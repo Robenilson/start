@@ -1,6 +1,5 @@
 import React ,{useState}from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { TailSpin } from 'react-loader-spinner';
 import Card from'../../components/Card';
 import { login } from "../../services/UsuarioService";
 import Menu from '../../components/menu';
@@ -27,9 +26,9 @@ const Login = () => {
       }
   
 
-      console.log(email,password )
+     // console.log(email,password )
       
-      //const vRetorno = await login({ email: email, senha: password });
+      const vRetorno = await login({ email: email, senha: password });
 
 
 
@@ -55,6 +54,7 @@ const Login = () => {
 
         
     <Card>
+       
         <div className="card-header ">Login</div>
             <div className="card-body ">              
               <form  >
@@ -73,7 +73,9 @@ const Login = () => {
                </div>               
               </form>
             </div>
+            
     </Card> 
+    
      
     );
 };
