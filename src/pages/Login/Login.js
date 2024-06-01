@@ -4,7 +4,7 @@ import Card from'../../components/Card';
 import { login } from "../../services/UsuarioService";
 import Menu from '../../components/menu';
 import { useNavigate } from 'react-router-dom';
-
+import  {urls} from"../../services/static/js/urls";
 
 
 const Login = () => {
@@ -19,7 +19,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
 
       e.preventDefault();
-      navigate('/home');
+      navigate(urls.homePage);
 
 
       /*

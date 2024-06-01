@@ -1,7 +1,8 @@
 export const urls = {
-  login: "/",
-  home:"",
-  caixa:"",
-  vendas:""
+  logiPage: "/",
+  homePage:"/home",
+  caixaPage:"/caixa",
+  vendasPage:"/venda",
+  NewProdutoPage:"/NewProduto"
   
 };

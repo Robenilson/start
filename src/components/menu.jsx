@@ -3,6 +3,7 @@ import { Navbar } from 'react-bootstrap';
 import {  Nav } from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
 import OptionNav from'./optionNav';
+import  {urls} from"../services/static/js/urls";
 
 import Card from '../components/Card';
 function menu(props) {
@@ -19,8 +20,8 @@ function menu(props) {
                     <Navbar.Collapse id="basic-navbar-nav">
                       <Nav className="me-auto custom-nav">    
                        
-                       <OptionNav url="/venda"  name="vendas" />
-                       <OptionNav url="/venda"  name="vendas" />
+                       <OptionNav url={urls.caixaPage}  name="Caixa" />
+                       <OptionNav url={urls.NewProdutoPage}  name="Novo Produto" />
                        <OptionNav url="/venda"  name="vendas" />
                               
                       </Nav>
