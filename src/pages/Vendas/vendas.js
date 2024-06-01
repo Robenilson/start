@@ -2,7 +2,7 @@ import Card from '../../components/Card';
 import { Button } from 'react-bootstrap';
 import React, { useState } from 'react';
 import ModalComponet from '../../components/ModalComponet';
-import  Menu  from'../../components/Card';
+import  Menu  from'../../components/menu';
 
 
 

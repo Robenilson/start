@@ -18,6 +18,9 @@ function menu(props) {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                       <Nav className="me-auto custom-nav">    
+                       
+                       <OptionNav url="/venda"  name="vendas" />
+                       <OptionNav url="/venda"  name="vendas" />
                        <OptionNav url="/venda"  name="vendas" />
                               
                       </Nav>
@@ -26,11 +29,6 @@ function menu(props) {
                         
                 </Navbar>
                 </div>
-      
-       
-       
-   
-        
        </Card>
       <div className="modal-body">
               {props.children}

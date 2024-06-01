@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-import { createBrowserRouter, RouterProvider  } from "react-router-dom"
 
 //import pages
 
@@ -15,6 +16,8 @@ import NewProduto from './pages/NovoProduto/NewProduto';
 import Home from './pages/Home/Home';
 import Venda from'./pages/Vendas/vendas';
 import Caixa from'./pages/Caixa/caixa';
+import { createBrowserRouter, RouterProvider  } from "react-router-dom"
+
 
 
 const router=createBrowserRouter([
@@ -31,10 +34,13 @@ const router=createBrowserRouter([
 
 
 
+
+
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-     <Login />
+      <App/>
   </React.StrictMode>
 );
 
