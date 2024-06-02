@@ -2,11 +2,13 @@ import React from 'react';
 import { Navbar } from 'react-bootstrap';
 import {  Nav } from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
-import OptionNav from'./optionNav';
-import  {urls} from"../services/static/js/urls";
+import Permision from './Permision';
 import { Outlet } from 'react-router-dom';
+import OptionNav from './optionNav';
 import Card from '../components/Card';
-function menu(props) {
+import  {urls} from"../services/static/js/urls";
+
+function Menu() {
     return (
       <>
        <Card >
@@ -14,16 +16,12 @@ function menu(props) {
             <Navbar  bg="light" expand="lg">
             <Container  >
                     <Navbar.Brand>
-                      <OptionNav url="/Home"  name="Home" />
+                    <OptionNav url= {urls.userDados} name="Home" />
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
-                      <Nav className="me-auto custom-nav">    
-                       
-                       <OptionNav url={urls.caixaPage}  name="Caixa" />
-                       <OptionNav url={urls.NewProdutoPage}  name="Novo Produto" />
-                       <OptionNav url="/venda"  name="vendas" />
-                              
+                      <Nav className="me-auto custom-nav"> 
+                      <Permision  userType="vendedor"/>                             
                       </Nav>
                     </Navbar.Collapse>
                   </Container>
@@ -32,14 +30,10 @@ function menu(props) {
                 </div>
        </Card>
       <div className="modal-body">
-              {props.children}
-          </div>
-      
+        <Outlet/>
+      </div>
       </>
-    
-
-
     );
   }
   
-  export default menu;
+  export default Menu;

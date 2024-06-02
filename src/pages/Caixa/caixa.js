@@ -45,7 +45,7 @@ export const Caixa = () => {
     const valorInput = e.target.value;
     setValor(valorInput);
 
-    if (valorInput > 100) {
+    if (valorInput => 100) {
       setCanOpenModal(true);
     } else {
       setCanOpenModal(false);
@@ -56,7 +56,7 @@ export const Caixa = () => {
     if (canOpenModal) {
       setIsModalOpen(true);
     } else {
-      alert('O valor deve ser maior que 100 reais para abrir o modal.');
+      alert('O valor deve ser maior ou igual a  100 reais para abrir o Caixa .');
     }
   };
 
@@ -65,7 +65,7 @@ export const Caixa = () => {
   };
 
   return (
-    <Menu>
+   
       <Card>
       <div className="card-header  text-center">Caixa</div>
        <div className="card-body ">  
@@ -112,7 +112,7 @@ export const Caixa = () => {
         )}
         </div>
       </Card>
-    </Menu>
+    
   );
 };
 

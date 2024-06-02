@@ -13,23 +13,13 @@ import Login from './pages/Login/Login';
 
 import UserForm from './pages/CadastroUsuarios/UserForm';
 import NewProduto from './pages/NovoProduto/NewProduto';
-import Home from './pages/Home/Home';
+import Home from './pages/Relatorio/Relatorio';
 import Venda from'./pages/Vendas/vendas';
 import Caixa from'./pages/Caixa/caixa';
-import { createBrowserRouter, RouterProvider  } from "react-router-dom"
 
 
 
-const router=createBrowserRouter([
-   
-  { path:"/",   element:<Login />},
-  { path:"/Home",   element:<Home />},
-   { path:"/UserForm",   element:<UserForm />},
-   { path:"/venda",  element:<Venda /> },
-   { path:"/NewProduto",  element:<NewProduto /> },
-   { path:"/caixa",  element:<Caixa /> }
- 
-]);
+
 
 
 

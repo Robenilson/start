@@ -5,10 +5,10 @@ import { login } from "../../services/UsuarioService";
 import Menu from '../../components/menu';
 import { useNavigate } from 'react-router-dom';
 import  {urls} from"../../services/static/js/urls";
+import { Function } from '../../services/static/js/functions';
 
 
 const Login = () => {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -18,9 +18,7 @@ const Login = () => {
   
     const handleSubmit = async (e) => {
 
-      e.preventDefault();
-      navigate(urls.homePage);
-
+      navigate(urls.userDados);
 
       /*
       if (email == null || email == "") {

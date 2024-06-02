@@ -1,68 +1,154 @@
-import Card from '../../components/Card';
-import { Button } from 'react-bootstrap';
 import React, { useState } from 'react';
-import ModalComponet from '../../components/ModalComponet';
-import  Menu  from'../../components/menu';
+import { Modal, Button, Form, Table } from 'react-bootstrap';
+import Card from '../../components/Card';
 
+const Vendas = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [saleType, setSaleType] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [confirmationData, setConfirmationData] = useState(null);
 
+  const products = [
+    { name: 'Produto A', price: 100 },
+    { name: 'Produto B', price: 200 },
+    { name: 'Produto C', price: 300 },
+  ];
 
-function Vendas() {
-  
-const [showModal, setShowModal] = useState(false);
-const handleShowModal = () => setShowModal(true);
-const handleCloseModal = () => setShowModal(false);
+  const consoles = [
+    { name: 'Console X', hourlyRate: 50, minHours: 1 },
+    { name: 'Console Y', hourlyRate: 75, minHours: 2 },
+    { name: 'Console Z', hourlyRate: 100, minHours: 1 },
+  ];
 
+  const handleRadioChange = (event) => {
+    setSaleType(event.target.value);
+    setShowModal(true);
+    setQuantity(1); // Reset quantity
+  };
 
-    return (
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+    setShowModal(false);
+    const minQuantity = saleType === 'produto' ? 1 : item.minHours;
+    setQuantity(minQuantity);
+    setConfirmationData({
+      saleType,
+      item,
+      quantity: minQuantity,
+      total: item.price ? item.price * minQuantity : item.hourlyRate * minQuantity,
+    });
+  };
 
-      <Menu>
+  const handleConfirm = () => {
+    // Enviar dados para o caixa
+    console.log('Venda confirmada:', confirmationData);
+    // Limpar estado
+    clearState();
+  };
 
-       <Card>
-          <form >
-                <h1 className="  text-center my-2  mb-4" >Vendas</h1>
-              <div className="card-header ">Venda-Iniciar-Venda</div>
-              <div className="card-body ">
+  const handleCancel = () => {
+    // Limpar estado ao cancelar
+    clearState();
+  };
 
-            <div className="form-group row    my-2  mb-4">
-                <label htmlFor="dataNascimento  h1">Principais:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Principais Vendas"></ModalComponet>
-              </div>
-              <hr/>
+  const clearState = () => {
+    setSelectedItem(null);
+    setSaleType('');
+    setConfirmationData(null);
+    setQuantity(1);
+  };
 
+  const handleQuantityChange = (event) => {
+    const newQuantity = Number(event.target.value);
+    setQuantity(newQuantity);
+    if (selectedItem) {
+      setConfirmationData({
+        ...confirmationData,
+        quantity: newQuantity,
+        total: selectedItem.price ? selectedItem.price * newQuantity : selectedItem.hourlyRate * newQuantity,
+      });
+    }
+  };
 
-              <div className="form-group row  my-2  mb-4">
-                <label htmlFor="dataNascimento   ">Outros:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Outros vendas"></ModalComponet>
-              </div>
-              <hr/>
+  return (
+    <Card>
+    <div className="container mt-5">
+      <Form>
+        <Form.Group>
+          <Form.Label>Cliente</Form.Label>
+          <Form.Control type="text" placeholder="Nome do Cliente" />
+        </Form.Group>
+        <Form.Group className="mt-3">
+          <Form.Label>Tipo de Venda</Form.Label>
+          <Form.Check
+            type="radio"
+            label="Produto"
+            value="produto"
+            checked={saleType === 'produto'}
+            onChange={handleRadioChange}
+          />
+          <Form.Check
+            type="radio"
+            label="Serviço"
+            value="serviço"
+            checked={saleType === 'serviço'}
+            onChange={handleRadioChange}
+          />
+        </Form.Group>
+      </Form>
 
-              <div className="form-group row  my-2  mb-4">
-                <label htmlFor="dataNascimento   ">Creditos:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Creditos"></ModalComponet>
-              </div>
-              <hr/>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Selecione um {saleType}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Preço</th>
+                {saleType === 'serviço' && <th>Valor Mínimo por Hora</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {(saleType === 'produto' ? products : consoles).map((item, index) => (
+                <tr key={index} onClick={() => handleItemClick(item)}>
+                  <td>{index + 1}</td>
+                  <td>{item.name}</td>
+                  <td>R${saleType === 'produto' ? item.price.toFixed(2) : item.hourlyRate.toFixed(2)}</td>
+                  {saleType === 'serviço' && <td>{item.minHours} hora(s)</td>}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Modal.Body>
+      </Modal>
 
-
-              <div className="form-group row  my-2  mb-4">
-                <label htmlFor="dataNascimento   ">Descontos:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Descontos"></ModalComponet>
-              </div>
-
-              </div>
-          </form>
-
-          <div className=" form-group  my-2  mb-4  text-center ">
-            <button type="submit"    className="btn btn-primary text-center">Cadastrar</button>
-          </div>
-       </Card>
-       </Menu>
-
-        
-    );
-}
+      {confirmationData && (
+        <div className="mt-5">
+          <h4>Confirmação de Venda</h4>
+          <p><strong>Tipo de Venda:</strong> {confirmationData.saleType}</p>
+          <p><strong>Item:</strong> {confirmationData.item.name}</p>
+          <p><strong>Preço Unitário:</strong> R${confirmationData.item.price ? confirmationData.item.price.toFixed(2) : confirmationData.item.hourlyRate.toFixed(2)}</p>
+          <Form.Group>
+            <Form.Label>{saleType === 'produto' ? 'Quantidade' : 'Horas de Uso'}</Form.Label>
+            <Form.Control
+              type="number"
+              min={saleType === 'produto' ? 1 : confirmationData.item.minHours}
+              value={quantity}
+              onChange={handleQuantityChange}
+            />
+          </Form.Group>
+          <p><strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}</p>
+          <Button variant="success" onClick={handleConfirm} className="me-2">Confirmar Venda</Button>
+          <Button variant="danger" onClick={handleCancel}>Cancelar Venda</Button>
+        </div>
+      )}
+    </div>
+    </Card>
+  );
+};
 
 export default Vendas;

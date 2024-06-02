@@ -1,9 +1,12 @@
 export const urls = {
-  logiPage: "/",
+  loginPage: "/",
   homePage:"/home",
   caixaPage:"/caixa",
   vendasPage:"/venda",
-  NewProdutoPage:"/NewProduto",
-  menuPage:"/menu"
+  newProdutoPage:"/newProduto",
+  userDados:"/dadosUser",
+  relatorio:"/relatorio"
+
+
   
 };
