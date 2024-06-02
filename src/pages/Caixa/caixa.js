@@ -72,7 +72,7 @@ export const Caixa = () => {
 
 
        <div className="form-group  text-center row my-2  mb-4">
-          <label htmlFor="email">Inicialize a caixa com um valor acima de  R$ 100,00 reais</label>
+          <label htmlFor="email">Inicialize o caixa com um valor acima de  R$ 100,00 reais</label>
           </div>
                        
         

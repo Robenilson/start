@@ -3,6 +3,7 @@ export const urls = {
   homePage:"/home",
   caixaPage:"/caixa",
   vendasPage:"/venda",
-  NewProdutoPage:"/NewProduto"
+  NewProdutoPage:"/NewProduto",
+  menuPage:"/menu"
   
 };

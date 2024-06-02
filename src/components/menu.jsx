@@ -4,7 +4,7 @@ import {  Nav } from 'react-bootstrap';
 import { Container } from 'react-bootstrap';
 import OptionNav from'./optionNav';
 import  {urls} from"../services/static/js/urls";
-
+import { Outlet } from 'react-router-dom';
 import Card from '../components/Card';
 function menu(props) {
     return (
