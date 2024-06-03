@@ -13,7 +13,7 @@ function ModalComponet( props ) {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={props.onHide}>Fechar</Button>
-                <Button variant="primary" onClick={props.handleSubmit}>Salvar</Button>
+                <Button variant="success" onClick={props.save}>Salvar</Button>
             </Modal.Footer>
         </Modal>
     );

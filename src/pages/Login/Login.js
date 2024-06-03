@@ -2,10 +2,8 @@ import React ,{useState}from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from'../../components/Card';
 import { login } from "../../services/UsuarioService";
-import Menu from '../../components/menu';
 import { useNavigate } from 'react-router-dom';
 import  {urls} from"../../services/static/js/urls";
-import { Function } from '../../services/static/js/functions';
 
 
 const Login = () => {

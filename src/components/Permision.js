@@ -23,7 +23,15 @@ const Permision = (props) => {
       message = [<OptionNav url={urls.caixaPage}  name="Caixa" />];
       break;
     default:
-      message = 'Seu tipo de usuário não foi reconhecido.';
+      message = [
+        <OptionNav url={urls.caixaPage}  name="Caixa" />,
+        <OptionNav url={urls.relatorio}  name="Relatorio" />,
+        <OptionNav url="/venda"  name="vendas" />,
+        <OptionNav url={urls.newProdutoPage}  name=" Produto " />
+
+
+
+      ];
   }
 
   return (

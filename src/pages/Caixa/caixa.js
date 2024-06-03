@@ -1,118 +1,143 @@
-import Card from '../../components/Card';
 import React, { useState } from 'react';
-import ModalComponet from '../../components/ModalComponet';
-import  Menu  from'../../components/menu';
-import { Button } from 'react-bootstrap';
+import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
+import Card from '../../components/Card';
+import PedidosTab from './componentesCaixa/ConcluidosTab';
+import ConcluidosTab from './componentesCaixa/ConcluidosTab';
+import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
 
-const Modal = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-  return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div style={{ backgroundColor: 'white', padding: 20, margin: '100px auto', width: '300px', borderRadius: '8px' }}>
-        <button onClick={onClose} style={{ float: 'right' }}>Fechar</button>
-        {children}
-      </div>
-    </div>
-  );
-};
+const Caixa = () => {
+  const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
+  const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
+  const [valorInicial, setValorInicial] = useState('');
+  const [saldo, setSaldo] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [pedidos, setPedidos] = useState([]);
+  const [servicosUtilizados, setServicosUtilizados] = useState([]);
+  const [caixaAberto, setCaixaAberto] = useState(false);
+  const [horaFechamento, setHoraFechamento] = useState(null);
 
-// Componente ListaFakePedidos
-const ListaFakePedidos = () => {
-  const pedidos = [
-    { id: 1, descricao: 'Pedido 1', valor: 50 },
-    { id: 2, descricao: 'Pedido 2', valor: 75 },
-    { id: 3, descricao: 'Pedido 3', valor: 150 },
-  ];
+  const handleAbrirCaixa = () => {
+    setShowModalAbrirCaixa(true);
+  };
 
-  return (
-    <ul>
-      {pedidos.map(pedido => (
-        <li key={pedido.id}>{pedido.descricao}: R$ {pedido.valor}</li>
-      ))}
-    </ul>
-  );
-};
+  const handleFecharCaixa = () => {
+    setShowModalFecharCaixa(true);
+  };
 
-// Componente principal Caixa
-export const Caixa = () => {
-  const [valor, setValor] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [canOpenModal, setCanOpenModal] = useState(false);
+  const handleCloseAbrirCaixa = () => {
+    setShowModalAbrirCaixa(false);
+    setValorInicial('');
+  };
 
- 
+  const handleCloseFecharCaixa = () => {
+    setShowModalFecharCaixa(false);
+  };
 
-  const handleChange = (e) => {
-    const valorInput = e.target.value;
-    setValor(valorInput);
-
-    if (valorInput => 100) {
-      setCanOpenModal(true);
+  const handleConfirmarAbrirCaixa = () => {
+    const valor = parseFloat(valorInicial);
+    if (valor >= 100) {
+      setSaldo(valor);
+      setCaixaAberto(true);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 5000);
+      handleCloseAbrirCaixa();
     } else {
-      setCanOpenModal(false);
+      alert('O valor inicial deve ser igual ou maior que 100.');
     }
   };
 
-  const handleShowModal = () => {
-    if (canOpenModal) {
-      setIsModalOpen(true);
-    } else {
-      alert('O valor deve ser maior ou igual a  100 reais para abrir o Caixa .');
-    }
+  const handleConfirmarFecharCaixa = () => {
+    setCaixaAberto(false);
+    setHoraFechamento(new Date().toLocaleString());
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 5000);
+    handleCloseFecharCaixa();
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handlePedidoFormaPagamento = (index) => {
+    alert(`Pedido ${index + 1}: Solicitar forma de pagamento`);
+  };
+
+  const adicionarServicoUtilizado = (servico) => {
+    setServicosUtilizados([...servicosUtilizados, servico]);
   };
 
   return (
-   
-      <Card>
-      <div className="card-header  text-center">Caixa</div>
-       <div className="card-body ">  
+    <Card>
+      <div className="card-header">Caixa</div>
+      <div className="card-body">
+        <Button variant="primary" onClick={handleAbrirCaixa} className="me-2">
+          Abrir Caixa
+        </Button>
+        <Button variant="secondary" onClick={handleFecharCaixa}>
+          Fechar Caixa
+        </Button>
 
+        <Modal show={showModalAbrirCaixa} onHide={handleCloseAbrirCaixa}>
+          <Modal.Header closeButton>
+            <Modal.Title>Abrir Caixa</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>Valor Inicial</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={valorInicial}
+                  onChange={(e) => setValorInicial(e.target.value)}
+                  placeholder="Valor Inicial"
+                />
+              </Form.Group>
+              <Button variant="success" onClick={handleConfirmarAbrirCaixa}>
+                Confirmar
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
 
-       <div className="form-group  text-center row my-2  mb-4">
-          <label htmlFor="email">Inicialize o caixa com um valor acima de  R$ 100,00 reais</label>
-          </div>
-                       
-        
-        <input 
-        className="form-control"
-          type="number"
-          value={valor}
-          onChange={handleChange}
-          placeholder="Digite um valor"
-        />
-        
-        <div className="form-group row my-2 mb-4">
-          <label htmlFor="dataNascimento">Principais:</label>
-          <button className="btn btn-light" onClick={handleShowModal}>Abrir Caixa</button>
-        </div>
-        {isModalOpen && (
-          <>
-           <div className="form-group row    my-2  mb-4">
-             <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-            <ModalComponet show={handleShowModal} onHide={handleCloseModal}title="Principais Vendas">
-               <h2>Pedidos</h2>
-            </ModalComponet>
-            </div>
-          
-          </>
-       
-       
-         
-      
+        <Modal show={showModalFecharCaixa} onHide={handleCloseFecharCaixa}>
+          <Modal.Header closeButton>
+            <Modal.Title>Fechar Caixa</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Você está prestes a fechar o caixa. Deseja continuar?</p>
+            <Button variant="success" onClick={handleConfirmarFecharCaixa}>
+              Confirmar
+            </Button>
+          </Modal.Body>
+        </Modal>
 
-
-
-
-
-      
-         
+        {showSuccess && (
+          <Alert variant="success" className="mt-3">
+            Operação concluída com sucesso!
+          </Alert>
         )}
+
+        <div className="mt-3">
+          <h5>Saldo: R${saldo.toFixed(2)}</h5>
         </div>
-      </Card>
-    
+
+        {!caixaAberto && horaFechamento && (
+          <Alert variant="info" className="mt-3">
+            Caixa fechado em {horaFechamento} com saldo de R${saldo.toFixed(2)}
+          </Alert>
+        )}
+
+        {caixaAberto && (
+          <Tabs defaultActiveKey="pedidos" id="tabela-abas" className="mt-3">
+            <Tab eventKey="pedidos" title="Pedidos">
+              <PedidosTab pedidos={pedidos} handlePedidoFormaPagamento={handlePedidoFormaPagamento} />
+            </Tab>
+            <Tab eventKey="concluidos" title="Concluídos">
+              <ConcluidosTab />
+            </Tab>
+            <Tab eventKey="servicos-utilizados" title="Serviços Utilizados">
+              <ServicosUtilizadosTab servicosUtilizados={servicosUtilizados} />
+            </Tab>
+          </Tabs>
+        )}
+      </div>
+    </Card>
   );
 };
 

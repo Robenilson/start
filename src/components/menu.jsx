@@ -21,7 +21,7 @@ function Menu() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                       <Nav className="me-auto custom-nav"> 
-                      <Permision  userType="vendedor"/>                             
+                      <Permision  userType="tu"/>                             
                       </Nav>
                     </Navbar.Collapse>
                   </Container>

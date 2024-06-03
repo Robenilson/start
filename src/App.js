@@ -8,7 +8,7 @@ import Caixa from './pages/Caixa/caixa';
 import NewProduto from './pages/NovoProduto/NewProduto';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { urls } from "./services/static/js/urls";
-import Userdados from './pages/PerfilUsuario/Userdados';
+import Userdados from './pages/UserManager/UserManager';
 
 
 
