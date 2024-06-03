@@ -15,7 +15,7 @@ import NewProduto from './pages/NovoProduto/NewProduto';
 import Home from './pages/Home/Home';
 import Venda from'./pages/Vendas/vendas';
 import Caixa from'./pages/Caixa/caixa';
-
+import {UserProvider} from  "./services/context/UserContext";
 
 const router=createBrowserRouter([
    
@@ -33,9 +33,13 @@ const router=createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  <UserProvider>
+
   <React.StrictMode>
      <Login />
   </React.StrictMode>
+  </UserProvider>
+
 );
 
 // If you want to start measuring performance in your app, pass a function

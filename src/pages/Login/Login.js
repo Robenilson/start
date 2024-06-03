@@ -1,13 +1,14 @@
 import React ,{useState}from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from'../../components/Card';
 import { login } from "../../services/UsuarioService";
 import Menu from '../../components/menu';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { jwtDecode } from 'jwt-decode';
+import {useUser} from  "../../services/context/UserContext";
 
 
 const Login = () => {
-
+    const { setUser } = useUser();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -29,12 +30,17 @@ const Login = () => {
      // console.log(email,password )
       
       const vRetorno = await login({ email: email, senha: password });
-
-
-
+      console.log('User Data:', vRetorno);
+      const userData = jwtDecode(vRetorno);
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      console.log('token decode:', userData);
+      console.log('User email:', userData.email);
+      console.log('User Roles:', userData.Role);
 
       const LogarUsuario = async ({ email, senha }) => {
         const vRetorno = await login({ email: email, senha: senha });
+        console.log('User Data2:', vRetorno);
         if (vRetorno.status && vRetorno.status === 200) {
             // Login bem-sucedido
             console.log('Login bem-sucedido:', vRetorno.data);

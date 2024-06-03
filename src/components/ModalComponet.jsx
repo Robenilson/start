@@ -1,5 +1,7 @@
 
-import { Button, Modal } from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+
 function ModalComponet( props ) {
     return (
         <Modal show={props.show} onHide={props.onHide}  >

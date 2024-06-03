@@ -49,10 +49,10 @@ export async function login(data) {
     }
   }
   
-  export async function getMeuPerfil() {
+  export async function getRoleBydId(roleId) {
     var config = functions.serviceRetornarConfig(
       "get",
-      endPoints.getMeuPerfil,
+      endPoints.obterRole + "/" + (roleId),
       null,
       true
     );
