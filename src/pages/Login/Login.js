@@ -4,43 +4,34 @@ import Card from'../../components/Card';
 import { login } from "../../services/UsuarioService";
 import { useNavigate } from 'react-router-dom';
 import  {urls} from"../../services/static/js/urls";
+import { jwtDecode } from 'jwt-decode';
+import {useUser} from  "../../services/context/UserContext";
 
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+  const { setUser } = useUser();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+
+
+
+
     const navigate = useNavigate();
 
   
     const handleSubmit = async (e) => {
-
-      navigate(urls.userDados);
-
-      /*
-      if (email == null || email == "") {
-        console.log('erro')      
-        return;
-      } 
-      if (password == null || password == "") {      
-        console.log('erro')
-        return;
-      }
-  
-
-     // console.log(email,password )
+      
       
       const vRetorno = await login({ email: email, senha: password });
-        if (vRetorno.status && vRetorno.status === 200) {
-            // Login bem-sucedido
-            console.log('Login bem-sucedido:', vRetorno.data);
-        } else {
-            // Tratamento de erro
-            console.error('Falha no login:', vRetorno.message);
-        }
- 
-  */
+      const userData = jwtDecode(vRetorno);
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      navigate(urls.userDados);
+      
+      
     }
   
   

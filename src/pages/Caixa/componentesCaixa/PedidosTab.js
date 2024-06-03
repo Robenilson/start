@@ -1,28 +1,30 @@
 import React from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 
-const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
+const PedidosTab = ({ pedidos }) => {
   return (
-    <Table striped bordered hover className="mt-3">
+    <Table striped bordered hover>
       <thead>
         <tr>
+          <th>#</th>
+          <th>CPF Vendedor</th>
           <th>CPF Cliente</th>
-          <th>Produto/Serviço</th>
+          <th>Tipo</th>
+          <th>Detalhes</th>
           <th>Valor</th>
-          <th>Ação</th>
+          <th>Quantidade</th>
         </tr>
       </thead>
       <tbody>
         {pedidos.map((pedido, index) => (
           <tr key={index}>
-            <td>{pedido.cpf}</td>
-            <td>{pedido.produtoServico}</td>
+            <td>{index + 1}</td>
+            <td>{pedido.cpfVendedor}</td>
+            <td>{pedido.cpfCliente}</td>
+            <td>{pedido.tipo}</td>
+            <td>{pedido.tipo === 'Serviço' ? pedido.detalhes.nomeServico : 'Produto'}</td>
             <td>{pedido.valor}</td>
-            <td>
-              <Button variant="info" onClick={() => handlePedidoFormaPagamento(index)}>
-                Pedir Forma de Pagamento
-              </Button>
-            </td>
+            <td>{pedido.tipo === 'Serviço' ? pedido.detalhes.horas : pedido.quantidade}</td>
           </tr>
         ))}
       </tbody>

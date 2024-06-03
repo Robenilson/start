@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Table, Alert } from 'react-bootstrap';
 import Card from '../../components/Card';
+import   {  novoPedido   }   from'../../services/OrderService';
+
 
 const Vendas = () => {
   const [cpf, setCpf] = useState('');
@@ -10,6 +12,7 @@ const Vendas = () => {
   const [quantity, setQuantity] = useState(1);
   const [confirmationData, setConfirmationData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
+
 
   const products = [
     { name: 'Produto A', price: 100 },
@@ -49,6 +52,34 @@ const Vendas = () => {
     setShowSuccess(true);
     // Ocultar mensagem de sucesso após 5 segundos
     // Limpar estado após um tempo
+      const user = JSON.parse(localStorage.getItem('user'));
+      const  data= {
+      
+        "dtSale": "2024-06-03T07:56:22.344Z",
+        "produtos": [
+          "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        ],
+        "clientId": 0,
+        "precoTotal": 0,
+        "desconto": 0,
+        "credito": 0,
+        "saleStatus": 0,
+        "payments": [
+          {
+            "id": 0,
+            "value": 0,
+            "paymentMethodId": 0,
+            "paymentMethod": {
+              "id": 0,
+              "nome": "string"
+            }
+          }
+        ]
+      }
+    novoPedido(data)
+
+
+
     setTimeout(clearState, 1000);
   };
 

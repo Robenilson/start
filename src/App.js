@@ -19,8 +19,7 @@ const App = () => {
     <Router>
     <Routes>
         <Route path={urls.loginPage}  exact element={<Login />} />
-        <Route element={<Menu />}>
-          
+        <Route element={<Menu />}>         
           <Route path={urls.relatorio} element={<Relatorio />} />
           <Route path={urls.userDados} element={<Userdados />} />
           <Route path={urls.caixaPage}    element={<Caixa />} />

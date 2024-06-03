@@ -5,32 +5,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
-
-//import pages
-
-import Login from './pages/Login/Login';
-
-import UserForm from './pages/CadastroUsuarios/UserForm';
-import NewProduto from './pages/NovoProduto/NewProduto';
-import Home from './pages/Relatorio/Relatorio';
-import Venda from'./pages/Vendas/vendas';
-import Caixa from'./pages/Caixa/caixa';
-
-
-
-
-
-
-
-
-
+import {UserProvider} from  "./services/context/UserContext";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <App/>
+    <UserProvider>
+       <App/>
+    </UserProvider>   
   </React.StrictMode>
 );
 

@@ -5,6 +5,7 @@ import PedidosTab from './componentesCaixa/ConcluidosTab';
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
 
+
 const Caixa = () => {
   const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
   const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
