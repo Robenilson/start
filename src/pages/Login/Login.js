@@ -5,11 +5,9 @@ import { login } from "../../services/UsuarioService";
 import { useNavigate } from 'react-router-dom';
 import  {urls} from"../../services/static/js/urls";
 import { jwtDecode } from 'jwt-decode';
-import {useUser} from  "../../services/context/UserContext";
 
 
 const Login = () => {
-  const { setUser } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,11 +22,11 @@ const Login = () => {
   
     const handleSubmit = async (e) => {
       
-      
+      /*
       const vRetorno = await login({ email: email, senha: password });
       const userData = jwtDecode(vRetorno);
       setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(userData));*/
       navigate(urls.userDados);
       
       

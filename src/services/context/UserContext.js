@@ -1,26 +1,43 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-// Criação do contexto
-const UserContext = createContext();
+// Cria o contexto
+export const GlobalContext = createContext();
 
-// Provider que envolve os componentes
-export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export const GlobalProvider = ({ children }) => {
+  const [pessoaArray, setPessoaArray] = useState(() => {
+    const savedData = localStorage.getItem('pessoaArray');
+    return savedData ? JSON.parse(savedData) : [];
+  });
+
+  const [produtoArray, setProdutoArray] = useState(() => {
+    const savedData = localStorage.getItem('produtoArray');
+    return savedData ? JSON.parse(savedData) : [];
+  });
+
+  const [servicoArray, setServicoArray] = useState(() => {
+    const savedData = localStorage.getItem('servicoArray');
+    return savedData ? JSON.parse(savedData) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('pessoaArray', JSON.stringify(pessoaArray));
+  }, [pessoaArray]);
+
+  useEffect(() => {
+    localStorage.setItem('produtoArray', JSON.stringify(produtoArray));
+  }, [produtoArray]);
+
+  useEffect(() => {
+    localStorage.setItem('servicoArray', JSON.stringify(servicoArray));
+  }, [servicoArray]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <GlobalContext.Provider value={{ 
+      pessoaArray, setPessoaArray, 
+      produtoArray, setProdutoArray, 
+      servicoArray, setServicoArray 
+    }}>
       {children}
-    </UserContext.Provider>
+    </GlobalContext.Provider>
   );
 };
-
-// Hook para usar o contexto
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (!context) {
-    throw new Error('useUser must be used within a UserProvider');
-  }
-  return context;
-};
-
-export default UserContext;

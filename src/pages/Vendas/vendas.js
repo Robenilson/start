@@ -3,7 +3,6 @@ import { Modal, Button, Form, Table, Alert } from 'react-bootstrap';
 import Card from '../../components/Card';
 import   {  novoPedido   }   from'../../services/OrderService';
 
-
 const Vendas = () => {
   const [cpf, setCpf] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -12,7 +11,6 @@ const Vendas = () => {
   const [quantity, setQuantity] = useState(1);
   const [confirmationData, setConfirmationData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-
 
   const products = [
     { name: 'Produto A', price: 100 },
@@ -77,9 +75,6 @@ const Vendas = () => {
         ]
       }
     novoPedido(data)
-
-
-
     setTimeout(clearState, 1000);
   };
 

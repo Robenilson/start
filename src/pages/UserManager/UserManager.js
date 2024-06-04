@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Button, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
-import ModalComponet from '../../components/ModalComponet';
+import ModalComponent from '../../components/ModalComponet';
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
+import { openDB } from 'idb';
+
+// Criando o contexto
+const UserContext = createContext();
+
+// Hook para usar o contexto
+export const useUserContext = () => useContext(UserContext);
 
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +26,21 @@ const UserManager = () => {
     role: '',
   });
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    async function fetchData() {
+      const db = await openDB('pessoas-db', 1, {
+        upgrade(db) {
+          db.createObjectStore('pessoas');
+        },
+      });
+      const tx = db.transaction('pessoas', 'readonly');
+      const store = tx.objectStore('pessoas');
+      const data = await store.getAll();
+      setPessoas(data);
+    }
+    fetchData();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,8 +65,14 @@ const UserManager = () => {
     });
   };
 
-  const handleSaveUser = () => {
-    setPessoas([...pessoas, userValues]);
+  const handleSaveUser = async () => {
+    const db = await openDB('pessoas-db', 1);
+    const tx = db.transaction('pessoas', 'readwrite');
+    const store = tx.objectStore('pessoas');
+    await store.add(userValues);
+    await tx.done;
+    const data = await store.getAll();
+    setPessoas(data);
     handleCloseModal();
   };
 
@@ -62,11 +90,10 @@ const UserManager = () => {
         <Button variant="primary" onClick={handleShowModal}>
           Cadastrar Pessoa
         </Button>
-        <ModalComponet show={showModal} onHide={handleCloseModal} title="Cadastrar Pessoa" save={handleSaveUser}>
+        <ModalComponent show={showModal} onHide={handleCloseModal} title="Cadastrar Pessoa" save={handleSaveUser}>
           <UserForm userValues={userValues} handleInputChange={handleInputChange} />
-        </ModalComponet>
+        </ModalComponent>
 
-        <div className=" m-0 mb-1">
         <Form.Group controlId="formSearch">
           <Form.Control
             type="text"
@@ -75,11 +102,6 @@ const UserManager = () => {
             onChange={handleSearchChange}
           />
         </Form.Group>
-        </div>
-
-
-        
-
 
         <Tabs defaultActiveKey="clientes" id="user-tabs" className="mt-3">
           <Tab eventKey="clientes" title="Clientes">
@@ -101,4 +123,3 @@ const UserManager = () => {
 };
 
 export default UserManager;
-
