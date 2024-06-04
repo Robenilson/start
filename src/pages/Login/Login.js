@@ -21,7 +21,7 @@ const Login = () => {
 
   
     const handleSubmit = async (e) => {
-      
+      e.preventDefault();
       /*
       const vRetorno = await login({ email: email, senha: password });
       const userData = jwtDecode(vRetorno);

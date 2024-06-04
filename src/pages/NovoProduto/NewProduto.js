@@ -58,7 +58,24 @@ const NewCadastro = () => {
       valor: parseFloat(produtoValues.valorProduto), 
       quantidade: parseInt(produtoValues.quantidade, 10) 
     };
-    setProdutos([...produtos, novoProduto]);
+
+ console.log( [...produtos, novoProduto])
+
+
+    const data={
+      "name": novoProduto.nome,
+      "description": "string",
+      "price": novoProduto.valor,
+      "productType": 1,
+      "virtualProduct": {
+        "quantidadeHoras": 0
+      },
+      "physiqueProduct": {
+        "estoque": novoProduto.quantidade
+      }
+    }
+
+    //setProdutos([...produtos, novoProduto]);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();

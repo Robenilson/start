@@ -5,6 +5,7 @@ import   {  novoPedido   }   from'../../services/OrderService';
 
 const Vendas = () => {
   const [cpf, setCpf] = useState('');
+  const [total, seTotal] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
@@ -32,6 +33,7 @@ const Vendas = () => {
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
+
     setShowModal(false); // Fecha o modal imediatamente
     const minQuantity = saleType === 'produto' ? 1 : item.minHours;
     setQuantity(minQuantity);
@@ -40,41 +42,26 @@ const Vendas = () => {
       item,
       quantity: minQuantity,
       total: item.price ? item.price * minQuantity : item.hourlyRate * minQuantity,
+      
     });
   };
 
   const handleConfirm = () => {
     // Enviar dados para o caixa
+
+    //Axios Aqui
     console.log('Venda confirmada:', confirmationData);
+    console.log(confirmationData.item)
     // Exibir mensagem de sucesso
     setShowSuccess(true);
     // Ocultar mensagem de sucesso após 5 segundos
     // Limpar estado após um tempo
-      const user = JSON.parse(localStorage.getItem('user'));
-      const  data= {
-      
-        "dtSale": "2024-06-03T07:56:22.344Z",
-        "produtos": [
-          "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-        ],
-        "clientId": 0,
-        "precoTotal": 0,
-        "desconto": 0,
-        "credito": 0,
-        "saleStatus": 0,
-        "payments": [
-          {
-            "id": 0,
-            "value": 0,
-            "paymentMethodId": 0,
-            "paymentMethod": {
-              "id": 0,
-              "nome": "string"
-            }
-          }
-        ]
-      }
-    novoPedido(data)
+   
+    
+    
+    //const user = JSON.parse(localStorage.getItem('user'));
+  
+    //novoPedido(data)
     setTimeout(clearState, 1000);
   };
 
