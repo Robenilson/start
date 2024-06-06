@@ -4,7 +4,7 @@ import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
-import { openDB } from 'idb';
+import '../../App.css';
 
 // Criando o contexto
 const UserContext = createContext();
@@ -22,32 +22,34 @@ const UserManager = () => {
     dataNascimento: '',
     cpf: '',
     telefone: '',
-    tipoPessoa: 'cliente',
-    role: '',
+    endereco: {
+      cep: '',
+      cidade: '',
+      estado: '',
+      bairro: '',
+      numero: '',
+    },
+    role: 'cliente',
   });
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    async function fetchData() {
-      const db = await openDB('pessoas-db', 1, {
-        upgrade(db) {
-          db.createObjectStore('pessoas');
-        },
-      });
-      const tx = db.transaction('pessoas', 'readonly');
-      const store = tx.objectStore('pessoas');
-      const data = await store.getAll();
-      setPessoas(data);
-    }
-    fetchData();
-  }, []);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUserValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+    if (name.startsWith('endereco.')) {
+      const key = name.split('.')[1];
+      setUserValues((prevValues) => ({
+        ...prevValues,
+        endereco: {
+          ...prevValues.endereco,
+          [key]: value,
+        },
+      }));
+    } else {
+      setUserValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+    }
   };
 
   const handleShowModal = () => setShowModal(true);
@@ -60,24 +62,29 @@ const UserManager = () => {
       dataNascimento: '',
       cpf: '',
       telefone: '',
-      tipoPessoa: 'cliente',
-      role: '',
+      endereco: {
+        cep: '',
+        cidade: '',
+        estado: '',
+        bairro: '',
+        numero: '',
+      },
+      role: 'cliente',
     });
   };
 
   const handleSaveUser = async () => {
-    const db = await openDB('pessoas-db', 1);
-    const tx = db.transaction('pessoas', 'readwrite');
-    const store = tx.objectStore('pessoas');
-    await store.add(userValues);
-    await tx.done;
-    const data = await store.getAll();
-    setPessoas(data);
+    console.log(userValues)
+
+
+    setPessoas([...pessoas, userValues]);
     handleCloseModal();
   };
 
-  const clientes = pessoas.filter(pessoa => pessoa.tipoPessoa === 'cliente' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-  const funcionarios = pessoas.filter(pessoa => pessoa.tipoPessoa === 'funcionario' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const clientes = pessoas.filter(pessoa => pessoa.role === 'cliente' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const vendedores = pessoas.filter(pessoa => pessoa.role === 'vendedor' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const caixas = pessoas.filter(pessoa => pessoa.role === 'caixa' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const administradores = pessoas.filter(pessoa => pessoa.role === 'administrador' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -107,13 +114,25 @@ const UserManager = () => {
           <Tab eventKey="clientes" title="Clientes">
             <UserTable 
               users={clientes} 
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço']} 
             />
           </Tab>
-          <Tab eventKey="funcionarios" title="Funcionários">
+          <Tab eventKey="vendedores" title="Vendedores">
             <UserTable 
-              users={funcionarios} 
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role']} 
+              users={vendedores} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço']} 
+            />
+          </Tab>
+          <Tab eventKey="caixas" title="Caixas">
+            <UserTable 
+              users={caixas} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço']} 
+            />
+          </Tab>
+          <Tab eventKey="administradores" title="Administradores">
+            <UserTable 
+              users={administradores} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço', 'Role']} 
             />
           </Tab>
         </Tabs>

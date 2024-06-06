@@ -8,6 +8,7 @@ const ProdutosTab = ({ produtos, handleEditProduto, handleDeleteProduto }) => {
         <tr>
           <th>#</th>
           <th>Nome</th>
+          <th>Descrição</th>
           <th>Valor</th>
           <th>Quantidade</th>
           <th>Ações</th>
@@ -18,6 +19,7 @@ const ProdutosTab = ({ produtos, handleEditProduto, handleDeleteProduto }) => {
           <tr key={index}>
             <td>{index + 1}</td>
             <td>{produto.nome}</td>
+            <td>{produto.descricao}</td>
             <td>R${produto.valor.toFixed(2)}</td>
             <td>{produto.quantidade}</td>
             <td>

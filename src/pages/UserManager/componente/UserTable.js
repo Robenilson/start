@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 
 const UserTable = ({ users, columns }) => (
-  <Table striped bordered hover className="mt-3 col-md-6">
+    <Table striped bordered hover className="mt-3 col-md-6">
     <thead>
       <tr>
         {columns.map((col, index) => (

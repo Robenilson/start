@@ -1,22 +1,21 @@
+import React from 'react';
+import { Modal, Button } from 'react-bootstrap';
 
-import { Button, Modal } from 'react-bootstrap';
-function ModalComponet( props ) {
-    return (
-        <Modal show={props.show} onHide={props.onHide}  >
-            <Modal.Header closeButton>
-                <Modal.Title>{props.title}</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <div className="modal-body">
-                    {props.children}
-                </div>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={props.onHide}>Fechar</Button>
-                <Button variant="success" onClick={props.save}>Salvar</Button>
-            </Modal.Footer>
-        </Modal>
-    );
-}
-export default ModalComponet
-;
+const ModalComponent = ({ show, onHide, title, save, children, customClass }) => (
+  <Modal show={show} onHide={onHide} dialogClassName={customClass}>
+    <Modal.Header closeButton>
+      <Modal.Title>{title}</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>{children}</Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={onHide}>
+        Fechar
+      </Button>
+      <Button variant="primary" onClick={save}>
+        Salvar
+      </Button>
+    </Modal.Footer>
+  </Modal>
+);
+
+export default ModalComponent;

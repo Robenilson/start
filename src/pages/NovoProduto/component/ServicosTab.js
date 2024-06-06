@@ -8,6 +8,7 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
         <tr>
           <th>#</th>
           <th>Nome</th>
+          <th>Descrição</th>
           <th>Valor</th>
           <th>Hora Mínima</th>
           <th>Quantidade</th>
@@ -19,6 +20,7 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
           <tr key={index}>
             <td>{index + 1}</td>
             <td>{servico.nome}</td>
+            <td>{servico.descricao}</td>
             <td>R${servico.valor.toFixed(2)}</td>
             <td>{servico.horaMinima}</td>
             <td>{servico.quantidade}</td>

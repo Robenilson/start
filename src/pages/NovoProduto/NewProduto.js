@@ -12,8 +12,8 @@ const NewCadastro = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
-  const [produtoValues, setProdutoValues] = useState({ nomeProduto: '', valorProduto: '', quantidade: '' });
-  const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '' });
+  const [produtoValues, setProdutoValues] = useState({ nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
+  const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '', descricaoServico: '' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
 
@@ -21,6 +21,7 @@ const NewCadastro = () => {
     { name: 'nomeProduto', label: 'Nome do Produto', type: 'text', placeholder: 'Nome do Produto' },
     { name: 'valorProduto', label: 'Valor', type: 'number', placeholder: 'R$0,00', step: '0.01' },
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
+    { name: 'descricaoProduto', label: 'Descrição', type: 'text', placeholder: 'Descrição do Produto' },
   ];
 
   const servicoFields = [
@@ -30,6 +31,7 @@ const NewCadastro = () => {
     { name: 'minutos', label: 'Minutos', type: 'number', placeholder: 'Minutos' },
     { name: 'segundos', label: 'Segundos', type: 'number', placeholder: 'Segundos' },
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
+    { name: 'descricaoServico', label: 'Descrição', type: 'text', placeholder: 'Descrição do Serviço' },
   ];
 
   const handleInputChange = (setter) => (name, value) => {
@@ -44,38 +46,23 @@ const NewCadastro = () => {
 
   const handleCloseProduto = () => {
     setShowModalProduto(false);
-    setProdutoValues({ nomeProduto: '', valorProduto: '', quantidade: '' });
+    setProdutoValues({ nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
   };
 
   const handleCloseServico = () => {
     setShowModalServico(false);
-    setServicoValues({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '' });
+    setServicoValues({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '', descricaoServico: '' });
   };
 
   const handleCadastroProduto = () => {
     const novoProduto = { 
       nome: produtoValues.nomeProduto, 
       valor: parseFloat(produtoValues.valorProduto), 
-      quantidade: parseInt(produtoValues.quantidade, 10) 
+      quantidade: parseInt(produtoValues.quantidade, 10),
+      descricao: produtoValues.descricaoProduto,
     };
 
- console.log( [...produtos, novoProduto])
-
-
-    const data={
-      "name": novoProduto.nome,
-      "description": "string",
-      "price": novoProduto.valor,
-      "productType": 1,
-      "virtualProduct": {
-        "quantidadeHoras": 0
-      },
-      "physiqueProduct": {
-        "estoque": novoProduto.quantidade
-      }
-    }
-
-    //setProdutos([...produtos, novoProduto]);
+    setProdutos([...produtos, novoProduto]);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
@@ -86,8 +73,26 @@ const NewCadastro = () => {
       nome: servicoValues.nomeServico,
       valor: parseFloat(servicoValues.valorServico),
       horaMinima: `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-      quantidade: parseInt(servicoValues.quantidade, 10)
+      quantidade: parseInt(servicoValues.quantidade, 10),
+      descricao: servicoValues.descricaoServico,
     };
+
+    const data={
+      "name": novoServico.nome,
+      "description": novoServico.descricao,
+      "price": novoServico.valor,
+      "productType": 1,
+      "virtualProduct": {
+        "quantidadeHoras": novoServico.horaMinima
+      },
+      "physiqueProduct": {
+        "estoque": novoServico.quantidade
+      }
+    }
+
+
+
+
     setServicos([...servicos, novoServico]);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
@@ -96,7 +101,7 @@ const NewCadastro = () => {
 
   const handleEditProduto = (index) => {
     const produto = produtos[index];
-    setProdutoValues({ nomeProduto: produto.nome, valorProduto: produto.valor, quantidade: produto.quantidade });
+    setProdutoValues({ nomeProduto: produto.nome, valorProduto: produto.valor, quantidade: produto.quantidade, descricaoProduto: produto.descricao });
     setProdutos(produtos.filter((_, i) => i !== index));
     setShowModalProduto(true);
   };
@@ -108,7 +113,7 @@ const NewCadastro = () => {
   const handleEditServico = (index) => {
     const servico = servicos[index];
     const [horas, minutos, segundos] = servico.horaMinima.split(':');
-    setServicoValues({ nomeServico: servico.nome, valorServico: servico.valor, horas, minutos, segundos, quantidade: servico.quantidade });
+    setServicoValues({ nomeServico: servico.nome, valorServico: servico.valor, horas, minutos, segundos, quantidade: servico.quantidade, descricaoServico: servico.descricao });
     setServicos(servicos.filter((_, i) => i !== index));
     setShowModalServico(true);
   };
@@ -150,6 +155,7 @@ const NewCadastro = () => {
               onChange={(e) => setSearchTermProduto(e.target.value)} 
               className="mb-3"
             />
+            
             <ProdutosTab 
               produtos={produtos.filter(produto => produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase()))} 
               handleEditProduto={handleEditProduto} 
