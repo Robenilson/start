@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import React, { useState } from 'react';
 import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
@@ -79,21 +81,25 @@ const NewCadastro = () => {
     };
 
     const data={
-      "name": novoServico.nome,
-      "description": novoServico.descricao,
-      "price": novoServico.valor,
-      "productType": 1,
-      "virtualProduct": {
-        "quantidadeHoras": novoServico.horaMinima
-      },
-      "physiqueProduct": {
-        "estoque": novoServico.quantidade
-      }
+     
     }
-
-
-
-    novoPedido(data)
+      axios.post('http://localhost:7276/api/SalesProduct',{
+        "name": novoServico.nome,
+        "description": novoServico.descricao,
+        "price": novoServico.valor,
+        "productType": 1,
+        "virtualProduct": {
+          "quantidadeHoras": novoServico.horaMinima
+        },
+        "physiqueProduct": {
+          "estoque": novoServico.quantidade
+        }
+      }).then(function(response){
+        console.log(response);
+      })
+      .catch(function(error){
+          console.log(error)
+      })
 
 
 
