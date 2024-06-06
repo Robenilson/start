@@ -5,6 +5,7 @@ import ModalComponent from '../../components/ModalComponet';
 import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
+import    {   novoPedido  }from '../../services/OrderService'
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -90,6 +91,9 @@ const NewCadastro = () => {
       }
     }
 
+
+
+    novoPedido(data)
 
 
 
