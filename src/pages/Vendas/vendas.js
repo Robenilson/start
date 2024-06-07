@@ -108,6 +108,7 @@ await novoUser(data);
   };
 
   const clearState = () => {
+    setCpf('')
     setSelectedItem(null);
     setSaleType('');
     setConfirmationData(null);

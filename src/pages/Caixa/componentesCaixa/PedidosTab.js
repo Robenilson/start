@@ -1,30 +1,36 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 
-const PedidosTab = ({ pedidos }) => {
+const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
   return (
     <Table striped bordered hover>
       <thead>
         <tr>
-          <th>#</th>
-          <th>CPF Vendedor</th>
-          <th>CPF Cliente</th>
+          <th>ID</th>
+          <th>Cliente ID</th>
           <th>Tipo</th>
-          <th>Detalhes</th>
-          <th>Valor</th>
-          <th>Quantidade</th>
+          <th>Produto</th>
+          <th>Preço Total</th>
+          <th>Desconto</th>
+          <th>Crédito</th>
+          <th>Status</th>
+          <th>Ação</th>
         </tr>
       </thead>
       <tbody>
         {pedidos.map((pedido, index) => (
-          <tr key={index}>
-            <td>{index + 1}</td>
-            <td>{pedido.cpfVendedor}</td>
-            <td>{pedido.cpfCliente}</td>
+          <tr key={pedido.id}>
+            <td>{pedido.id}</td>
+            <td>{pedido.clientId}</td>
             <td>{pedido.tipo}</td>
-            <td>{pedido.tipo === 'Serviço' ? pedido.detalhes.nomeServico : 'Produto'}</td>
-            <td>{pedido.valor}</td>
-            <td>{pedido.tipo === 'Serviço' ? pedido.detalhes.horas : pedido.quantidade}</td>
+            <td>{pedido.produto}</td>
+            <td>R${pedido.precoTotal.toFixed(2)}</td>
+            <td>R${pedido.desconto.toFixed(2)}</td>
+            <td>R${pedido.credito.toFixed(2)}</td>
+            <td>{pedido.saleStatus}</td>
+            <td>
+              <Button onClick={() => handlePedidoFormaPagamento(index)}>Forma de Pagamento</Button>
+            </td>
           </tr>
         ))}
       </tbody>

@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
-import PedidosTab from './componentesCaixa/ConcluidosTab';
+import PedidosTab from './componentesCaixa/PedidosTab'; // Atualize a importação correta para PedidosTab
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-
 
 const Caixa = () => {
   const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
@@ -16,6 +16,32 @@ const Caixa = () => {
   const [servicosUtilizados, setServicosUtilizados] = useState([]);
   const [caixaAberto, setCaixaAberto] = useState(false);
   const [horaFechamento, setHoraFechamento] = useState(null);
+  const [dataAbertura, setDataAbertura] = useState(null);
+  const [showModalPagamento, setShowModalPagamento] = useState(false);
+  const [showModalConfirmacaoVenda, setShowModalConfirmacaoVenda] = useState(false);
+  const [formaPagamento, setFormaPagamento] = useState('');
+  const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
+
+  useEffect(() => {
+    const dataAberturaSalva = localStorage.getItem('dataAbertura');
+    if (dataAberturaSalva) {
+      setDataAbertura(new Date(dataAberturaSalva));
+      setCaixaAberto(true);
+      setSaldo(parseFloat(localStorage.getItem('saldo')));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (caixaAberto) {
+      axios.get('http://localhost:8080/Venda')
+        .then(response => {
+          setPedidos(response.data);
+        })
+        .catch(error => {
+          console.error('Erro ao carregar os pedidos:', error);
+        });
+    }
+  }, [caixaAberto]);
 
   const handleAbrirCaixa = () => {
     setShowModalAbrirCaixa(true);
@@ -37,8 +63,12 @@ const Caixa = () => {
   const handleConfirmarAbrirCaixa = () => {
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
+      const agora = new Date();
       setSaldo(valor);
       setCaixaAberto(true);
+      setDataAbertura(agora);
+      localStorage.setItem('dataAbertura', agora.toISOString());
+      localStorage.setItem('saldo', valor.toString());
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 5000);
       handleCloseAbrirCaixa();
@@ -52,11 +82,57 @@ const Caixa = () => {
     setHoraFechamento(new Date().toLocaleString());
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
+    localStorage.removeItem('dataAbertura');
+    localStorage.removeItem('saldo');
     handleCloseFecharCaixa();
   };
 
   const handlePedidoFormaPagamento = (index) => {
-    alert(`Pedido ${index + 1}: Solicitar forma de pagamento`);
+    setPedidoSelecionado(index);
+    setShowModalPagamento(true);
+  };
+
+  const handleClosePagamento = () => {
+    setShowModalPagamento(false);
+    setFormaPagamento('');
+  };
+
+  const handleConfirmarPagamento = () => {
+
+    setShowModalPagamento(false);
+    setShowModalConfirmacaoVenda(true);
+  };
+
+  const handleCloseConfirmacaoVenda = () => {
+    setShowModalConfirmacaoVenda(false);
+  };
+
+  const handleVendaConcluida = () => {
+    axios.post('http://localhost:8080/VendaConcluida', {
+      pedidoId: pedidos[pedidoSelecionado].id,
+      formaPagamento: formaPagamento
+    })
+    .then(response => {
+      console.log('Venda concluída com sucesso:', response.data);
+      const valor = parseFloat(valorInicial);
+      
+      
+    
+
+     //    localStorage.setItem('saldo', (valor+ valorVenda));
+      return axios.delete(`http://localhost:8080/Venda/${pedidos[pedidoSelecionado].id}`);
+    })
+    .then(response => {
+
+      
+      setPedidos(prevPedidos => prevPedidos.filter(pedido => pedido.id !== pedidos[pedidoSelecionado].id));
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 5000);
+      handleCloseConfirmacaoVenda();
+    })
+    .catch(error => {
+      console.error('Erro ao concluir ou deletar a venda:', error);
+    });
   };
 
   const adicionarServicoUtilizado = (servico) => {
@@ -108,6 +184,48 @@ const Caixa = () => {
           </Modal.Body>
         </Modal>
 
+        <Modal show={showModalPagamento} onHide={handleClosePagamento}>
+          <Modal.Header closeButton>
+            <Modal.Title>Forma de Pagamento</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group>
+                <Form.Label>Selecione a forma de pagamento</Form.Label>
+                <Form.Control
+                  as="select"
+                  value={formaPagamento}
+                  onChange={(e) => setFormaPagamento(e.target.value)}
+                >
+                  <option value="">Selecione</option>
+                  <option value="pix">Pix</option>
+                  <option value="cedulas">Cédulas</option>
+                  <option value="debito">Cartão de Débito</option>
+                  <option value="credito">Cartão de Crédito</option>
+                </Form.Control>
+              </Form.Group>
+              <Button variant="success" onClick={handleConfirmarPagamento}>
+                Confirmar
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
+
+        <Modal show={showModalConfirmacaoVenda} onHide={handleCloseConfirmacaoVenda}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmação de Venda</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>A venda foi concluída ou cancelada?</p>
+            <Button variant="success" onClick={handleVendaConcluida}>
+              Concluída
+            </Button>
+            <Button variant="danger" onClick={handleCloseConfirmacaoVenda} className="ms-2">
+              Cancelada
+            </Button>
+          </Modal.Body>
+        </Modal>
+
         {showSuccess && (
           <Alert variant="success" className="mt-3">
             Operação concluída com sucesso!
@@ -117,6 +235,14 @@ const Caixa = () => {
         <div className="mt-3">
           <h5>Saldo: R${saldo.toFixed(2)}</h5>
         </div>
+
+        {dataAbertura && (
+          <div className="mt-3">
+            <Alert variant="info">
+              Caixa aberto em {dataAbertura.toLocaleString()}
+            </Alert>
+          </div>
+        )}
 
         {!caixaAberto && horaFechamento && (
           <Alert variant="info" className="mt-3">
