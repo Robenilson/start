@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'react-bootstrap';
 
 const UserTable = ({ users, columns }) => (
-    <Table striped bordered hover className="mt-3 col-md-6">
+  <Table striped bordered hover className="mt-3 col-md-6">
     <thead>
       <tr>
         {columns.map((col, index) => (
@@ -15,7 +15,11 @@ const UserTable = ({ users, columns }) => (
         <tr key={index}>
           <td>{index + 1}</td>
           {columns.slice(1).map((col, idx) => (
-            <td key={idx}>{user[col.toLowerCase()]}</td>
+            <td key={idx}>
+              {col === 'Data de Nascimento'
+                ? new Date(user.dataNascimento).toLocaleDateString()
+                : user[col.toLowerCase()]}
+            </td>
           ))}
         </tr>
       ))}

@@ -67,6 +67,22 @@ const UserForm = ({ userValues, handleInputChange }) => (
           onChange={handleInputChange}
         />
       </Form.Group>
+      
+    </Row>
+
+    <Row className="mb-3">
+    <Form.Group controlId="formPassword">
+      
+      <Form.Label>Senha</Form.Label>
+      <Form.Control
+        type="password"
+        name="password"
+        value={userValues.password}
+        onChange={handleInputChange}
+        placeholder="Digite a senha"
+      />
+    </Form.Group>
+
     </Row>
 
     <h5>Endereço</h5>

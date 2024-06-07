@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Button, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
@@ -6,10 +7,8 @@ import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
 
-// Criando o contexto
 const UserContext = createContext();
 
-// Hook para usar o contexto
 export const useUserContext = () => useContext(UserContext);
 
 const UserManager = () => {
@@ -30,6 +29,7 @@ const UserManager = () => {
       numero: '',
     },
     role: 'cliente',
+    password: '',  // Novo campo de senha
   });
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -70,16 +70,64 @@ const UserManager = () => {
         numero: '',
       },
       role: 'cliente',
+      password: '',  // Certifique-se de que a senha também seja limpa
     });
   };
 
   const handleSaveUser = async () => {
-    console.log(userValues)
+    const data = {
+      nome: userValues.nome,
+      sobrenome: userValues.sobrenome,
+      dataNascimento: userValues.dataNascimento,
+      email: userValues.email,
+      cpf: userValues.cpf,
+      telefone: userValues.telefone,
+      role: userValues.role,
+      endereco: {
+        cep: userValues.endereco.cep,
+        cidade: userValues.endereco.cidade,
+        estado: userValues.endereco.estado,
+        bairro: userValues.endereco.bairro,
+        numero: userValues.endereco.numero,
+      },
+      password: userValues.password,
+    };
 
+    const novoUser = async (data) => {
+      try {
+        await axios.post('http://localhost:8080/User', data);
+      } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+      }
+    };
 
-    setPessoas([...pessoas, userValues]);
+    await novoUser(data);  // Chamada ao serviço para salvar o novo usuário
+    fetchPessoas();  // Recarregar a lista de pessoas
     handleCloseModal();
   };
+
+  const handleEditUser = async (userId, updatedValues) => {
+    // Chamada ao serviço para editar o usuário
+    fetchPessoas();  // Recarregar a lista de pessoas
+  };
+
+  const handleDeleteUser = async (userId) => {
+    // Chamada ao serviço para excluir o usuário
+    fetchPessoas();  // Recarregar a lista de pessoas
+  };
+
+  const fetchPessoas = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/User');
+      setPessoas(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPessoas();  // Chamada para buscar usuários ao montar o componente
+  }, []);
 
   const clientes = pessoas.filter(pessoa => pessoa.role === 'cliente' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
   const vendedores = pessoas.filter(pessoa => pessoa.role === 'vendedor' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -114,25 +162,25 @@ const UserManager = () => {
           <Tab eventKey="clientes" title="Clientes">
             <UserTable 
               users={clientes} 
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço']} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']} 
             />
           </Tab>
           <Tab eventKey="vendedores" title="Vendedores">
             <UserTable 
               users={vendedores} 
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço']} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']} 
             />
           </Tab>
           <Tab eventKey="caixas" title="Caixas">
             <UserTable 
               users={caixas} 
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço']} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']} 
             />
           </Tab>
           <Tab eventKey="administradores" title="Administradores">
             <UserTable 
               users={administradores} 
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Endereço', 'Role']} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone',  'Role']} 
             />
           </Tab>
         </Tabs>

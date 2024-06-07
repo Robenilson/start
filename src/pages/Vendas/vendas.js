@@ -1,29 +1,46 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Table, Alert } from 'react-bootstrap';
 import Card from '../../components/Card';
-import   {  novoPedido   }   from'../../services/OrderService';
 
 const Vendas = () => {
   const [cpf, setCpf] = useState('');
-  const [total, seTotal] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [confirmationData, setConfirmationData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [services, setServices] = useState([]);
+  const [produtos, setProdutos] = useState([]);
 
-  const products = [
-    { name: 'Produto A', price: 100 },
-    { name: 'Produto B', price: 200 },
-    { name: 'Produto C', price: 300 },
-  ];
+  // Função axios tipo GET que chama o endpoint de Serviço
+  const fetchService = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/Service');
+      setServices(response.data);  // Atualizar o estado com os dados recebidos
+    } catch (error) {
+      console.error('Erro ao buscar serviços:', error);
+    }
+  };
 
-  const consoles = [
-    { name: 'Console X', hourlyRate: 50, minHours: 1 },
-    { name: 'Console Y', hourlyRate: 75, minHours: 2 },
-    { name: 'Console Z', hourlyRate: 100, minHours: 1 },
-  ];
+  useEffect(() => {
+    fetchService();  // Chamada para buscar serviços ao montar o componente
+  }, []);
+
+  // Função axios tipo GET que chama o endpoint de Produto
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/Product');
+      setProdutos(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProduct();  // Chamada para buscar produtos ao montar o componente
+  }, []);
 
   const handleButtonClick = (type) => {
     setSaleType(type);
@@ -33,40 +50,26 @@ const Vendas = () => {
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
-
     setShowModal(false); // Fecha o modal imediatamente
-    const minQuantity = saleType === 'produto' ? 1 : item.minHours;
+    const minQuantity = saleType === 'produto' ? 1 : parseInt(item.horaMinima);
     setQuantity(minQuantity);
     setConfirmationData({
       saleType,
       item,
       quantity: minQuantity,
-      total: item.price ? item.price * minQuantity : item.hourlyRate * minQuantity,
-      
+      total: item.valor ? item.valor * minQuantity : 0,
     });
   };
 
   const handleConfirm = () => {
     // Enviar dados para o caixa
-
-    //Axios Aqui
-    console.log('Venda confirmada:', confirmationData);
-    console.log(confirmationData.item)
-    // Exibir mensagem de sucesso
-    setShowSuccess(true);
-    // Ocultar mensagem de sucesso após 5 segundos
-    // Limpar estado após um tempo
+    console.log('Venda confirmada:', confirmationData,'cpf:',cpf);
    
-    
-    
-    //const user = JSON.parse(localStorage.getItem('user'));
-  
-    //novoPedido(data)
-    setTimeout(clearState, 1000);
+    setShowSuccess(true);
+    setTimeout(clearState, 5000);
   };
 
   const handleCancel = () => {
-    // Limpar estado ao cancelar
     clearState();
   };
 
@@ -82,10 +85,11 @@ const Vendas = () => {
     const newQuantity = Number(event.target.value);
     setQuantity(newQuantity);
     if (selectedItem) {
+      const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
       setConfirmationData({
         ...confirmationData,
         quantity: newQuantity,
-        total: selectedItem.price ? selectedItem.price * newQuantity : selectedItem.hourlyRate * newQuantity,
+        total: updatedTotal,
       });
     }
   };
@@ -132,17 +136,15 @@ const Vendas = () => {
                 </tr>
               </thead>
               <tbody>
-                {(saleType === 'produto' ? products : consoles).map((item, index) => (
+                {(saleType === 'produto' ? produtos : services).map((item, index) => (
                   <tr key={index} onClick={() => handleItemClick(item)}>
                     <td>{index + 1}</td>
-                    <td>{item.name}</td>
+                    <td>{item.nome}</td>
                     <td>
                       R$
-                      {saleType === 'produto'
-                        ? item.price.toFixed(2)
-                        : item.hourlyRate.toFixed(2)}
+                      {item.valor?.toFixed(2)}
                     </td>
-                    {saleType === 'serviço' && <td>{item.minHours} hora(s)</td>}
+                    {saleType === 'serviço' && <td>{item.horaMinima}</td>}
                   </tr>
                 ))}
               </tbody>
@@ -157,13 +159,11 @@ const Vendas = () => {
               <strong>Tipo de Venda:</strong> {confirmationData.saleType}
             </p>
             <p>
-              <strong>Item:</strong> {confirmationData.item.name}
+              <strong>Item:</strong> {confirmationData.item.nome}
             </p>
             <p>
               <strong>Preço Unitário:</strong> R$
-              {confirmationData.item.price
-                ? confirmationData.item.price.toFixed(2)
-                : confirmationData.item.hourlyRate.toFixed(2)}
+              {confirmationData.item.valor?.toFixed(2)}
             </p>
             <Form.Group>
               <Form.Label>
@@ -171,11 +171,12 @@ const Vendas = () => {
               </Form.Label>
               <Form.Control
                 type="number"
-                min={saleType === 'produto' ? 1 : confirmationData.item.minHours}
+                min={saleType === 'produto' ? 1 : confirmationData.item.horaMinima}
                 value={quantity}
                 onChange={handleQuantityChange}
               />
             </Form.Group>
+             
             <p>
               <strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}
             </p>

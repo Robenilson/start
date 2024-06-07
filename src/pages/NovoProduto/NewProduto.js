@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
@@ -19,6 +19,8 @@ const NewCadastro = () => {
   const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '', descricaoServico: '' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
+  const [posts, setPosts] = useState([]);
+  const [error, setError] = useState(null);
 
   const produtoFields = [
     { name: 'nomeProduto', label: 'Nome do Produto', type: 'text', placeholder: 'Nome do Produto' },
@@ -36,6 +38,48 @@ const NewCadastro = () => {
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
     { name: 'descricaoServico', label: 'Descrição', type: 'text', placeholder: 'Descrição do Serviço' },
   ];
+
+  const fetchProdut = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/Product');
+      setProdutos(response.data);
+
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProdut();  // Chamada para buscar usuários ao montar o componente
+  }, []);
+
+
+  const fetchService = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/Service');
+      setServicos(response.data);
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchService();  // Chamada para buscar usuários ao montar o componente
+  }, []);
+
+  
+
+
+
+
+
+ 
+
+
+
+
+
+
 
   const handleInputChange = (setter) => (name, value) => {
     setter((prevValues) => ({
@@ -57,57 +101,56 @@ const NewCadastro = () => {
     setServicoValues({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '', descricaoServico: '' });
   };
 
-  const handleCadastroProduto = () => {
+  const handleCadastroProduto = async () => {
     const novoProduto = { 
-      nome: produtoValues.nomeProduto, 
-      valor: parseFloat(produtoValues.valorProduto), 
-      quantidade: parseInt(produtoValues.quantidade, 10),
-      descricao: produtoValues.descricaoProduto,
+      "nome": produtoValues.nomeProduto, 
+      "valor": parseFloat(produtoValues.valorProduto), 
+      "quantidade": parseInt(produtoValues.quantidade, 10),
+      "descricao": produtoValues.descricaoProduto,
     };
 
-    setProdutos([...produtos, novoProduto]);
+    const newSevice = async (novoProduto) => {
+      try {
+        await axios.post('http://localhost:8080/Product', novoProduto);
+      } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+      }
+    };
+
+    await newSevice(novoProduto)
+
+
+    fetchProdut();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
   };
 
-  const handleCadastroServico = () => {
-    const novoServico = {
-      nome: servicoValues.nomeServico,
-      valor: parseFloat(servicoValues.valorServico),
-      horaMinima: `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-      quantidade: parseInt(servicoValues.quantidade, 10),
-      descricao: servicoValues.descricaoServico,
+  const handleCadastroServico = async() => {
+    const data = {
+    "nome": servicoValues.nomeServico,
+    "valor": parseFloat(servicoValues.valorServico),
+    "horaMinima": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
+    "quantidade": parseInt(servicoValues.quantidade, 10),
+    "descricao" : servicoValues.descricaoServico,
     };
 
-    const data={
-     
-    }
+    const newSevice = async (data) => {
+      try {
+        await axios.post('http://localhost:8080/Service', data);
+      } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+      }
+    };
 
+    await newSevice(data)
+
+
+   
+    fetchService();
 
 
     
-      axios.post('http://localhost:7276/api/SalesProduct',{
-        "name": novoServico.nome,
-        "description": novoServico.descricao,
-        "price": novoServico.valor,
-        "productType": 1,
-        "virtualProduct": {
-          "quantidadeHoras": novoServico.horaMinima
-        },
-        "physiqueProduct": {
-          "estoque": novoServico.quantidade
-        }
-      }).then(function(response){
-        console.log(response);
-      })
-      .catch(function(error){
-          console.log(error)
-      })
-
-
-
-    setServicos([...servicos, novoServico]);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
@@ -138,6 +181,9 @@ const NewCadastro = () => {
 
   return (
     <Card>
+
+
+
       <div className="card-header">Novo Cadastro</div>
       <div className="card-body">
         <Button variant="primary" onClick={handleShowProduto} className="me-2">
