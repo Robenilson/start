@@ -83,6 +83,10 @@ const NewCadastro = () => {
     const data={
      
     }
+
+
+
+    
       axios.post('http://localhost:7276/api/SalesProduct',{
         "name": novoServico.nome,
         "description": novoServico.descricao,
