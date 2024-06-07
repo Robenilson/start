@@ -42,6 +42,9 @@ const Vendas = () => {
     fetchProduct();  // Chamada para buscar produtos ao montar o componente
   }, []);
 
+
+
+  
   const handleButtonClick = (type) => {
     setSaleType(type);
     setShowModal(true);
@@ -61,10 +64,41 @@ const Vendas = () => {
     });
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async() => {
     // Enviar dados para o caixa
     console.log('Venda confirmada:', confirmationData,'cpf:',cpf);
+
+
+    if (cpf=='') {
+      console.error('CPF inválido:', cpf);
+      return;
+    }
    
+ const data={
+  "clientId": cpf,
+  "tipo": confirmationData.saleType,
+  "produto":  confirmationData.item.nome,
+  "precoTotal": confirmationData.item.valor,
+  "desconto": 0,
+  "credito": 0,
+  "saleStatus": "ANDAMENTO",
+
+ }
+
+ console.log(data)
+
+ const novoUser = async (data) => {
+  try {
+    await axios.post('http://localhost:8080/Venda', data);
+  } catch (error) {
+    console.error('Erro ao salvar usuário:', error);
+  }
+};
+
+await novoUser(data); 
+
+
+
     setShowSuccess(true);
     setTimeout(clearState, 5000);
   };
@@ -86,11 +120,12 @@ const Vendas = () => {
     setQuantity(newQuantity);
     if (selectedItem) {
       const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
-      setConfirmationData({
-        ...confirmationData,
+  
+      setConfirmationData((prevConfirmationData) => ({
+        ...prevConfirmationData,
         quantity: newQuantity,
         total: updatedTotal,
-      });
+      }));
     }
   };
 
