@@ -40,12 +40,53 @@ const NewCadastro = () => {
 
 
   const UpdateTabelProduct = async ()=>{
-    await fetchProduct().then((dados)=>{setProdutos(dados)})
+    try {
+      const data = await fetchProduct();
+      if (data && Array.isArray(data)) {
+        const product = data.map(product => ({
+            "id": product.id,
+            "nome": product.name,
+            "valor": product.price ,
+            "horaMinima": product.virtualProduct.quantidadeHoras,
+            "quantidade": product.physiqueProduct.estoque,
+            "descricao": product.description
+      
+        }));
+
+        setProdutos(product)
+      } else {
+        console.error("Dados recebidos não são válidos:", data);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    }
+
+
+
   }
 
 
   const UpdateTabelServicos = async ()=>{
-    await fetchService().then((dados)=>{setServicos(dados)}) 
+    try {
+      const data = await fetchService();
+      if (data && Array.isArray(data)) {
+        const service = data.map(service => ({
+            "id": service.id,
+            "nome": service.name,
+            "valor": service.price ,
+            "horaMinima": service.virtualProduct.quantidadeHoras,
+            "quantidade": service.physiqueProduct.estoque,
+            "descricao": service.description
+      
+        }));
+
+        setServicos(service)
+      } else {
+        console.error("Dados recebidos não são válidos:", data);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+    }
   }
   
 
@@ -81,12 +122,19 @@ const NewCadastro = () => {
   };
 
   const handleCadastroProduto = async () => {
-    const novoProduto = { 
-      "nome": produtoValues.nomeProduto, 
-      "valor": parseFloat(produtoValues.valorProduto), 
-      "quantidade": parseInt(produtoValues.quantidade, 10),
-      "descricao": produtoValues.descricaoProduto,
-    };
+    const novoProduto =  
+     {
+      "name": produtoValues.nomeProduto, 
+      "description":  produtoValues.descricaoProduto,
+      "price": parseFloat(produtoValues.valorProduto),
+      "productType": 1,
+      "virtualProduct": {
+        "quantidadeHoras": 0
+      },
+      "physiqueProduct": {
+        "estoque": parseInt(produtoValues.quantidade, 10),
+      }
+    }
     await newProduct(novoProduto);
     await UpdateTabelProduct()
     setShowSuccess(true);
@@ -95,13 +143,22 @@ const NewCadastro = () => {
   };
 
   const handleCadastroServico = async () => {
-    const data = {
-      "nome": servicoValues.nomeServico,
-      "valor": parseFloat(servicoValues.valorServico),
-      "horaMinima": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-      "quantidade": parseInt(servicoValues.quantidade, 10),
-      "descricao" : servicoValues.descricaoServico,
-      };
+    const data= 
+    {
+        "name": servicoValues.nomeServico, 
+        "description":  servicoValues.descricaoServico,
+        "price": parseFloat(servicoValues.valorServico),
+        "productType": 2,
+        "virtualProduct": {
+          "quantidadeHoras": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
+        },
+        "physiqueProduct": {
+          "estoque": parseInt(servicoValues.quantidade, 10),
+        }
+      }
+
+
+
     await newService(data);
     await UpdateTabelServicos();
     setShowSuccess(true);

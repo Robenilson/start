@@ -121,7 +121,6 @@ const UserManager = () => {
   const UpdatePessoas = async () => {
     try {
       const data = await FetchUser();
-
       if (data && Array.isArray(data)) {
         const users = data.map(user => ({
           nome: user.nome,
