@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Button, Tabs, Tab, Form } from 'react-bootstrap';
@@ -6,6 +7,7 @@ import ModalComponent from '../../components/ModalComponet';
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
+  import{ FetchUser, NewUser} from'../../services/functions/RequestPeople';
 
 const UserContext = createContext();
 
@@ -75,58 +77,81 @@ const UserManager = () => {
   };
 
   const handleSaveUser = async () => {
-    const data = {
+    const dataSave = {
       nome: userValues.nome,
       sobrenome: userValues.sobrenome,
-      dataNascimento: userValues.dataNascimento,
+      dtNascimento: userValues.dataNascimento,
       email: userValues.email,
       cpf: userValues.cpf,
-      telefone: userValues.telefone,
-      role: userValues.role,
-      endereco: {
-        cep: userValues.endereco.cep,
-        cidade: userValues.endereco.cidade,
-        estado: userValues.endereco.estado,
-        bairro: userValues.endereco.bairro,
-        numero: userValues.endereco.numero,
+      phone: userValues.telefone,
+      userType: userValues.role,
+      address: {
+        id: 0,
+        zipCode: userValues.endereco.cep,
+        cityName: userValues.endereco.cidade,
+        state: userValues.endereco.estado,
+        road: userValues.endereco.bairro,
+        number: userValues.endereco.numero,
       },
+      roleIds: [
+        "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      ],
       password: userValues.password,
     };
 
-    const novoUser = async (data) => {
-      try {
-        await axios.post('http://localhost:8080/User', data);
-      } catch (error) {
-        console.error('Erro ao salvar usuário:', error);
-      }
-    };
-
-    await novoUser(data);  // Chamada ao serviço para salvar o novo usuário
-    fetchPessoas();  // Recarregar a lista de pessoas
-    handleCloseModal();
+    try {
+      await NewUser(dataSave);  // Chamada ao serviço para salvar o novo usuário
+      UpdatePessoas();  // Recarregar a lista de pessoas
+      handleCloseModal();
+    } catch (error) {
+      console.error("Erro ao salvar o usuário:", error);
+    }
   };
 
   const handleEditUser = async (userId, updatedValues) => {
     // Chamada ao serviço para editar o usuário
-    fetchPessoas();  // Recarregar a lista de pessoas
+    UpdatePessoas();  // Recarregar a lista de pessoas
   };
 
   const handleDeleteUser = async (userId) => {
     // Chamada ao serviço para excluir o usuário
-    fetchPessoas();  // Recarregar a lista de pessoas
+    UpdatePessoas();  // Recarregar a lista de pessoas
   };
 
-  const fetchPessoas = async () => {
+  const UpdatePessoas = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/User');
-      setPessoas(response.data);
+      const data = await FetchUser();
+
+      if (data && Array.isArray(data)) {
+        const users = data.map(user => ({
+          nome: user.nome,
+          sobrenome: user.sobrenome,
+          email: user.email,
+          dataNascimento: user.dtNascimento,
+          cpf: user.cpf,
+          telefone: user.phone,
+          endereco: {
+            cep: user.address.zipCode,
+            cidade: user.address.cityName,
+            estado: user.address.state,
+            bairro: user.address.road,
+            numero: user.address.number,
+          },
+          role: user.userType,
+          password: '',  // Certifique-se de que a senha também seja limpa
+        }));
+
+        setPessoas(users);
+      } else {
+        console.error("Dados recebidos não são válidos:", data);
+      }
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+      console.error("Erro ao buscar usuários:", error);
     }
   };
 
   useEffect(() => {
-    fetchPessoas();  // Chamada para buscar usuários ao montar o componente
+    UpdatePessoas();  // Chamada para buscar usuários ao montar o componente
   }, []);
 
   const clientes = pessoas.filter(pessoa => pessoa.role === 'cliente' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -180,7 +205,7 @@ const UserManager = () => {
           <Tab eventKey="administradores" title="Administradores">
             <UserTable 
               users={administradores} 
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone',  'Role']} 
+              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role']} 
             />
           </Tab>
         </Tabs>

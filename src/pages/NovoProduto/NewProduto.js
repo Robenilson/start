@@ -1,13 +1,13 @@
 import axios from 'axios';
-
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
-import    {   novoPedido  }from '../../services/OrderService'
+import { newService ,fetchService } from '../../services/functions/RequestService';
+import{ newProduct,fetchProduct }from"../../services/functions/RequestProduct";
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -19,7 +19,6 @@ const NewCadastro = () => {
   const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '', descricaoServico: '' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
-  const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
 
   const produtoFields = [
@@ -39,47 +38,27 @@ const NewCadastro = () => {
     { name: 'descricaoServico', label: 'Descrição', type: 'text', placeholder: 'Descrição do Serviço' },
   ];
 
-  const fetchProdut = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/Product');
-      setProdutos(response.data);
 
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchProdut();  // Chamada para buscar usuários ao montar o componente
-  }, []);
+  const UpdateTabelProduct = async ()=>{
+    await fetchProduct().then((dados)=>{setProdutos(dados)})
+  }
 
 
-  const fetchService = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/Service');
-      setServicos(response.data);
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchService();  // Chamada para buscar usuários ao montar o componente
-  }, []);
-
+  const UpdateTabelServicos = async ()=>{
+    await fetchService().then((dados)=>{setServicos(dados)}) 
+  }
   
 
+  useEffect(() => {
+    UpdateTabelProduct()
+  }, []);
 
 
+  useEffect(() => {
+    UpdateTabelServicos()
+   }, []);
 
-
- 
-
-
-
-
-
-
+   
 
   const handleInputChange = (setter) => (name, value) => {
     setter((prevValues) => ({
@@ -108,49 +87,23 @@ const NewCadastro = () => {
       "quantidade": parseInt(produtoValues.quantidade, 10),
       "descricao": produtoValues.descricaoProduto,
     };
-
-    const newSevice = async (novoProduto) => {
-      try {
-        await axios.post('http://localhost:8080/Product', novoProduto);
-      } catch (error) {
-        console.error('Erro ao salvar usuário:', error);
-      }
-    };
-
-    await newSevice(novoProduto)
-
-
-    fetchProdut();
+    await newProduct(novoProduto);
+    await UpdateTabelProduct()
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
   };
 
-  const handleCadastroServico = async() => {
+  const handleCadastroServico = async () => {
     const data = {
-    "nome": servicoValues.nomeServico,
-    "valor": parseFloat(servicoValues.valorServico),
-    "horaMinima": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-    "quantidade": parseInt(servicoValues.quantidade, 10),
-    "descricao" : servicoValues.descricaoServico,
-    };
-
-    const newSevice = async (data) => {
-      try {
-        await axios.post('http://localhost:8080/Service', data);
-      } catch (error) {
-        console.error('Erro ao salvar usuário:', error);
-      }
-    };
-
-    await newSevice(data)
-
-
-   
-    fetchService();
-
-
-    
+      "nome": servicoValues.nomeServico,
+      "valor": parseFloat(servicoValues.valorServico),
+      "horaMinima": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
+      "quantidade": parseInt(servicoValues.quantidade, 10),
+      "descricao" : servicoValues.descricaoServico,
+      };
+    await newService(data);
+    await UpdateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
@@ -181,9 +134,6 @@ const NewCadastro = () => {
 
   return (
     <Card>
-
-
-
       <div className="card-header">Novo Cadastro</div>
       <div className="card-body">
         <Button variant="primary" onClick={handleShowProduto} className="me-2">
@@ -206,6 +156,7 @@ const NewCadastro = () => {
             Cadastro concluído com sucesso!
           </Alert>
         )}
+
         <Tabs defaultActiveKey="produtos" id="tabela-abas" className="mt-3">
           <Tab eventKey="produtos" title="Produtos">
             <Form.Control 
@@ -215,9 +166,8 @@ const NewCadastro = () => {
               onChange={(e) => setSearchTermProduto(e.target.value)} 
               className="mb-3"
             />
-            
             <ProdutosTab 
-              produtos={produtos.filter(produto => produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase()))} 
+              produtos={produtos.filter(produto => produto.nome && produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase()))} 
               handleEditProduto={handleEditProduto} 
               handleDeleteProduto={handleDeleteProduto} 
             />
@@ -231,7 +181,7 @@ const NewCadastro = () => {
               className="mb-3"
             />
             <ServicosTab 
-              servicos={servicos.filter(servico => servico.nome.toLowerCase().includes(searchTermServico.toLowerCase()))} 
+              servicos={servicos.filter(servico => servico.nome && servico.nome.toLowerCase().includes(searchTermServico.toLowerCase()))} 
               handleEditServico={handleEditServico} 
               handleDeleteServico={handleDeleteServico} 
             />

@@ -17,6 +17,9 @@ export async function novoPedido(data) {
     }
   }
 
+
+  
+
   export async function cancelarPedido(id) {
     var config = functions.serviceRetornarConfig(
       "put",
