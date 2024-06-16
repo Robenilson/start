@@ -1,12 +1,12 @@
 var backHost =
   process.env.REACT_APP_BACKEND_HOST != null
     ? process.env.REACT_APP_BACKEND_HOST
-    : "http://localhost:7276";
+    : "https://localhost:44363";
 
     
 
 export const endPoints = {
-    urlService: backHost +"/api/SalesProduct",
+    urlService: backHost +"/api/SalesProduct/service",
     urlProduct:backHost+"/api/SalesProduct",
     urlUser:backHost + "/api/SalesClient/clients ",
 
