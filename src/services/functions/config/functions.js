@@ -1,11 +1,18 @@
 
-export function serviceRetornarConfig(method, url, data, authorization) {
-    return {
+export function serviceRetornarConfig(method, url, data) {
+    const user = localStorage.getItem('user');
+    const token = user ? JSON.parse(user).token : null;
+    if (!token) {
+        console.error('Token não encontrado');
+        return null; // Retorna null ou outro valor adequado caso o token não seja encontrado
+    }
+  
+      return {
         method: method,
         url: url,
         headers: {
-          //  "Content-Type": "application/json",
-        //    Authorization: authorization ? "Bearer " + authService.getToken() : "",
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
         },
         timeout: 180000,
         data: data,

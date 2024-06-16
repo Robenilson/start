@@ -4,6 +4,9 @@ import { endPoints } from "./config/endpoints";
 
 
 
+
+
+
 //Faz um get na tabela Produtos 
 export async function FetchUser() {
     var config = serviceRetornarConfig(

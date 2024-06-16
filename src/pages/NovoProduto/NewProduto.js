@@ -143,18 +143,15 @@ const NewCadastro = () => {
   };
 
   const handleCadastroServico = async () => {
-    const data= 
-    {
+
+   
+
+
+    const data= {
         "name": servicoValues.nomeServico, 
         "description":  servicoValues.descricaoServico,
         "price": parseFloat(servicoValues.valorServico),
-        "productType": 2,
-        "virtualProduct": {
-          "quantidadeHoras": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-        },
-        "physiqueProduct": {
-          "estoque": parseInt(servicoValues.quantidade, 10),
-        }
+        "quantityHours": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
       }
 
 
