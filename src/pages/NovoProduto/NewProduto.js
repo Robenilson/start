@@ -39,7 +39,7 @@ const NewCadastro = () => {
   ];
 
 
-  const UpdateTabelProduct = async ()=>{
+  const UpdateTabelProduct = async ()=>{/*
     try {
       const data = await fetchProduct();
       if (data && Array.isArray(data)) {
@@ -60,13 +60,14 @@ const NewCadastro = () => {
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     }
-
+*/
 
 
   }
 
 
   const UpdateTabelServicos = async ()=>{
+    /*
     try {
       const data = await fetchService();
       if (data && Array.isArray(data)) {
@@ -86,7 +87,7 @@ const NewCadastro = () => {
       }
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
-    }
+    */
   }
   
 
@@ -148,15 +149,26 @@ const NewCadastro = () => {
 
 
     const data= {
-        "name": servicoValues.nomeServico, 
-        "description":  servicoValues.descricaoServico,
-        "price": parseFloat(servicoValues.valorServico),
-        "quantityHours": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-      }
+
+      nome: servicoValues.nomeServico,
+      valor: parseFloat(servicoValues.valorServico),
+      horaMinima: `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
+      quantidade: parseInt(servicoValues.quantidade, 10),
+      descricao: servicoValues.descricaoServico,
+    };
+    // Criando o FormData
+    const formData = new FormData();
+    formData.append('name', data.nome);
+    formData.append('description', data.descricao);
+    formData.append('price', data.valor);
+    formData.append('quantityHours', data.quantidade)
 
 
 
-    await newService(data);
+
+
+
+    await newService(formData);
     await UpdateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);

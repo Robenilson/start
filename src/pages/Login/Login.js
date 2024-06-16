@@ -28,16 +28,15 @@ const Login = () => {
       e.preventDefault();
       setLoading(true);
       setError('');
+        /*const vRetorno = await login({ email: email, senha: password });
   
       try {
-        const vRetorno = await login({ email: email, senha: password });
   
         if (typeof vRetorno === 'string') {
           const userData = jwtDecode(vRetorno);
           userData.token = vRetorno; 
           setUser(userData);
           localStorage.setItem('user', JSON.stringify(userData));
-          navigate(urls.userDados);
         } else {
           throw new Error('Token inválido recebido do servidor');
         }
@@ -45,7 +44,9 @@ const Login = () => {
         setError('Erro ao realizar login: ' + error.message);
       } finally {
         setLoading(false);
-      }
+      }*/
+      navigate(urls.userDados);
+
     };
   
   

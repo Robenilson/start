@@ -4,7 +4,6 @@ export function serviceRetornarConfig(method, url, data) {
     const token = user ? JSON.parse(user).token : null;
     if (!token) {
         console.error('Token não encontrado');
-        return null; // Retorna null ou outro valor adequado caso o token não seja encontrado
     }
   
       return {

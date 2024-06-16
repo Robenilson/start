@@ -5,7 +5,7 @@ import { endPoints } from "./config/endpoints";
 
 //Adiciona um novo serviço
 export async function newService(data) {
-  console.log(endPoints.newService)
+  
   var config = serviceRetornarConfig(
     "post",
     endPoints.urlService,
