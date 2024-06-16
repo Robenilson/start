@@ -20,16 +20,33 @@ const Login = () => {
     const navigate = useNavigate();
 
   
+    const [user, setUser] = useState(null)
+  
+
+  
     const handleSubmit = async (e) => {
       e.preventDefault();
-      /*
-      const vRetorno = await login({ email: email, senha: password });
-      const userData = jwtDecode(vRetorno);
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));*/
-      navigate(urls.userDados);
-      
-      
+      setLoading(true);
+      setError('');
+  
+      try {
+        const vRetorno = await login({ email: email, senha: password });
+  
+        if (typeof vRetorno === 'string') {
+          const userData = jwtDecode(vRetorno);
+          userData.token = vRetorno; 
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+          navigate(urls.userDados);
+        } else {
+          throw new Error('Token inválido recebido do servidor');
+        }
+      } catch (error) {
+        setError('Erro ao realizar login: ' + error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
     }
   
   
