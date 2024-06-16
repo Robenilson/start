@@ -47,7 +47,6 @@ const Login = () => {
         setLoading(false);
       }
     };
-    }
   
   
       
