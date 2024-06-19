@@ -124,18 +124,30 @@ const NewCadastro = () => {
 
   const handleCadastroProduto = async () => {
     const novoProduto =  
-     {
-      "name": produtoValues.nomeProduto, 
-      "description":  produtoValues.descricaoProduto,
-      "price": parseFloat(produtoValues.valorProduto),
-      "productType": 1,
-      "virtualProduct": {
-        "quantidadeHoras": 0
-      },
-      "physiqueProduct": {
-        "estoque": parseInt(produtoValues.quantidade, 10),
+      {
+        "name": produtoValues.nomeProduto,
+        "description": produtoValues.descricaoProduto,
+        "price": parseFloat(produtoValues.valorProduto),
+        "quantity": parseInt(produtoValues.quantidade, 10),
       }
-    }
+
+
+
+
+  
+    
+    //const v=axios.post("https://localhost:7276/api/SalesProduct/product", novoProduto, {headers});
+
+
+   // console.log(v)
+
+
+
+
+    
+
+
+
     await newProduct(novoProduto);
     await UpdateTabelProduct()
     setShowSuccess(true);
@@ -165,11 +177,14 @@ const NewCadastro = () => {
 
 
 
+  
 
 
 
-    await newService(formData);
-    await UpdateTabelServicos();
+
+
+    //await newService(formData);
+    //await UpdateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();

@@ -1,4 +1,7 @@
 
+
+
+
 export function serviceRetornarConfig(method, url, data) {
     const user = localStorage.getItem('user');
     const token = user ? JSON.parse(user).token : null;
@@ -10,9 +13,9 @@ export function serviceRetornarConfig(method, url, data) {
         method: method,
         url: url,
         headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
-        },
+             'Content-Type': 'application/json',
+             'Authorization': `Bearer ${token}`
+         },
         timeout: 180000,
         data: data,
     };

@@ -5,6 +5,7 @@ import { login } from "../../services/UsuarioService";
 import { useNavigate } from 'react-router-dom';
 import  {urls} from"../../services/static/js/urls";
 import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 
 const Login = () => {
@@ -28,8 +29,11 @@ const Login = () => {
       e.preventDefault();
       setLoading(true);
       setError('');
-        /*const vRetorno = await login({ email: email, senha: password });
-  
+        //const vRetorno = await login({ email: email, senha: password });
+
+       const vRetorno = (await axios.post("https://localhost:7276/login?email=naruto%40adm.com&password=12345")).data;
+        
+
       try {
   
         if (typeof vRetorno === 'string') {
@@ -44,7 +48,7 @@ const Login = () => {
         setError('Erro ao realizar login: ' + error.message);
       } finally {
         setLoading(false);
-      }*/
+      }
       navigate(urls.userDados);
 
     };
