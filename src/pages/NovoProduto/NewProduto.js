@@ -130,24 +130,6 @@ const NewCadastro = () => {
         "price": parseFloat(produtoValues.valorProduto),
         "quantity": parseInt(produtoValues.quantidade, 10),
       }
-
-
-
-
-  
-    
-    //const v=axios.post("https://localhost:7276/api/SalesProduct/product", novoProduto, {headers});
-
-
-   // console.log(v)
-
-
-
-
-    
-
-
-
     await newProduct(novoProduto);
     await UpdateTabelProduct()
     setShowSuccess(true);
@@ -162,28 +144,30 @@ const NewCadastro = () => {
 
     const data= {
 
-      nome: servicoValues.nomeServico,
-      valor: parseFloat(servicoValues.valorServico),
-      horaMinima: `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-      quantidade: parseInt(servicoValues.quantidade, 10),
-      descricao: servicoValues.descricaoServico,
+      "name": servicoValues.nomeServico,
+      "price": parseFloat(servicoValues.valorServico),
+      "quantityHours": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
+     // quantidade: parseInt(servicoValues.quantidade, 10),
+      "description": servicoValues.descricaoServico,
     };
-    // Criando o FormData
-    const formData = new FormData();
-    formData.append('name', data.nome);
-    formData.append('description', data.descricao);
-    formData.append('price', data.valor);
-    formData.append('quantityHours', data.quantidade)
 
-
+    console.log(data)
+   
+    const user = localStorage.getItem('user');
+    const token = user ? JSON.parse(user).token : null;
+   
+   const    headers= {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${token}`
+  }
 
   
 
+    axios.post("https://localhost:7276/api/SalesProduct/service ",data,{headers })
 
 
 
-
-    //await newService(formData);
+    //await newService(data);
     //await UpdateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);

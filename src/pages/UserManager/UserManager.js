@@ -77,35 +77,39 @@ const UserManager = () => {
   };
 
   const handleSaveUser = async () => {
-    const dataSave = {
-      nome: userValues.nome,
-      sobrenome: userValues.sobrenome,
-      dtNascimento: userValues.dataNascimento,
-      email: userValues.email,
-      cpf: userValues.cpf,
-      phone: userValues.telefone,
-      userType: userValues.role,
-      address: {
-        id: 0,
-        zipCode: userValues.endereco.cep,
-        cityName: userValues.endereco.cidade,
-        state: userValues.endereco.estado,
-        road: userValues.endereco.bairro,
-        number: userValues.endereco.numero,
+
+
+    const data = {  
+     
+      "nome": userValues.nome,
+      "sobrenome": userValues.sobrenome,
+      "dtNascimento": "2024-06-20T14:08:17.229Z", // Formato ISO 8601
+      "email": userValues.email,
+      "cpf": userValues.cpf,
+      "phone": userValues.telefone,
+      "userType": 1, // Converte para número
+      "address": {
+        "id": 0, // ID padrão para novo endereço
+        "zipCode": userValues.endereco.cep,
+        "cityName": userValues.endereco.cidade,
+        "state": userValues.endereco.estado,
+        "road": userValues.endereco.bairro,
+        "number": parseInt(userValues.endereco.numero, 10), // Converte para número
       },
-      roleIds: [
+      "roleIds": [
         "3fa85f64-5717-4562-b3fc-2c963f66afa6"
       ],
-      password: userValues.password,
-    };
-
-    try {
-      await NewUser(dataSave);  // Chamada ao serviço para salvar o novo usuário
-      UpdatePessoas();  // Recarregar a lista de pessoas
-      handleCloseModal();
-    } catch (error) {
-      console.error("Erro ao salvar o usuário:", error);
+      "password": userValues.password,
     }
+
+  
+  
+
+
+      await NewUser(data);  // Chamada ao serviço para salvar o novo usuário
+     // UpdatePessoas();  // Recarregar a lista de pessoas
+    //  handleCloseModal();
+   
   };
 
   const handleEditUser = async (userId, updatedValues) => {
