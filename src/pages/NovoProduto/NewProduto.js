@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
@@ -65,7 +64,7 @@ const NewCadastro = () => {
 
 
   const UpdateTabelServicos = async ()=>{
-    /*
+    
     try {
       const data = await fetchService();
       if (data && Array.isArray(data)) {
@@ -85,7 +84,7 @@ const NewCadastro = () => {
       }
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
-    */
+    }
   }
   
 
@@ -141,32 +140,18 @@ const NewCadastro = () => {
 
 
     const data= {
-
+    
       "name": servicoValues.nomeServico,
       "price": parseFloat(servicoValues.valorServico),
-      "quantityHours": `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-     // quantidade: parseInt(servicoValues.quantidade, 10),
+      "quantityHours": parseInt(`${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`),
       "description": servicoValues.descricaoServico,
     };
 
-    console.log(data)
    
-    const user = localStorage.getItem('user');
-    const token = user ? JSON.parse(user).token : null;
-   
-   const    headers= {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${token}`
-  }
-
   
 
-    axios.post("https://localhost:7276/api/SalesProduct/service ",data,{headers })
-
-
-
-    //await newService(data);
-    //await UpdateTabelServicos();
+    await newService(data);
+    await UpdateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
