@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
@@ -5,8 +6,8 @@ import ModalComponent from '../../components/ModalComponet';
 import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
-import { newService ,fetchService } from '../../services/functions/RequestService';
-import{ newProduct,fetchProduct }from"../../services/functions/RequestProduct";
+import { newService, fetchService } from '../../services/functions/RequestService';
+import { newProduct, fetchProduct } from "../../services/functions/RequestProduct";
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -37,70 +38,58 @@ const NewCadastro = () => {
     { name: 'descricaoServico', label: 'Descrição', type: 'text', placeholder: 'Descrição do Serviço' },
   ];
 
-
-  const UpdateTabelProduct = async ()=>{
+  const updateTabelProduct = async () => {
     try {
       const data = await fetchProduct();
       if (data && Array.isArray(data)) {
         const product = data.map(product => ({
-            "id": product.id,
-            "nome": product.name,
-            "valor": product.price ,
-            "quantidade": product.quantity,
-            "descricao": product.description     
+          id: product.id,
+          nome: product.name,
+          valor: product.price,
+          horaMinima: product.virtualProduct?.quantidadeHoras || 'N/A',
+          quantidade: product.physiqueProduct?.estoque || 0,
+          descricao: product.description,
         }));
-
-        setProdutos(product)
+        setProdutos(product);
       } else {
         console.error("Dados recebidos não são válidos:", data);
       }
     } catch (error) {
-      console.error("Erro ao buscar usuários:", error);
+      console.error("Erro ao buscar produtos:", error);
     }
+  };
 
-
-
-  }
-
-
-  const UpdateTabelServicos = async ()=>{
-    
+  const updateTabelServicos = async () => {
     try {
       const data = await fetchService();
       if (data && Array.isArray(data)) {
         const service = data.map(service => ({
-            "id": service.id,
-            "nome": service.name,
-            "valor": service.price ,
-            "horaMinima": service.virtualProduct.quantidadeHoras,
-            "quantidade": service.physiqueProduct.estoque,
-            "descricao": service.description
-      
+          id: service.id,
+          nome: service.name,
+          valor: service.price,
+          horaMinima: service.virtualProduct?.quantidadeHoras || 'N/A',
+          quantidade: service.physiqueProduct?.estoque || 0,
+          descricao: service.description,
         }));
-
-        setServicos(service)
+        setServicos(service);
       } else {
         console.error("Dados recebidos não são válidos:", data);
       }
     } catch (error) {
-      console.error("Erro ao buscar usuários:", error);
+      console.error("Erro ao buscar serviços:", error);
     }
-  }
-  
+  };
 
   useEffect(() => {
-    UpdateTabelProduct()
+    updateTabelProduct();
   }, []);
 
-
   useEffect(() => {
-    UpdateTabelServicos()
-   }, []);
-
-   
+    updateTabelServicos();
+  }, []);
 
   const handleInputChange = (setter) => (name, value) => {
-    setter((prevValues) => ({
+    setter(prevValues => ({
       ...prevValues,
       [name]: value,
     }));
@@ -120,38 +109,35 @@ const NewCadastro = () => {
   };
 
   const handleCadastroProduto = async () => {
-    const novoProduto =  
-      {
-        "name": produtoValues.nomeProduto,
-        "description": produtoValues.descricaoProduto,
-        "price": parseFloat(produtoValues.valorProduto),
-        "quantity": parseInt(produtoValues.quantidade, 10),
-      }
+    const novoProduto = {
+      name: produtoValues.nomeProduto,
+      description: produtoValues.descricaoProduto,
+      price: parseFloat(produtoValues.valorProduto),
+      quantity: parseInt(produtoValues.quantidade, 10),
+    };
     await newProduct(novoProduto);
-    await UpdateTabelProduct()
+    await updateTabelProduct();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
   };
 
   const handleCadastroServico = async () => {
-
-   
-
-
-    const data= {
-    
-      "name": servicoValues.nomeServico,
-      "price": parseFloat(servicoValues.valorServico),
-      "quantityHours": parseInt(`${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`),
-      "description": servicoValues.descricaoServico,
+    const data = {
+      name: servicoValues.nomeServico,
+      price: parseFloat(servicoValues.valorServico),
+      quantityHours: `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
+      description: servicoValues.descricaoServico,
     };
 
-   
-  
+    const user = localStorage.getItem('user');
+    const token = user ? JSON.parse(user).token : null;
+    const headers = {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': `Bearer ${token}`,
+    };
 
-    await newService(data);
-    await UpdateTabelServicos();
+    await axios.post("https://localhost:44363/api/SalesProduct/service", data, { headers });
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
@@ -207,31 +193,31 @@ const NewCadastro = () => {
 
         <Tabs defaultActiveKey="produtos" id="tabela-abas" className="mt-3">
           <Tab eventKey="produtos" title="Produtos">
-            <Form.Control 
-              type="text" 
-              placeholder="Buscar Produtos" 
-              value={searchTermProduto} 
-              onChange={(e) => setSearchTermProduto(e.target.value)} 
+            <Form.Control
+              type="text"
+              placeholder="Buscar Produtos"
+              value={searchTermProduto}
+              onChange={(e) => setSearchTermProduto(e.target.value)}
               className="mb-3"
             />
-            <ProdutosTab 
-              produtos={produtos.filter(produto => produto.nome && produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase()))} 
-              handleEditProduto={handleEditProduto} 
-              handleDeleteProduto={handleDeleteProduto} 
+            <ProdutosTab
+              produtos={produtos.filter(produto => produto.nome && produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase()))}
+              handleEditProduto={handleEditProduto}
+              handleDeleteProduto={handleDeleteProduto}
             />
           </Tab>
           <Tab eventKey="servicos" title="Serviços">
-            <Form.Control 
-              type="text" 
-              placeholder="Buscar Serviços" 
-              value={searchTermServico} 
-              onChange={(e) => setSearchTermServico(e.target.value)} 
+            <Form.Control
+              type="text"
+              placeholder="Buscar Serviços"
+              value={searchTermServico}
+              onChange={(e) => setSearchTermServico(e.target.value)}
               className="mb-3"
             />
-            <ServicosTab 
-              servicos={servicos.filter(servico => servico.nome && servico.nome.toLowerCase().includes(searchTermServico.toLowerCase()))} 
-              handleEditServico={handleEditServico} 
-              handleDeleteServico={handleDeleteServico} 
+            <ServicosTab
+              servicos={servicos.filter(servico => servico.nome && servico.nome.toLowerCase().includes(searchTermServico.toLowerCase()))}
+              handleEditServico={handleEditServico}
+              handleDeleteServico={handleDeleteServico}
             />
           </Tab>
         </Tabs>
