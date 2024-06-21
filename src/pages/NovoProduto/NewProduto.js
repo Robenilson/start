@@ -39,7 +39,7 @@ const NewCadastro = () => {
   ];
 
 
-  const UpdateTabelProduct = async ()=>{/*
+  const UpdateTabelProduct = async ()=>{
     try {
       const data = await fetchProduct();
       if (data && Array.isArray(data)) {
@@ -47,10 +47,8 @@ const NewCadastro = () => {
             "id": product.id,
             "nome": product.name,
             "valor": product.price ,
-            "horaMinima": product.virtualProduct.quantidadeHoras,
-            "quantidade": product.physiqueProduct.estoque,
-            "descricao": product.description
-      
+            "quantidade": product.quantity,
+            "descricao": product.description     
         }));
 
         setProdutos(product)
@@ -60,7 +58,7 @@ const NewCadastro = () => {
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     }
-*/
+
 
 
   }

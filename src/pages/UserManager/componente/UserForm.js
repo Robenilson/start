@@ -151,7 +151,7 @@ const UserForm = ({ userValues, handleInputChange }) => (
           type="radio"
           label="Cliente"
           name="role"
-          value="cliente"
+          value="1"
           checked={userValues.role === 'cliente'}
           onChange={handleInputChange}
         />
@@ -159,7 +159,7 @@ const UserForm = ({ userValues, handleInputChange }) => (
           type="radio"
           label="Vendedor"
           name="role"
-          value="vendedor"
+          value="2"
           checked={userValues.role === 'vendedor'}
           onChange={handleInputChange}
         />
@@ -167,7 +167,7 @@ const UserForm = ({ userValues, handleInputChange }) => (
           type="radio"
           label="Caixa"
           name="role"
-          value="caixa"
+          value="3"
           checked={userValues.role === 'caixa'}
           onChange={handleInputChange}
         />
@@ -175,7 +175,7 @@ const UserForm = ({ userValues, handleInputChange }) => (
           type="radio"
           label="Administrador"
           name="role"
-          value="administrador"
+          value="4"
           checked={userValues.role === 'administrador'}
           onChange={handleInputChange}
         />

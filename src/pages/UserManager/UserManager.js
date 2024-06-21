@@ -87,7 +87,7 @@ const UserManager = () => {
       "email": userValues.email,
       "cpf": userValues.cpf,
       "phone": userValues.telefone,
-      "userType": 1, // Converte para número
+      "userType": userValues.role, // Converte para número
       "address": {
         "id": 0, // ID padrão para novo endereço
         "zipCode": userValues.endereco.cep,
@@ -157,10 +157,10 @@ const UserManager = () => {
     UpdatePessoas();  // Chamada para buscar usuários ao montar o componente
   }, []);
 
-  const clientes = pessoas.filter(pessoa => pessoa.role === 'cliente' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-  const vendedores = pessoas.filter(pessoa => pessoa.role === 'vendedor' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-  const caixas = pessoas.filter(pessoa => pessoa.role === 'caixa' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-  const administradores = pessoas.filter(pessoa => pessoa.role === 'administrador' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const clientes = pessoas.filter(pessoa => pessoa.role === '1' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const vendedores = pessoas.filter(pessoa => pessoa.role === '2' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const caixas = pessoas.filter(pessoa => pessoa.role === '3' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
+  const administradores = pessoas.filter(pessoa => pessoa.role === '4' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
