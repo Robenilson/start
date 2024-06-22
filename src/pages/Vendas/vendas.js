@@ -2,6 +2,11 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Table, Alert } from 'react-bootstrap';
 import Card from '../../components/Card';
+import {  fetchService } from '../../services/functions/RequestService';
+import {  fetchProduct } from "../../services/functions/RequestProduct";
+
+
+
 
 const Vendas = () => {
   const [cpf, setCpf] = useState('');
@@ -15,7 +20,7 @@ const Vendas = () => {
   const [produtos, setProdutos] = useState([]);
 
   // Função axios tipo GET que chama o endpoint de Serviço
-  const fetchService = async () => {
+  const UpdateServece = async () => {
     try {
      
       const data = await fetchService();
@@ -40,11 +45,11 @@ const Vendas = () => {
   };
 
   useEffect(() => {
-    fetchService();  // Chamada para buscar serviços ao montar o componente
+    UpdateServece();  // Chamada para buscar serviços ao montar o componente
   }, []);
 
   // Função axios tipo GET que chama o endpoint de Produto
-  const fetchProduct = async () => {
+  const UpdateProduct = async () => {
   try {
 
       const data = await fetchProduct();
@@ -68,7 +73,7 @@ const Vendas = () => {
   };
 
   useEffect(() => {
-    fetchProduct();  // Chamada para buscar produtos ao montar o componente
+    UpdateProduct();  // Chamada para buscar produtos ao montar o componente
   }, []);
 
 
