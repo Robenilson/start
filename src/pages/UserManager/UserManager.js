@@ -7,7 +7,7 @@ import ModalComponent from '../../components/ModalComponet';
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
-  import{ FetchUser, NewUser} from'../../services/functions/RequestPeople';
+import{ FetchUser, NewUser} from'../../services/functions/RequestPeople';
 
 const UserContext = createContext();
 

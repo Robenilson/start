@@ -2,14 +2,13 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Table, Alert } from 'react-bootstrap';
 import Card from '../../components/Card';
-import {  fetchService } from '../../services/functions/RequestService';
-import {  fetchProduct } from "../../services/functions/RequestProduct";
-
-
-
+import { fetchService } from '../../services/functions/RequestService';
+import { fetchProduct } from '../../services/functions/RequestProduct';
+import { FetchUserCPF } from '../../services/functions/RequestPeople';
 
 const Vendas = () => {
   const [cpf, setCpf] = useState('');
+  const [nomeUsuario, setNomeUsuario] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
@@ -19,39 +18,33 @@ const Vendas = () => {
   const [services, setServices] = useState([]);
   const [produtos, setProdutos] = useState([]);
 
-  // Função axios tipo GET que chama o endpoint de Serviço
   const UpdateServece = async () => {
     try {
-     
       const data = await fetchService();
       if (data && Array.isArray(data)) {
         const service = data.map(service => ({
-          id:service.id,
-          nome:service.name,
-          valor:service.price,
-          horaMinima:service.quantityHours || 'N/A',
-          quantidade:service.quantity || 0,
-          descricao:service.description,
+          id: service.id,
+          nome: service.name,
+          valor: service.price,
+          horaMinima: service.quantityHours || 'N/A',
+          quantidade: service.quantity || 0,
+          descricao: service.description,
         }));
-        setServices(service);  // Atualizar o estado com os dados recebidos            
+        setServices(service);
       } else {
         console.error("Dados recebidos não são válidos:", data);
       }
-      
-
     } catch (error) {
       console.error('Erro ao buscar serviços:', error);
     }
   };
 
   useEffect(() => {
-    UpdateServece();  // Chamada para buscar serviços ao montar o componente
+    UpdateServece();
   }, []);
 
-  // Função axios tipo GET que chama o endpoint de Produto
   const UpdateProduct = async () => {
-  try {
-
+    try {
       const data = await fetchProduct();
       if (data && Array.isArray(data)) {
         const product = data.map(product => ({
@@ -62,32 +55,27 @@ const Vendas = () => {
           descricao: product.description,
         }));
         setProdutos(product);
-        } else {
-          console.error("Dados recebidos não são válidos:", data);
-        }   
-    
-    
+      } else {
+        console.error("Dados recebidos não são válidos:", data);
+      }
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
     }
   };
 
   useEffect(() => {
-    UpdateProduct();  // Chamada para buscar produtos ao montar o componente
+    UpdateProduct();
   }, []);
 
-
-
-  
   const handleButtonClick = (type) => {
     setSaleType(type);
     setShowModal(true);
-    setQuantity(1); // Reset quantity
+    setQuantity(1);
   };
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
-    setShowModal(false); // Fecha o modal imediatamente
+    setShowModal(false);
     const minQuantity = saleType === 'produto' ? 1 : parseInt(item.horaMinima);
     setQuantity(minQuantity);
     setConfirmationData({
@@ -98,41 +86,31 @@ const Vendas = () => {
     });
   };
 
-  const handleConfirm = async() => {
-    // Enviar dados para o caixa
-    console.log('Venda confirmada:', confirmationData,'cpf:',cpf);
-
-
-    if (cpf=='') {
+  const handleConfirm = async () => {
+    if (cpf === '') {
       console.error('CPF inválido:', cpf);
       return;
     }
-   
- const data={
-  "clientId": cpf,
-  "tipo": confirmationData.saleType,
-  "produto":  confirmationData.item.nome,
-  "precoTotal": confirmationData.item.valor,
-  "desconto": 0,
-  "credito": 0,
-  "saleStatus": "ANDAMENTO",
 
- }
+    const data = {
+      clientId: cpf,
+      tipo: confirmationData.saleType,
+      produto: confirmationData.item.nome,
+      precoTotal: confirmationData.item.valor,
+      desconto: 0,
+      credito: 0,
+      saleStatus: 'ANDAMENTO',
+    };
 
- console.log(data)
+    const novoUser = async (data) => {
+      try {
+        await axios.post('http://localhost:8080/Venda', data);
+      } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+      }
+    };
 
- const novoUser = async (data) => {
-  try {
-    await axios.post('http://localhost:8080/Venda', data);
-  } catch (error) {
-    console.error('Erro ao salvar usuário:', error);
-  }
-};
-
-await novoUser(data); 
-
-
-
+    await novoUser(data);
     setShowSuccess(true);
     setTimeout(clearState, 5000);
   };
@@ -142,7 +120,8 @@ await novoUser(data);
   };
 
   const clearState = () => {
-    setCpf('')
+    setCpf('');
+    setNomeUsuario('');
     setSelectedItem(null);
     setSaleType('');
     setConfirmationData(null);
@@ -155,12 +134,24 @@ await novoUser(data);
     setQuantity(newQuantity);
     if (selectedItem) {
       const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
-  
       setConfirmationData((prevConfirmationData) => ({
         ...prevConfirmationData,
         quantity: newQuantity,
         total: updatedTotal,
       }));
+    }
+  };
+
+  const handleValidateUser = async () => {
+    try {
+      const user = await FetchUserCPF(cpf);
+      if (user) {
+        setNomeUsuario(user.nome);
+      } else {
+        alert('Usuário não cadastrado');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
     }
   };
 
@@ -175,9 +166,22 @@ await novoUser(data);
               value={cpf || ''}
               onChange={(e) => setCpf(e.target.value)}
               placeholder="Cpf do Cliente"
+              disabled={!!nomeUsuario}
             />
+            <Button onClick={handleValidateUser} disabled={!!nomeUsuario}>
+              Validar Usuário
+            </Button>
           </Form.Group>
-
+          {nomeUsuario && (
+            <Form.Group className="mt-3">
+              <Form.Label>Nome do Cliente</Form.Label>
+              <Form.Control
+                type="text"
+                value={nomeUsuario}
+                readOnly
+              />
+            </Form.Group>
+          )}
           <Form.Group className="mt-3">
             <Form.Label>Tipo de Venda</Form.Label>
             <div>
@@ -210,10 +214,7 @@ await novoUser(data);
                   <tr key={index} onClick={() => handleItemClick(item)}>
                     <td>{index + 1}</td>
                     <td>{item.nome}</td>
-                    <td>
-                      R$
-                      {item.valor?.toFixed(2)}
-                    </td>
+                    <td>R${item.valor?.toFixed(2)}</td>
                     {saleType === 'serviço' && <td>{item.horaMinima}</td>}
                   </tr>
                 ))}
@@ -232,8 +233,7 @@ await novoUser(data);
               <strong>Item:</strong> {confirmationData.item.nome}
             </p>
             <p>
-              <strong>Preço Unitário:</strong> R$
-              {confirmationData.item.valor?.toFixed(2)}
+              <strong>Preço Unitário:</strong> R${confirmationData.item.valor?.toFixed(2)}
             </p>
             <Form.Group>
               <Form.Label>
@@ -246,15 +246,10 @@ await novoUser(data);
                 onChange={handleQuantityChange}
               />
             </Form.Group>
-             
             <p>
               <strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}
             </p>
-            <Button
-              variant="success"
-              onClick={handleConfirm}
-              className="me-2"
-            >
+            <Button variant="success" onClick={handleConfirm} className="me-2">
               Confirmar Venda
             </Button>
             <Button variant="danger" onClick={handleCancel}>

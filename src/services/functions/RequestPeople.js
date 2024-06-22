@@ -25,6 +25,24 @@ export async function FetchUser() {
 
 
 
+
+//Faz  uma pesquisa na tabela usuario 
+export async function FetchUserCPF(data) {
+  var config = serviceRetornarConfig(
+    "get",
+    endPoints.urlUser,
+    data,
+    true
+  );
+
+  try {
+    const response= await axios(config);
+    return response.data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
 //Adiciona um novo Produto
 export async function NewUser(data) {
     var config = serviceRetornarConfig(
