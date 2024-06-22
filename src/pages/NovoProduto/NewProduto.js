@@ -122,15 +122,13 @@ const NewCadastro = () => {
   };
 
   const handleCadastroServico = async () => {
+   
     const data = {
       name: servicoValues.nomeServico,
       price:parseFloat(servicoValues.valorServico),
       quantityHours:parseInt(`${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`),
       description:servicoValues.descricaoServico,
     };
-
-    
-
 
     await newService(data);
     await updateTabelServicos();

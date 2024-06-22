@@ -17,8 +17,23 @@ const Vendas = () => {
   // Função axios tipo GET que chama o endpoint de Serviço
   const fetchService = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/Service');
-      setServices(response.data);  // Atualizar o estado com os dados recebidos
+     
+      const data = await fetchService();
+      if (data && Array.isArray(data)) {
+        const service = data.map(service => ({
+          id:service.id,
+          nome:service.name,
+          valor:service.price,
+          horaMinima:service.quantityHours || 'N/A',
+          quantidade:service.quantity || 0,
+          descricao:service.description,
+        }));
+        setServices(service);  // Atualizar o estado com os dados recebidos            
+      } else {
+        console.error("Dados recebidos não são válidos:", data);
+      }
+      
+
     } catch (error) {
       console.error('Erro ao buscar serviços:', error);
     }
@@ -30,9 +45,23 @@ const Vendas = () => {
 
   // Função axios tipo GET que chama o endpoint de Produto
   const fetchProduct = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/Product');
-      setProdutos(response.data);
+  try {
+
+      const data = await fetchProduct();
+      if (data && Array.isArray(data)) {
+        const product = data.map(product => ({
+          id: product.id,
+          nome: product.name,
+          valor: product.price,
+          quantidade: product.quantity || 0,
+          descricao: product.description,
+        }));
+        setProdutos(product);
+        } else {
+          console.error("Dados recebidos não são válidos:", data);
+        }   
+    
+    
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
     }
