@@ -46,8 +46,7 @@ const NewCadastro = () => {
           id: product.id,
           nome: product.name,
           valor: product.price,
-          horaMinima: product.virtualProduct?.quantidadeHoras || 'N/A',
-          quantidade: product.physiqueProduct?.estoque || 0,
+          quantidade: product.quantity || 0,
           descricao: product.description,
         }));
         setProdutos(product);
@@ -64,12 +63,12 @@ const NewCadastro = () => {
       const data = await fetchService();
       if (data && Array.isArray(data)) {
         const service = data.map(service => ({
-          id: service.id,
-          nome: service.name,
-          valor: service.price,
-          horaMinima: service.virtualProduct?.quantidadeHoras || 'N/A',
-          quantidade: service.physiqueProduct?.estoque || 0,
-          descricao: service.description,
+          id:service.id,
+          nome:service.name,
+          valor:service.price,
+          horaMinima:service.quantityHours || 'N/A',
+          quantidade:service.quantity || 0,
+          descricao:service.description,
         }));
         setServicos(service);
       } else {
@@ -113,7 +112,7 @@ const NewCadastro = () => {
       name: produtoValues.nomeProduto,
       description: produtoValues.descricaoProduto,
       price: parseFloat(produtoValues.valorProduto),
-      quantity: parseInt(produtoValues.quantidade, 10),
+      quantity: parseInt(produtoValues.quantidade),
     };
     await newProduct(novoProduto);
     await updateTabelProduct();
@@ -125,19 +124,16 @@ const NewCadastro = () => {
   const handleCadastroServico = async () => {
     const data = {
       name: servicoValues.nomeServico,
-      price: parseFloat(servicoValues.valorServico),
-      quantityHours: `${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`,
-      description: servicoValues.descricaoServico,
+      price:parseFloat(servicoValues.valorServico),
+      quantityHours:parseInt(`${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`),
+      description:servicoValues.descricaoServico,
     };
 
-    const user = localStorage.getItem('user');
-    const token = user ? JSON.parse(user).token : null;
-    const headers = {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': `Bearer ${token}`,
-    };
+    
 
-    await axios.post("https://localhost:44363/api/SalesProduct/service", data, { headers });
+
+    await newService(data);
+    await updateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
