@@ -12,15 +12,26 @@ import { endPoints } from "./config/endpoints";
     );
   
     try {
-      const response= await axios(config);
-      return response.data;
+      const response= await axios(config);     
+      if (response.data && Array.isArray(response.data)) {
+        const product = response.data.map(product => ({
+          id: product.id,
+          nome: product.name,
+          valor: product.price,
+          quantidade: product.quantity || 0,
+          descricao: product.description,
+        }));
+         return product;
+      } else {
+        console.error("Dados recebidos não são válidos:", response.data);
+      }
     } catch (error) {
-      return serviceRetornarErro(error);
+      return serviceRetornarErro(error)
     }
   }
 
 
-
+  
 //Adiciona um novo Produto
 export async function newProduct(data) {
     console.log(endPoints.urlProduct)

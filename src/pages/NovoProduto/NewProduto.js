@@ -39,44 +39,11 @@ const NewCadastro = () => {
   ];
 
   const updateTabelProduct = async () => {
-    try {
-      const data = await fetchProduct();
-      if (data && Array.isArray(data)) {
-        const product = data.map(product => ({
-          id: product.id,
-          nome: product.name,
-          valor: product.price,
-          quantidade: product.quantity || 0,
-          descricao: product.description,
-        }));
-        setProdutos(product);
-      } else {
-        console.error("Dados recebidos não são válidos:", data);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar produtos:", error);
-    }
+     setProdutos(await fetchProduct());
   };
 
   const updateTabelServicos = async () => {
-    try {
-      const data = await fetchService();
-      if (data && Array.isArray(data)) {
-        const service = data.map(service => ({
-          id:service.id,
-          nome:service.name,
-          valor:service.price,
-          horaMinima:service.quantityHours || 'N/A',
-          quantidade:service.quantity || 0,
-          descricao:service.description,
-        }));
-        setServicos(service);
-      } else {
-        console.error("Dados recebidos não são válidos:", data);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar serviços:", error);
-    }
+       setServicos(await fetchService());
   };
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import Card from '../../components/Card';
 import { fetchService } from '../../services/functions/RequestService';
 import { fetchProduct } from '../../services/functions/RequestProduct';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
+import{ NewSale} from'../../services/functions/RequestSales';
 
 const Vendas = () => {
   const [cpf, setCpf] = useState('');
@@ -19,24 +20,7 @@ const Vendas = () => {
   const [produtos, setProdutos] = useState([]);
 
   const UpdateServece = async () => {
-    try {
-      const data = await fetchService();
-      if (data && Array.isArray(data)) {
-        const service = data.map(service => ({
-          id: service.id,
-          nome: service.name,
-          valor: service.price,
-          horaMinima: service.quantityHours || 'N/A',
-          quantidade: service.quantity || 0,
-          descricao: service.description,
-        }));
-        setServices(service);
-      } else {
-        console.error("Dados recebidos não são válidos:", data);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar serviços:', error);
-    }
+    setServices(await fetchService());   
   };
 
   useEffect(() => {
@@ -44,24 +28,8 @@ const Vendas = () => {
   }, []);
 
   const UpdateProduct = async () => {
-    try {
-      const data = await fetchProduct();
-      if (data && Array.isArray(data)) {
-        const product = data.map(product => ({
-          id: product.id,
-          nome: product.name,
-          valor: product.price,
-          quantidade: product.quantity || 0,
-          descricao: product.description,
-        }));
-        setProdutos(product);
-      } else {
-        console.error("Dados recebidos não são válidos:", data);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar produtos:', error);
-    }
-  };
+        setProdutos(await fetchProduct());
+    };
 
   useEffect(() => {
     UpdateProduct();
@@ -93,24 +61,29 @@ const Vendas = () => {
     }
 
     const data = {
-      clientId: cpf,
-      tipo: confirmationData.saleType,
-      produto: confirmationData.item.nome,
-      precoTotal: confirmationData.item.valor,
+      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      dtSale: new Date().toISOString(),
+      produtos: [
+        selectedItem.id
+      ],
+      clientId: parseInt(cpf),
+      precoTotal: confirmationData.total,
       desconto: 0,
       credito: 0,
-      saleStatus: 'ANDAMENTO',
+      saleStatus: 0,
+      payments: [
+        {
+          id: 0,
+          value: confirmationData.total,
+          paymentMethodId: 0,
+          paymentMethod: {
+            id: 0,
+            nome: "string"
+          }
+        }
+      ]
     };
-
-    const novoUser = async (data) => {
-      try {
-        await axios.post('http://localhost:8080/Venda', data);
-      } catch (error) {
-        console.error('Erro ao salvar usuário:', error);
-      }
-    };
-
-    await novoUser(data);
+    await NewSale(data);
     setShowSuccess(true);
     setTimeout(clearState, 5000);
   };

@@ -30,7 +30,19 @@ export async function fetchService() {
 
   try {
     const response= await axios(config);
-    return response.data;
+    if (response.data && Array.isArray(response.data)) {
+      const service = response.data.map(service => ({
+        id: service.id,
+        nome: service.name,
+        valor: service.price,
+        horaMinima: service.quantityHours || 'N/A',
+        quantidade: service.quantity || 0,
+        descricao: service.description,
+      }));
+      return service;
+    } else {
+      console.error("Dados recebidos não são válidos:", response.data);
+    }
   } catch (error) {
     return serviceRetornarErro(error);
   }
