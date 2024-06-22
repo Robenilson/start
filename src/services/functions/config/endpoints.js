@@ -8,6 +8,8 @@ export const endPoints = {
     urlService: backHost +"/api/SalesProduct/AllServices",
     urlProduct:backHost+"/api/SalesProduct/Allproducts",
     urlUser:backHost + "/api/User ",
+    urlUserCPF:backHost + "  ",
+    urlNewSale:backHost + "/api/SalesOrder",
 
 
     usuarioLogin: backHost + "/login",
