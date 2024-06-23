@@ -8,6 +8,8 @@ import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
 import{ FetchUser, NewUser} from'../../services/functions/RequestPeople';
+import { jwtDecode } from 'jwt-decode';
+
 
 const UserContext = createContext();
 
@@ -75,6 +77,15 @@ const UserManager = () => {
       password: '',  // Certifique-se de que a senha também seja limpa
     });
   };
+
+ 
+
+
+ 
+  const user = JSON.parse(localStorage.getItem('user'))
+ 
+
+  console.log(user.sub);
 
   const handleSaveUser = async () => {
 
