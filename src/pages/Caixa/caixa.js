@@ -5,6 +5,8 @@ import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab'; // Atualize a importação correta para PedidosTab
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
+import { OpenBox } from "../../services/functions/RequestBox";
+
 
 const Caixa = () => {
   const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
@@ -60,13 +62,15 @@ const Caixa = () => {
     setShowModalFecharCaixa(false);
   };
 
-  const handleConfirmarAbrirCaixa = () => {
+  const handleConfirmarAbrirCaixa =  async() => {
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
       const agora = new Date();
+      await OpenBox(valor.toString())
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);
+      
       localStorage.setItem('dataAbertura', agora.toISOString());
       localStorage.setItem('saldo', valor.toString());
       setShowSuccess(true);

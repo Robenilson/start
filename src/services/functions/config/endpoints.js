@@ -18,9 +18,16 @@ export const endPoints = {
     urlServiceAll: backHost +"/api/SalesProduct/AllServices",
     urlAddNewService:backHost+"/api/SalesProduct/service",
 
+    //UrlSales
+    urlNewSale:backHost + "/api/SalesOrder",
+
+    //UrlBox
+    urlOpenBox:backHost + "/api/CashierOrder/open",
+
+
 
    
-    urlNewSale:backHost + "/api/SalesOrder",
+    
 
 
     usuarioLogin: backHost + "/login",
