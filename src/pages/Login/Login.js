@@ -31,9 +31,8 @@ const Login = () => {
       setError('');
         //const vRetorno = await login({ email: email, senha: password });
 
-       const vRetorno = (await axios.post("https://localhost:7276/login?email=naruto%40adm.com&password=12345")).data;
+       const vRetorno = (await axios.post("https://localhost:7276/login?email=admin%40admin.com&password=12345")).data;
         
-
       try {
   
         if (typeof vRetorno === 'string') {

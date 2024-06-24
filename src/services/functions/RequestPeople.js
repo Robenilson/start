@@ -11,7 +11,7 @@ import { endPoints } from "./config/endpoints";
 export async function FetchUser() {
     var config = serviceRetornarConfig(
       "get",
-      endPoints.urlUser,
+      endPoints.urlListAllUser,
       true
     );
   
@@ -30,7 +30,7 @@ export async function FetchUser() {
 export async function FetchUserCPF(data) {
   var config = serviceRetornarConfig(
     "get",
-    endPoints.urlUser,
+    endPoints.urlAddNewUser,
     data,
     true
   );
@@ -47,7 +47,7 @@ export async function FetchUserCPF(data) {
 export async function NewUser(data) {
     var config = serviceRetornarConfig(
       "post",
-      endPoints.urlUser,
+      endPoints.urlAddNewUser,
       data,
       true
     );
@@ -60,3 +60,32 @@ export async function NewUser(data) {
   }
   
   
+  export async function createDataObjectUser(userValues) {
+    try {
+      const data = {
+        nome: userValues.nome.toString(),
+        sobrenome: userValues.sobrenome.toString(),
+        dtNascimento: userValues.dataNascimento.toString(),
+        email: userValues.email.toString(),
+        cpf: userValues.cpf.toString(),
+        phone: userValues.telefone.toString(),
+        userType: 1,
+        address: {
+          zipCode: userValues.endereco.cep.toString(),
+          cityName: userValues.endereco.cidade.toString(),
+          state: userValues.endereco.estado.toString(),
+          road: userValues.endereco.bairro.toString(),
+          number: parseInt(userValues.endereco.numero),
+        },
+        roleIds: [
+          "84a4f924-5a1b-4c72-8a29-14b3673f1533"
+        ],
+        password: userValues.password.toString()
+      };
+  
+      return data;
+    } catch (error) {
+      console.error('Erro ao converter dados:', error);
+      throw error;
+    }
+  }

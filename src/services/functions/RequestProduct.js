@@ -12,7 +12,8 @@ import { endPoints } from "./config/endpoints";
     );
   
     try {
-      const response= await axios(config);     
+      const response= await axios(config); 
+      console.log(response.data)    
       if (response.data && Array.isArray(response.data)) {
         const product = response.data.map(product => ({
           id: product.id,
@@ -37,7 +38,7 @@ export async function newProduct(data) {
     console.log(endPoints.urlProduct)
     var config = serviceRetornarConfig(
       "post",
-      endPoints.urlProduct,
+      endPoints.urlAddNewProduct,
       data,
       true
     );

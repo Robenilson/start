@@ -39,11 +39,23 @@ const NewCadastro = () => {
   ];
 
   const updateTabelProduct = async () => {
-     setProdutos(await fetchProduct());
+    try {
+      const data = await fetchProduct();
+      setProdutos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error updating products:', error);
+      setProdutos([]);
+    }
   };
 
   const updateTabelServicos = async () => {
-       setServicos(await fetchService());
+    try {
+      const data = await fetchService();
+      setServicos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Error updating services:', error);
+      setServicos([]);
+    }
   };
 
   useEffect(() => {
@@ -81,6 +93,8 @@ const NewCadastro = () => {
       price: parseFloat(produtoValues.valorProduto),
       quantity: parseInt(produtoValues.quantidade),
     };
+    
+    console.log(novoProduto)
     await newProduct(novoProduto);
     await updateTabelProduct();
     setShowSuccess(true);
@@ -89,12 +103,11 @@ const NewCadastro = () => {
   };
 
   const handleCadastroServico = async () => {
-   
     const data = {
       name: servicoValues.nomeServico,
-      price:parseFloat(servicoValues.valorServico),
-      quantityHours:parseInt(`${servicoValues.horas}:${servicoValues.minutos}:${servicoValues.segundos}`),
-      description:servicoValues.descricaoServico,
+      price: parseFloat(servicoValues.valorServico),
+      quantityHours: parseInt(servicoValues.horas) * 3600 + parseInt(servicoValues.minutos) * 60 + parseInt(servicoValues.segundos),
+      description: servicoValues.descricaoServico,
     };
 
     await newService(data);
