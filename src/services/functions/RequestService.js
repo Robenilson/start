@@ -8,7 +8,7 @@ export async function newService(data) {
   
   var config = serviceRetornarConfig(
     "post",
-    endPoints.urlService,
+    endPoints.urlAddNewService,
     data,
     true
   );
@@ -24,7 +24,7 @@ export async function newService(data) {
 export async function fetchService() {
   var config = serviceRetornarConfig(
     "get",
-    endPoints.urlService,
+    endPoints.urlServiceAll,
     true
   );
 

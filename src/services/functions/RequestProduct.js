@@ -7,7 +7,7 @@ import { endPoints } from "./config/endpoints";
   export async function fetchProduct() {
     var config = serviceRetornarConfig(
       "get",
-      endPoints.urlProduct,
+      endPoints.urlProductAll,
       true
     );
   

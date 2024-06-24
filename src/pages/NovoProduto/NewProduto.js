@@ -95,6 +95,8 @@ const NewCadastro = () => {
     };
     
     console.log(novoProduto)
+
+    
     await newProduct(novoProduto);
     await updateTabelProduct();
     setShowSuccess(true);

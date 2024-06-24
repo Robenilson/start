@@ -8,13 +8,15 @@ export const endPoints = {
     //urlUSer
     urlAddNewUser: backHost +"/api/User",
     urlListAllUser:backHost + "/api/User ",
-    //Url
-    
-
-
-    urlService: backHost +"/api/SalesProduct/AllServices",
-    urlProduct:backHost+"/api/SalesProduct/Allproducts",
+    //UrlProduct
+    urlProductAll:backHost+"/api/SalesProduct/Allproducts",
     urlAddNewProduct:backHost+"/api/SalesProduct/product",
+
+
+    //UrlServices
+    urlServiceAll: backHost +"/api/SalesProduct/AllServices",
+    urlAddNewService:backHost+"/api/SalesProduct/service",
+
 
     urlUserCPF:backHost + "  ",
     urlNewSale:backHost + "/api/SalesOrder",
