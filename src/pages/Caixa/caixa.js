@@ -5,7 +5,7 @@ import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab'; // Atualize a importação correta para PedidosTab
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox } from "../../services/functions/RequestBox";
+import { OpenBox,  FetchBox } from "../../services/functions/RequestBox";
 
 
 const Caixa = () => {
@@ -33,15 +33,16 @@ const Caixa = () => {
     }
   }, []);
 
+  const updateBox = async() =>{
+   const data = await FetchBox();
+   console.log(data);
+  // setPedidos(data)
+     
+  }
+
   useEffect(() => {
     if (caixaAberto) {
-      axios.get('http://localhost:8080/Venda')
-        .then(response => {
-          setPedidos(response.data);
-        })
-        .catch(error => {
-          console.error('Erro ao carregar os pedidos:', error);
-        });
+      updateBox()     
     }
   }, [caixaAberto]);
 

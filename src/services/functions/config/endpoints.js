@@ -23,6 +23,7 @@ export const endPoints = {
 
     //UrlBox
     urlOpenBox:backHost + "/api/CashierOrder/open",
+    urlGetBox:backHost +"/api/SalesOrder",
 
 
 

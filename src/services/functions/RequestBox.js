@@ -18,3 +18,21 @@ export async function OpenBox(data) {
       return serviceRetornarErro(error);
     }
   }
+
+
+
+  export async function FetchBox() {
+    var config = serviceRetornarConfig(
+      "get",
+      endPoints.urlGetBox,
+      true
+    );
+  
+    try {
+      const response= await axios(config);
+      return response.data;
+    } catch (error) {
+      return serviceRetornarErro(error);
+    }
+  }
+
