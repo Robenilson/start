@@ -8,6 +8,7 @@ import { NewSale } from '../../services/functions/RequestSales';
 import SelectableTable from './componente/SelectableTable'; 
 
 const Vendas = () => {
+  const [cliente, setCliente] = useState(null); // Inicializando como null
   const [cpf, setCpf] = useState('');
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -56,14 +57,11 @@ const Vendas = () => {
   };
 
   const handleConfirm = async () => {
-   
-
     if (!selectedItem) {
       console.error('Nenhum item selecionado.');
       return;
     }
 
-    // Definindo o tipo do produto com base no saleType
     const productType = saleType === 'produto' ? 1 : 2;
 
     const data = {
@@ -74,19 +72,19 @@ const Vendas = () => {
           productId: selectedItem.id,  
           quantity: quantity,
           orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",  
-          productType: productType,  // Aqui atribuímos o valor de productType
+          productType: productType,
         }
       ],
-      clientId: parseInt(cpf),
-      employeerId: user.EmployeerId,
-      precoTotal: confirmationData.total,
+      clientId: parseInt(cliente.id),
+      employeerId: parseInt(user.EmployeerId),
+      precoTotal: parseInt(confirmationData.total),
       desconto: 0,
       credito: 0,
       saleStatus: 0,
       payments: [
         {
           id: 0,
-          value: confirmationData.total,
+          value: parseInt(confirmationData.total),
           paymentMethodId: 0,
           paymentMethod: {
             id: 0,
@@ -95,20 +93,12 @@ const Vendas = () => {
         }
       ]
     };
+    console.log(data)
 
-    try {
-      const response = await NewSale(data);
+    await NewSale(data);
+    setShowSuccess(true);
+    setTimeout(clearState, 5000);
 
-      if (response.ok) {
-        setShowSuccess(true);
-        setTimeout(clearState, 5000);
-      } else {
-        const errorData = await response.json();
-        console.error('Erro ao criar a venda:', errorData);
-      }
-    } catch (error) {
-      console.error('Erro de rede ao criar a venda:', error);
-    }
   };
 
   const handleCancel = () => {
@@ -123,6 +113,7 @@ const Vendas = () => {
     setConfirmationData(null);
     setQuantity(1);
     setShowSuccess(false);
+    setCliente(null); // Resetando o estado do cliente
   };
 
   const handleQuantityChange = (event) => {
@@ -143,6 +134,7 @@ const Vendas = () => {
       const user = await FetchUserCPF(cpf);
 
       if (user) {
+        setCliente(user); // Salvando o objeto completo do cliente
         setNomeUsuario(user.nome);
       } else {
         alert('Usuário não cadastrado');
