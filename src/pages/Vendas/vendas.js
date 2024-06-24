@@ -56,10 +56,7 @@ const Vendas = () => {
   };
 
   const handleConfirm = async () => {
-    if (cpf === '' || isNaN(parseInt(cpf))) {
-      console.error('CPF inválido:', cpf);
-      return;
-    }
+   
 
     if (!selectedItem) {
       console.error('Nenhum item selecionado.');
@@ -144,6 +141,7 @@ const Vendas = () => {
   const handleValidateUser = async () => {
     try {
       const user = await FetchUserCPF(cpf);
+
       if (user) {
         setNomeUsuario(user.nome);
       } else {
