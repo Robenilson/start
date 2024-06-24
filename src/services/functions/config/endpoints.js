@@ -5,9 +5,17 @@ var backHost =
 
 
 export const endPoints = {
+    //urlUSer
+    urlAddNewUser: backHost +"/api/User",
+    urlListAllUser:backHost + "/api/User ",
+    //Url
+    
+
+
     urlService: backHost +"/api/SalesProduct/AllServices",
     urlProduct:backHost+"/api/SalesProduct/Allproducts",
-    urlUser:backHost + "/api/User ",
+    urlAddNewProduct:backHost+"/api/SalesProduct/product",
+
     urlUserCPF:backHost + "  ",
     urlNewSale:backHost + "/api/SalesOrder",
 
