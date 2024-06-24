@@ -28,9 +28,10 @@ export async function FetchUser() {
 
 //Faz  uma pesquisa na tabela usuario 
 export async function FetchUserCPF(data) {
+  console.log(`${endPoints.urlUserCPF}%22${data}%22`,)
   var config = serviceRetornarConfig(
     "get",
-    endPoints.urlAddNewUser,
+    `${endPoints.urlUserCPF}%22${data}%22`,
     data,
     true
   );

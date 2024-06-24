@@ -35,7 +35,7 @@ import { endPoints } from "./config/endpoints";
   
 //Adiciona um novo Produto
 export async function newProduct(data) {
-    console.log(endPoints.urlProduct)
+    console.log(endPoints.urlAddNewProduct)
     var config = serviceRetornarConfig(
       "post",
       endPoints.urlAddNewProduct,
