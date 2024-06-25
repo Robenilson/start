@@ -12,6 +12,7 @@ export const endPoints = {
     //UrlProduct
     urlProductAll:backHost+"/api/SalesProduct/Allproducts",
     urlAddNewProduct:backHost+"/api/SalesProduct/product",
+    urlDeletProduct:backHost+"/api/Product",
 
 
     //UrlServices
@@ -22,7 +23,7 @@ export const endPoints = {
     urlNewSale:backHost + "/api/SalesOrder",
 
     //UrlBox
-    urlOpenBox:backHost + "/api/CashierOrder/open",
+    urlOpenBox:backHost + "/api/CashierOrder/open?",
     urlGetBox:backHost +"/api/SalesOrder",
 
 

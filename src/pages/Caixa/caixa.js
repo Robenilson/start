@@ -6,6 +6,7 @@ import PedidosTab from './componentesCaixa/PedidosTab'; // Atualize a importaÃ§Ã
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
 import { OpenBox,  FetchBox } from "../../services/functions/RequestBox";
+const user = JSON.parse(localStorage.getItem('user'));
 
 
 const Caixa = () => {
@@ -67,7 +68,7 @@ const Caixa = () => {
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
       const agora = new Date();
-      await OpenBox(valor.toString())
+      await OpenBox(user.EmployeerId, valor.toString())
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);

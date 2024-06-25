@@ -7,7 +7,7 @@ import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
 import { newService, fetchService } from '../../services/functions/RequestService';
-import { newProduct, fetchProduct } from "../../services/functions/RequestProduct";
+import { newProduct, fetchProduct, DeletProduct } from "../../services/functions/RequestProduct";
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -51,6 +51,7 @@ const NewCadastro = () => {
   const updateTabelServicos = async () => {
     try {
       const data = await fetchService();
+      console.log(data)
       setServicos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error updating services:', error);
@@ -107,7 +108,7 @@ const NewCadastro = () => {
   const handleCadastroServico = async () => {
     const data = {
       name: servicoValues.nomeServico,
-      price: parseFloat(servicoValues.valorServico),
+      price: parseInt(servicoValues.valorServico),
       quantityHours: parseInt(servicoValues.horas) * 3600 + parseInt(servicoValues.minutos) * 60 + parseInt(servicoValues.segundos),
       description: servicoValues.descricaoServico,
     };
@@ -127,7 +128,16 @@ const NewCadastro = () => {
   };
 
   const handleDeleteProduto = (index) => {
-    setProdutos(produtos.filter((_, i) => i !== index));
+    
+/*
+    let foundObjects = produtos.filter(item => console.log(item));
+
+    console.log(foundObjects)
+
+    
+   // const a = produtos.filter((_, i) => i !== index)
+      */
+    
   };
 
   const handleEditServico = (index) => {

@@ -4,10 +4,10 @@ import { endPoints } from "./config/endpoints";
 
 
 //Adiciona um novo Produto
-export async function OpenBox(data) {
+export async function OpenBox(useid,data) {
     var config = serviceRetornarConfig(
       "post",
-      endPoints.urlOpenBox,
+      `${endPoints.urlOpenBox}employeerId=${useid}`,
       data,
       true
     );

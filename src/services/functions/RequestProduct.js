@@ -49,5 +49,21 @@ export async function newProduct(data) {
       return serviceRetornarErro(error);
     }
   }
+
+  //Apagar um Produto 
+export async function DeletProduct(data) {
+  console.log(endPoints.urlAddNewProduct)
+  var config = serviceRetornarConfig(
+    "post",
+    `${endPoints.urlDeletProduct}/${data}`,
+    true
+  );
+
+  try {
+    return (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
   
   
