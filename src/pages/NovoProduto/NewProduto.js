@@ -129,14 +129,14 @@ const NewCadastro = () => {
 
   const handleDeleteProduto = (index) => {
     
-/*
+
     let foundObjects = produtos.filter(item => console.log(item));
 
     console.log(foundObjects)
 
     
    // const a = produtos.filter((_, i) => i !== index)
-      */
+      
     
   };
 

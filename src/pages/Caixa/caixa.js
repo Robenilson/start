@@ -5,7 +5,7 @@ import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab'; // Atualize a importação correta para PedidosTab
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox,  FetchBox } from "../../services/functions/RequestBox";
+import { OpenBox,  FetchBox, CloseBox ,FetchBoxById} from "../../services/functions/RequestBox";
 const user = JSON.parse(localStorage.getItem('user'));
 
 
@@ -69,6 +69,8 @@ const Caixa = () => {
     if (valor >= 100) {
       const agora = new Date();
       await OpenBox(user.EmployeerId, valor.toString())
+
+      
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);
@@ -83,7 +85,13 @@ const Caixa = () => {
     }
   };
 
-  const handleConfirmarFecharCaixa = () => {
+  const handleConfirmarFecharCaixa =  async() => {
+    const agora = new Date();
+
+    //await CloseBox(user.EmployeerId, agora )
+
+
+
     setCaixaAberto(false);
     setHoraFechamento(new Date().toLocaleString());
     setShowSuccess(true);
