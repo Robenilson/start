@@ -24,7 +24,7 @@ export const endPoints = {
 
     //UrlBox
     urlOpenBox:backHost + "/api/CashierOrder/open?",
-    urlGetBox:backHost +"/api/CashierOrder/",
+    urlGetBox:backHost +"/api/SalesOrder",
     urlCloseBox:backHost +"/api/CashierOrder/close",
   
 

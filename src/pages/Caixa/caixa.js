@@ -70,6 +70,7 @@ const Caixa = () => {
       const agora = new Date();
       await OpenBox(user.EmployeerId, valor.toString())
 
+     // await  FetchBoxById("234af66b-1409-496c-b768-c4f56066b0f2")
       
       setSaldo(valor);
       setCaixaAberto(true);
