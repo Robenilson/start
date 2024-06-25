@@ -47,7 +47,6 @@ export async function CloseBox(useid,data) {
   
     try {
       const response= await axios(config);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       return serviceRetornarErro(error);
@@ -58,6 +57,7 @@ export async function CloseBox(useid,data) {
 
   //Lista pedidoscom o id 
   export async function FetchBoxById(data) {
+    console.log(`${endPoints.urlGetBox}/${data}`);
     var config = serviceRetornarConfig(
       "get",
       `${endPoints.urlGetBox}/${data}`,
@@ -73,12 +73,82 @@ export async function CloseBox(useid,data) {
   }
 
 
+  //Converte para Inserir no banco
+  export async function createDataObjectBox(userValues) {
+    try {
+      const  data = {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "dtSale": "2024-06-25T13:59:49.314Z",
+        "produtos": [
+          {
+            "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "quantity": 0,
+            "orderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "productType": 1
+          }
+        ],
+        "clientId": 0,
+        "employeerId": 0,
+        "precoTotal": 0,
+        "desconto": 0,
+        "credito": 0,
+        "saleStatus": 0,
+        "payments": [
+          {
+            "id": 0,
+            "value": 0,
+            "paymentMethodId": 0,
+            "paymentMethod": {
+              "id": 0,
+              "nome": "string"
+            }
+          }
+        ]
+      }
+      return data;
+    } catch (error) {
+      console.error('Erro ao converter dados:', error);
+      throw error;
+    }
+  }
 
-//Put Complite Box
+
+
+
+  //Converte  para Exibir na tela 
+  export async function ViewDataObjectBox(data) {
+    try {
+      const value= data
+     
+     return value;
+    } catch (error) {
+      console.error('Erro ao converter dados:', error);
+      throw error;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Put  Box
 export async function PutCompletBox(data) {
   var config = serviceRetornarConfig(
-    "post",
-    `${endPoints.fecharCaixa}/${data}/complete`,
+    "put",
+    `${endPoints.urlPutBox}/${data}`,
     true
   );
 

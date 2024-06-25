@@ -5,7 +5,8 @@ import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab'; // Atualize a importação correta para PedidosTab
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox,  FetchBox, CloseBox ,FetchBoxById} from "../../services/functions/RequestBox";
+import { OpenBox,  FetchBox, CloseBox ,FetchBoxById, PutCompletBox,
+  createDataObjectBox, ViewDataObjectBox} from "../../services/functions/RequestBox";
 const user = JSON.parse(localStorage.getItem('user'));
 
 
@@ -35,9 +36,12 @@ const Caixa = () => {
   }, []);
 
   const updateBox = async() =>{
-   const data = await FetchBox();
-   console.log(data);
-  // setPedidos(data)
+    await  ViewDataObjectBox(await FetchBox()).then(
+      data=>{console.log(data)}
+    )
+ 
+   
+   //setPedidos(data)
      
   }
 
@@ -66,16 +70,13 @@ const Caixa = () => {
 
   const handleConfirmarAbrirCaixa =  async() => {
     const valor = parseFloat(valorInicial);
+
     if (valor >= 100) {
       const agora = new Date();
-      await OpenBox(user.EmployeerId, valor.toString())
-
-     // await  FetchBoxById("234af66b-1409-496c-b768-c4f56066b0f2")
-      
+     await OpenBox(user.EmployeerId, valor.toString())    
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);
-      
       localStorage.setItem('dataAbertura', agora.toISOString());
       localStorage.setItem('saldo', valor.toString());
       setShowSuccess(true);
@@ -88,11 +89,7 @@ const Caixa = () => {
 
   const handleConfirmarFecharCaixa =  async() => {
     const agora = new Date();
-
     //await CloseBox(user.EmployeerId, agora )
-
-
-
     setCaixaAberto(false);
     setHoraFechamento(new Date().toLocaleString());
     setShowSuccess(true);
@@ -122,29 +119,23 @@ const Caixa = () => {
     setShowModalConfirmacaoVenda(false);
   };
 
-  const handleVendaConcluida = () => {
-    axios.post('http://localhost:8080/VendaConcluida', {
+
+  //Concluir as vendas 
+  const handleVendaConcluida = async ()  => {
+    const data={
       pedidoId: pedidos[pedidoSelecionado].id,
       formaPagamento: formaPagamento
-    })
-    .then(response => {
+    }
+    await createDataObjectBox(data).then(
+     data=>{PutCompletBox(data)}
+    ).then(response => {
       console.log('Venda concluída com sucesso:', response.data);
       const valor = parseFloat(valorInicial);
-      
-      
-    
-
-     //    localStorage.setItem('saldo', (valor+ valorVenda));
-      return axios.delete(`http://localhost:8080/Venda/${pedidos[pedidoSelecionado].id}`);
-    })
-    .then(response => {
-
-      
       setPedidos(prevPedidos => prevPedidos.filter(pedido => pedido.id !== pedidos[pedidoSelecionado].id));
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 5000);
       handleCloseConfirmacaoVenda();
-    })
+      })
     .catch(error => {
       console.error('Erro ao concluir ou deletar a venda:', error);
     });
