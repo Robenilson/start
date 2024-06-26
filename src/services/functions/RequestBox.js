@@ -1,6 +1,7 @@
 import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
 import { endPoints } from "./config/endpoints";
+import   { FetchUserByID} from"./RequestPeople";
 
 
 //Abrir o caixa
@@ -35,6 +36,31 @@ export async function CloseBox(useid,data) {
     return serviceRetornarErro(error);
   }
 }
+
+
+function Name(value){
+  FetchUserByID(value)
+  .then(response => {
+    console.log(response)
+    return response;
+  }).catch(error => {
+    console.error(error);
+  });
+}
+
+
+
+
+
+
+const getRole = (roleNumber) => {
+  return roleNumber === 1 ? 'Iniciada' :
+         roleNumber === 2 ? 'AguardandoPagamento' :
+         roleNumber === 3 ? '' :
+         roleNumber === 4 ? 'vendedor' :
+         'Role não reconhecido';
+};
+
 
 
 //Lista pedidos do caixa
@@ -77,7 +103,6 @@ export async function CloseBox(useid,data) {
   export async function createDataObjectBox(userValues) {
     try {
       const  data = {
-        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "dtSale": "2024-06-25T13:59:49.314Z",
         "produtos": [
           {
@@ -115,11 +140,47 @@ export async function CloseBox(useid,data) {
 
 
 
+  
+
   //Converte  para Exibir na tela 
   export async function ViewDataObjectBox(data) {
+    console.log(data)
     try {
-      const value= data
-     
+      let value;
+      console.log(data)
+   /*   <tr key={pedido.id}>
+            <td>{pedido.id}</td>
+
+
+              {
+    "id": "cf0f429d-7c65-4865-a7ce-7c5f6431b991",
+    "dtSale": "0001-01-01T00:00:00",
+    "produtos": [],
+    "clientId": 123456,
+    "employeerId": 0,
+    
+  }
+*/
+
+
+
+ 
+
+      if (data && Array.isArray(data)) {
+        value= data.map(s => ({
+          id:s.id,
+          clientId: s.clientId,
+          tipo      : "null",
+          desconto  : s.desconto,
+          precoTotal:s.precoTotal,
+          credito:   s.credito,
+          payments: "null",
+          saleStatus:s.saleStatus,
+          produto:"null",
+          dtSale :s.dtSale
+
+        }));
+      }
      return value;
     } catch (error) {
       console.error('Erro ao converter dados:', error);

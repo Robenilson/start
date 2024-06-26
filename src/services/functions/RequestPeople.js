@@ -3,10 +3,6 @@ import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
 import { endPoints } from "./config/endpoints";
 
 
-
-
-
-
 //Faz um get na tabela Produtos 
 export async function FetchUser() {
     var config = serviceRetornarConfig(
@@ -42,6 +38,26 @@ export async function FetchUserCPF(data) {
     return serviceRetornarErro(error);
   }
 }
+
+//Faz  uma pesquisa por id na  tabela usuario 
+export async function FetchUserByID(data) {
+  console.log(`${endPoints.urlUserByid}/${data}`,)
+  var config = serviceRetornarConfig(
+    "get",
+    `${endPoints.urlUserByid}/${data}`,
+    true
+  );
+
+  try {
+    const response= await axios(config);
+    return response.data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
 
 //Adiciona um novo Produto
 export async function NewUser(data) {

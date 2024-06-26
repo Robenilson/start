@@ -6,7 +6,6 @@ const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
     <Table striped bordered hover>
       <thead>
         <tr>
-          <th>ID</th>
           <th>Cliente ID</th>
           <th>Tipo</th>
           <th>Produto</th>
@@ -20,7 +19,6 @@ const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
       <tbody>
         {pedidos.map((pedido, index) => (
           <tr key={pedido.id}>
-            <td>{pedido.id}</td>
             <td>{pedido.clientId}</td>
             <td>{pedido.tipo}</td>
             <td>{pedido.produto}</td>
