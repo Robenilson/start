@@ -1,7 +1,7 @@
 var backHost =
   process.env.REACT_APP_BACKEND_HOST != null
     ? process.env.REACT_APP_BACKEND_HOST
-    : "https://localhost:7276";
+    : "https://localhost:44363";
 
 
 export const endPoints = {

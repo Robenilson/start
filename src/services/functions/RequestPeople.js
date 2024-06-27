@@ -69,14 +69,14 @@ export async function NewUser(data) {
         email: userValues.email.toString(),
         cpf: userValues.cpf.toString(),
         phone: userValues.telefone.toString(),
-        userType: 1,
+        userType: userValues.userType,
         address: {
-          zipCode: userValues.endereco.cep.toString(),
-          cityName: userValues.endereco.cidade.toString(),
-          state: userValues.endereco.estado.toString(),
-          road: userValues.endereco.bairro.toString(),
-          number: parseInt(userValues.endereco.numero),
-        },
+          zipCode: userValues.endereco && userValues.endereco.cep ? userValues.endereco.cep.toString() : " ",
+          cityName: userValues.endereco && userValues.endereco.cidade ? userValues.endereco.cidade.toString() : " ",
+          state: userValues.endereco && userValues.endereco.estado ? userValues.endereco.estado.toString() : " ",
+          road: userValues.endereco && userValues.endereco.bairro ? userValues.endereco.bairro.toString() : " ",
+          number: userValues.endereco && userValues.endereco.numero ? userValues.endereco.numero : 0, // Use toString() 
+        },        
         roleIds: [
           "84a4f924-5a1b-4c72-8a29-14b3673f1533"
         ],
