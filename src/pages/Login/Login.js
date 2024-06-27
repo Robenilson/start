@@ -2,50 +2,55 @@ import React ,{useState}from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from'../../components/Card';
 import { login } from "../../services/UsuarioService";
-import Menu from '../../components/menu';
 import { useNavigate } from 'react-router-dom';
 import  {urls} from"../../services/static/js/urls";
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+
+
+
+
     const navigate = useNavigate();
 
   
-    const handleSubmit = async (e) => {
-
-      e.preventDefault();
-      navigate(urls.homePage);
-
-
-      /*
-      if (email == null || email == "") {
-        console.log('erro')      
-        return;
-      } 
-      if (password == null || password == "") {      
-        console.log('erro')
-        return;
-      }
+    const [user, setUser] = useState(null)
   
 
-     // console.log(email,password )
-      
-      const vRetorno = await login({ email: email, senha: password });
-        if (vRetorno.status && vRetorno.status === 200) {
-            // Login bem-sucedido
-            console.log('Login bem-sucedido:', vRetorno.data);
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setError('');
+        //const vRetorno = await login({ email: email, senha: password });
+
+       const vRetorno = (await axios.post("https://localhost:7276/login?email=admin%40admin.com&password=12345")).data;
+        
+      try {
+  
+        if (typeof vRetorno === 'string') {
+          const userData = jwtDecode(vRetorno);
+          userData.token = vRetorno; 
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
         } else {
-            // Tratamento de erro
-            console.error('Falha no login:', vRetorno.message);
+          throw new Error('Token inválido recebido do servidor');
         }
- 
-  */
-    }
+      } catch (error) {
+        setError('Erro ao realizar login: ' + error.message);
+      } finally {
+        setLoading(false);
+      }
+      navigate(urls.userDados);
+
+    };
   
   
       

@@ -1,68 +1,245 @@
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import Card from '../../components/Card';
-import { Button } from 'react-bootstrap';
-import React, { useState } from 'react';
-import ModalComponet from '../../components/ModalComponet';
-import  Menu  from'../../components/menu';
+import { fetchService } from '../../services/functions/RequestService';
+import { fetchProduct } from '../../services/functions/RequestProduct';
+import { FetchUserCPF } from '../../services/functions/RequestPeople';
+import { NewSale } from '../../services/functions/RequestSales';
+import SelectableTable from './componente/SelectableTable'; 
 
+const Vendas = () => {
+  const [cliente, setCliente] = useState(null); // Inicializando como null
+  const [cpf, setCpf] = useState('');
+  const [nomeUsuario, setNomeUsuario] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [saleType, setSaleType] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [confirmationData, setConfirmationData] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [services, setServices] = useState([]);
+  const [produtos, setProdutos] = useState([]);
+  const user = JSON.parse(localStorage.getItem('user'));
 
+  const UpdateServece = async () => {
+    setServices(await fetchService());   
+  };
 
-function Vendas() {
-  
-const [showModal, setShowModal] = useState(false);
-const handleShowModal = () => setShowModal(true);
-const handleCloseModal = () => setShowModal(false);
+  useEffect(() => {
+    UpdateServece();
+  }, []);
 
+  const UpdateProduct = async () => {
+    setProdutos(await fetchProduct());
+  };
 
-    return (
+  useEffect(() => {
+    UpdateProduct();
+  }, []);
 
-      <Menu>
+  const handleButtonClick = (type) => {
+    setSaleType(type);
+    setShowModal(true);
+    setQuantity(1);
+  };
 
-       <Card>
-          <form >
-                <h1 className="  text-center my-2  mb-4" >Vendas</h1>
-              <div className="card-header ">Venda-Iniciar-Venda</div>
-              <div className="card-body ">
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+    setShowModal(false);
+    const minQuantity = saleType === 'produto' ? 1 : parseInt(item.horaMinima);
+    setQuantity(minQuantity);
+    setConfirmationData({
+      saleType,
+      item,
+      quantity: minQuantity,
+      total: item.valor ? item.valor * minQuantity : 0,
+    });
+  };
 
-            <div className="form-group row    my-2  mb-4">
-                <label htmlFor="dataNascimento  h1">Principais:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Principais Vendas"></ModalComponet>
-              </div>
-              <hr/>
+  const handleConfirm = async () => {
+    if (!selectedItem) {
+      console.error('Nenhum item selecionado.');
+      return;
+    }
 
+    const productType = saleType === 'produto' ? 1 : 2;
 
-              <div className="form-group row  my-2  mb-4">
-                <label htmlFor="dataNascimento   ">Outros:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Outros vendas"></ModalComponet>
-              </div>
-              <hr/>
+    const data = {
+      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      dtSale: new Date().toISOString(),
+      produtos: [
+        {
+          productId: selectedItem.id,  
+          quantity: quantity,
+          orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",  
+          productType: productType,
+        }
+      ],
+      clientId: parseInt(cliente.id),
+      employeerId: parseInt(user.EmployeerId),
+      precoTotal: parseInt(confirmationData.total),
+      desconto: 0,
+      credito: 0,
+      saleStatus: 0,
+      payments: [
+        {
+          id: 0,
+          value: parseInt(confirmationData.total),
+          paymentMethodId: 0,
+          paymentMethod: {
+            id: 0,
+            nome: "string"
+          }
+        }
+      ]
+    };
+    console.log(data)
 
-              <div className="form-group row  my-2  mb-4">
-                <label htmlFor="dataNascimento   ">Creditos:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Creditos"></ModalComponet>
-              </div>
-              <hr/>
+    await NewSale(data);
+    setShowSuccess(true);
+    setTimeout(clearState, 5000);
 
+  };
 
-              <div className="form-group row  my-2  mb-4">
-                <label htmlFor="dataNascimento   ">Descontos:</label>
-                <Button  className=" btn btn-light "   onClick={handleShowModal}>Escolha opção</Button>         
-                <ModalComponet show={showModal} onHide={handleCloseModal}title="Descontos"></ModalComponet>
-              </div>
+  const handleCancel = () => {
+    clearState();
+  };
 
-              </div>
-          </form>
+  const clearState = () => {
+    setCpf('');
+    setNomeUsuario('');
+    setSelectedItem(null);
+    setSaleType('');
+    setConfirmationData(null);
+    setQuantity(1);
+    setShowSuccess(false);
+    setCliente(null); // Resetando o estado do cliente
+  };
 
-          <div className=" form-group  my-2  mb-4  text-center ">
-            <button type="submit"    className="btn btn-primary text-center">Cadastrar</button>
+  const handleQuantityChange = (event) => {
+    const newQuantity = Number(event.target.value);
+    setQuantity(newQuantity);
+    if (selectedItem) {
+      const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
+      setConfirmationData((prevConfirmationData) => ({
+        ...prevConfirmationData,
+        quantity: newQuantity,
+        total: updatedTotal,
+      }));
+    }
+  };
+
+  const handleValidateUser = async () => {
+    try {
+      const user = await FetchUserCPF(cpf);
+
+      if (user) {
+        setCliente(user); // Salvando o objeto completo do cliente
+        setNomeUsuario(user.nome);
+      } else {
+        alert('Usuário não cadastrado');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
+    }
+  };
+
+  return (
+    <Card>
+      <div className="form-group row text-center m-0 mb-1">
+        <Form>
+          <Form.Group>
+            <Form.Label>Cpf do Cliente</Form.Label>
+            <Form.Control
+              type="text"
+              value={cpf || ''}
+              onChange={(e) => setCpf(e.target.value)}
+              placeholder="Cpf do Cliente"
+              disabled={!!nomeUsuario}
+            />
+            <Button onClick={handleValidateUser} disabled={!!nomeUsuario}>
+              Validar Usuário
+            </Button>
+          </Form.Group>
+          {nomeUsuario && (
+            <Form.Group className="mt-3">
+              <Form.Label>Nome do Cliente</Form.Label>
+              <Form.Control
+                type="text"
+                value={nomeUsuario}
+                readOnly
+              />
+            </Form.Group>
+          )}
+          <Form.Group className="mt-3">
+            <Form.Label>Tipo de Venda</Form.Label>
+            <div>
+              <Button variant="primary" onClick={() => handleButtonClick('produto')} className="me-2">
+                Produto
+              </Button>
+              <Button variant="secondary" onClick={() => handleButtonClick('serviço')}>
+                Serviço
+              </Button>
+            </div>
+          </Form.Group>
+        </Form>
+
+        <Modal show={showModal} onHide={() => setShowModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Selecione um {saleType}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <SelectableTable
+              data={saleType === 'produto' ? produtos : services}
+              saleType={saleType}
+              handleItemClick={handleItemClick}
+            />
+          </Modal.Body>
+        </Modal>
+
+        {confirmationData && (
+          <div className="mt-5">
+            <h4>Confirmação de Venda</h4>
+            <p>
+              <strong>Tipo de Venda:</strong> {confirmationData.saleType}
+            </p>
+            <p>
+              <strong>Item:</strong> {confirmationData.item.nome}
+            </p>
+            <p>
+              <strong>Preço Unitário:</strong> R${confirmationData.item.valor?.toFixed(2)}
+            </p>
+            <Form.Group>
+              <Form.Label>
+                {saleType === 'produto' ? 'Quantidade' : 'Horas de Uso'}
+              </Form.Label>
+              <Form.Control
+                type="number"
+                min={saleType === 'produto' ? 1 : confirmationData.item.horaMinima}
+                value={quantity}
+                onChange={handleQuantityChange}
+              />
+            </Form.Group>
+            <p>
+              <strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}
+            </p>
+            <Button variant="success" onClick={handleConfirm} className="me-2">
+              Confirmar Venda
+            </Button>
+            <Button variant="danger" onClick={handleCancel}>
+              Cancelar Venda
+            </Button>
           </div>
-       </Card>
-       </Menu>
+        )}
 
-        
-    );
-}
+        {showSuccess && (
+          <Alert variant="success" className="mt-3">
+            Pedido concluído com sucesso!
+          </Alert>
+        )}
+      </div>
+    </Card>
+  );
+};
 
 export default Vendas;

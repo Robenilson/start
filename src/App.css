@@ -1,3 +1,9 @@
+.custom-modal-width .modal-dialog {
+  max-width: 80%; /* ajuste conforme necessário */
+}
+
+
+
 .App {
   text-align: center;
 }
