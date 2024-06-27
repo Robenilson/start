@@ -21,13 +21,13 @@ const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
           <tr key={pedido.id}>
             <td>{pedido.clientId}</td>
             <td>{pedido.tipo}</td>
-            <td>{pedido.produto}</td>
+            {    }
             <td>R${pedido.precoTotal.toFixed(2)}</td>
             <td>R${pedido.desconto.toFixed(2)}</td>
             <td>R${pedido.credito.toFixed(2)}</td>
             <td>{pedido.saleStatus}</td>
             <td>
-              <Button onClick={() => handlePedidoFormaPagamento(index)}>Forma de Pagamento</Button>
+              <Button onClick={() => handlePedidoFormaPagamento(index)}>Detalhes da Veda </Button>
             </td>
           </tr>
         ))}

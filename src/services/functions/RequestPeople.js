@@ -24,7 +24,6 @@ export async function FetchUser() {
 
 //Faz  uma pesquisa na tabela usuario 
 export async function FetchUserCPF(data) {
-  console.log(`${endPoints.urlUserCPF}${data}`,)
   var config = serviceRetornarConfig(
     "get",
     `${endPoints.urlUserCPF}${data}`,
@@ -41,7 +40,6 @@ export async function FetchUserCPF(data) {
 
 //Faz  uma pesquisa por id na  tabela usuario 
 export async function FetchUserByID(data) {
-  console.log(`${endPoints.urlUserByid}/${data}`,)
   var config = serviceRetornarConfig(
     "get",
     `${endPoints.urlUserByid}/${data}`,
@@ -50,6 +48,7 @@ export async function FetchUserByID(data) {
 
   try {
     const response= await axios(config);
+    
     return response.data;
   } catch (error) {
     return serviceRetornarErro(error);

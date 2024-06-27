@@ -38,15 +38,26 @@ export async function CloseBox(useid,data) {
 }
 
 
-function Name(value){
-  FetchUserByID(value)
-  .then(response => {
-    console.log(response)
-    return response;
-  }).catch(error => {
-    console.error(error);
-  });
-}
+
+
+
+export async function Name(clientId) {
+  // Simulação de uma chamada à API ou banco de dados
+  try {
+    const response = FetchUserByID(clientId).then(
+      data=>{
+        return data;
+
+      }
+    )
+  
+   // const cliente = await response.json();
+ //   return response;
+  } catch (error) {
+    console.error('Erro ao buscar o cliente:', error);
+    return undefined;
+  }
+};
 
 
 
@@ -83,7 +94,6 @@ const getRole = (roleNumber) => {
 
   //Lista pedidoscom o id 
   export async function FetchBoxById(data) {
-    console.log(`${endPoints.urlGetBox}/${data}`);
     var config = serviceRetornarConfig(
       "get",
       `${endPoints.urlGetBox}/${data}`,
@@ -144,27 +154,9 @@ const getRole = (roleNumber) => {
 
   //Converte  para Exibir na tela 
   export async function ViewDataObjectBox(data) {
-    console.log(data)
-    try {
-      let value;
-      console.log(data)
-   /*   <tr key={pedido.id}>
-            <td>{pedido.id}</td>
-
-
-              {
-    "id": "cf0f429d-7c65-4865-a7ce-7c5f6431b991",
-    "dtSale": "0001-01-01T00:00:00",
-    "produtos": [],
-    "clientId": 123456,
-    "employeerId": 0,
     
-  }
-*/
-
-
-
- 
+    try {
+      let value; 
 
       if (data && Array.isArray(data)) {
         value= data.map(s => ({
@@ -176,7 +168,7 @@ const getRole = (roleNumber) => {
           credito:   s.credito,
           payments: "null",
           saleStatus:s.saleStatus,
-          produto:"null",
+          produto: s.produtos,
           dtSale :s.dtSale
 
         }));

@@ -6,7 +6,7 @@ import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox,  FetchBox, CloseBox ,FetchBoxById, PutCompletBox,
+import { OpenBox,  FetchBox, CloseBox ,FetchBoxById, PutCompletBox,Name,
   createDataObjectBox, ViewDataObjectBox} from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido'; 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -16,6 +16,7 @@ const Caixa = () => {
   const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
   const [valorInicial, setValorInicial] = useState('');
   const [saldo, setSaldo] = useState(0);
+  const [cliente, setcliente] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const [pedidos, setPedidos] = useState([]);
   const [servicosUtilizados, setServicosUtilizados] = useState([]);
@@ -36,11 +37,21 @@ const Caixa = () => {
     }
   }, []);
 
-  const updateBox = async() =>{
-    await  ViewDataObjectBox(await FetchBox()).then(
-      data=>{setPedidos(data)   }
-    )    
-  }
+  const updateBox = async () => {
+
+      const boxData = await FetchBox();
+      const viewData = await ViewDataObjectBox(boxData);
+      setPedidos(viewData)
+      console.log(viewData)
+
+    
+
+      
+
+
+     
+  };
+  
 
   useEffect(() => {
     if (caixaAberto) {
