@@ -108,6 +108,56 @@ const getRole = (roleNumber) => {
     }
   }
 
+    //Lista  Produtos por id 
+    export async function GetByIdProdutos(data) {
+      var config = serviceRetornarConfig(
+        "get",
+        `${endPoints.urlGetByIdProdutos}${data}`,
+        true
+      );
+    
+      try {
+        const response= await axios(config);
+        return response.data;
+      } catch (error) {
+        return serviceRetornarErro(error);
+      }
+    }
+
+
+  //Lista Serviços por   id 
+  export async function GetByIdServicos(data) {
+    var config = serviceRetornarConfig(
+      "get",
+      `${endPoints.urlGetByIdServicos}${data}`,
+      true
+    );
+  
+    try {
+      const response= await axios(config);
+      return response.data;
+    } catch (error) {
+      return serviceRetornarErro(error);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //Converte para Inserir no banco
   export async function createDataObjectBox(userValues) {

@@ -18,6 +18,10 @@ export const endPoints = {
     urlProductAll:backHost+"/api/SalesProduct/Allproducts",
     urlAddNewProduct:backHost+"/api/SalesProduct/product",
     urlDeletProduct:backHost+"/api/Product",
+    urlGetByIdProdutos:backHost+"/api/SalesProduct/GetProductById?id=",
+    urlGetByIdServicos:backHost+"/api/SalesProduct/GetServiceById?id=",
+
+
 
 
     //UrlServices

@@ -8,7 +8,7 @@ import { NewSale } from '../../services/functions/RequestSales';
 import SelectableTable from './componente/SelectableTable'; 
 
 const Vendas = () => {
-  const [cliente, setCliente] = useState(null); // Inicializando como null
+  const [cliente, setCliente] = useState(null);
   const [cpf, setCpf] = useState('');
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -19,23 +19,45 @@ const Vendas = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [services, setServices] = useState([]);
   const [produtos, setProdutos] = useState([]);
+  const [formData, setFormData] = useState({
+    id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    dtSale: new Date().toISOString(),
+    produtos: [],
+    clientId: 0,
+    employeerId: 0,
+    precoTotal: 0,
+    desconto: 0,
+    credito: 0,
+    saleStatus: 0,
+    payments: [
+      {
+        id: 0,
+        value: 0,
+        paymentMethod: "string",
+        orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      }
+    ]
+  });
+
   const user = JSON.parse(localStorage.getItem('user'));
 
-  const UpdateServece = async () => {
-    setServices(await fetchService());   
-  };
-
   useEffect(() => {
-    UpdateServece();
+    async function fetchData() {
+      await UpdateServece();
+      await UpdateProduct();
+    }
+    fetchData();
   }, []);
+
+  const UpdateServece = async () => {
+    const fetchedServices = await fetchService();
+    setServices(fetchedServices);
+  };
 
   const UpdateProduct = async () => {
-    setProdutos(await fetchProduct());
+    const fetchedProducts = await fetchProduct();
+    setProdutos(fetchedProducts);
   };
-
-  useEffect(() => {
-    UpdateProduct();
-  }, []);
 
   const handleButtonClick = (type) => {
     setSaleType(type);
@@ -64,41 +86,38 @@ const Vendas = () => {
 
     const productType = saleType === 'produto' ? 1 : 2;
 
-    const data = {
-      id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      dtSale: new Date().toISOString(),
-      produtos: [
-        {
-          productId: selectedItem.id,  
-          quantity: quantity,
-          orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",  
-          productType: productType,
-        }
-      ],
+    const newProduct = {
+      productId: selectedItem.id,
+      quantity: quantity,
+      orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      productType: productType,
+    };
+
+    const newData = {
+      ...formData,
+      produtos: [...formData.produtos, newProduct],
       clientId: parseInt(cliente.id),
       employeerId: parseInt(user.EmployeerId),
       precoTotal: parseInt(confirmationData.total),
-      desconto: 0,
-      credito: 0,
-      saleStatus: 0,
       payments: [
         {
-          id: 0,
+          ...formData.payments[0],
           value: parseInt(confirmationData.total),
-          paymentMethodId: 0,
-          paymentMethod: {
-            id: 0,
-            nome: "string"
-          }
         }
       ]
     };
-    console.log(data)
 
-    await NewSale(data);
-    setShowSuccess(true);
-    setTimeout(clearState, 5000);
+    setFormData(newData);
 
+    try {
+
+      console.log(newData)
+      await NewSale(newData);
+      setShowSuccess(true);
+      setTimeout(clearState, 5000);
+    } catch (error) {
+      console.error('Erro ao criar nova venda:', error);
+    }
   };
 
   const handleCancel = () => {
@@ -113,7 +132,26 @@ const Vendas = () => {
     setConfirmationData(null);
     setQuantity(1);
     setShowSuccess(false);
-    setCliente(null); // Resetando o estado do cliente
+    setCliente(null);
+    setFormData({
+      dtSale: new Date().toISOString(),
+      produtos: [],
+      clientId: 0,
+      employeerId: 0,
+      precoTotal: 0,
+      desconto: 0,
+      credito: 0,
+      saleStatus: 0,
+      payments: [
+        {
+          id: 0,
+          value: 0,
+          paymentMethod: "string",
+          orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        }
+      ]
+
+    });
   };
 
   const handleQuantityChange = (event) => {
@@ -134,7 +172,7 @@ const Vendas = () => {
       const user = await FetchUserCPF(cpf);
 
       if (user) {
-        setCliente(user); // Salvando o objeto completo do cliente
+        setCliente(user);
         setNomeUsuario(user.nome);
       } else {
         alert('Usuário não cadastrado');

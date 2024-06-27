@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 
@@ -8,12 +9,8 @@ const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
         <tr>
           <th>Cliente ID</th>
           <th>Tipo</th>
-          <th>Produto</th>
           <th>Preço Total</th>
-          <th>Desconto</th>
-          <th>Crédito</th>
           <th>Status</th>
-          <th>Ação</th>
         </tr>
       </thead>
       <tbody>
@@ -21,13 +18,9 @@ const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
           <tr key={pedido.id}>
             <td>{pedido.clientId}</td>
             <td>{pedido.tipo}</td>
-            {    }
-            <td>R${pedido.precoTotal.toFixed(2)}</td>
-            <td>R${pedido.desconto.toFixed(2)}</td>
-            <td>R${pedido.credito.toFixed(2)}</td>
             <td>{pedido.saleStatus}</td>
             <td>
-              <Button onClick={() => handlePedidoFormaPagamento(index)}>Detalhes da Veda </Button>
+              <Button onClick={() => handlePedidoFormaPagamento(index)}>Detalhes do Pedido</Button>
             </td>
           </tr>
         ))}
