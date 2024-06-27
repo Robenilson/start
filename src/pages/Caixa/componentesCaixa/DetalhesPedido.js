@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FetchUserByID } from '../../../services/functions/RequestPeople';
-import { GetByIdProdutos, GetByIdServicos ,PutCompletBox } from '../../../services/functions/RequestBox';
+import { GetByIdProdutos, GetByIdServicos, PutCompletBox } from '../../../services/functions/RequestBox';
 import { Form, Button, Table } from 'react-bootstrap';
 
-const DetalhesPedido = ({ pedido }) => {
+const DetalhesPedido = ({ pedido  , onHide }) => {
   const [cliente, setCliente] = useState(null);
   const [erro, setErro] = useState(null);
   const [formaPagamento, setFormaPagamento] = useState('');
@@ -26,8 +26,6 @@ const DetalhesPedido = ({ pedido }) => {
   const fetchProdutoDetalhado = (orderId) => {
     GetByIdProdutos(orderId)
       .then(detalhes => {
-
-        
         setProdutoDetalhado(detalhes);
       })
       .catch(error => {
@@ -58,7 +56,46 @@ const DetalhesPedido = ({ pedido }) => {
   const handleConfirmarPagamento = () => {
     console.log('Forma de Pagamento:', formaPagamento);
     console.log('Desconto:', desconto);
-    // Lógica para confirmar o pagamento
+
+    // Montando o objeto data conforme especificado
+    const data = {
+      dtSale: new Date().toISOString(),
+      produtos: pedido.produto.map(prod => ({
+        productId: prod.orderId,
+        quantity: prod.quantity,
+        orderId: prod.orderId,
+        productType: prod.productType
+      })),
+      clientId: pedido.clientId || 0,
+      employeerId: 0, // Defina o employeerId conforme necessário
+      precoTotal: pedido.precoTotal || 0,
+      desconto: parseFloat(desconto) || 0,
+      credito: 0,
+      saleStatus: 0,
+      payments: [{
+        id: 0,
+        value: 0,
+        paymentMethodId: 0,
+        paymentMethod: {
+          id: 0,
+          nome: formaPagamento
+        }
+      }]
+    };
+
+
+    // Chamar a função PutCompletBox com os dados montados
+    PutCompletBox(data)
+      .then(response => {
+        console.log('Venda concluída com sucesso:');
+        // Lógica adicional após a conclusão da venda, se necessário
+      })
+      .catch(error => {
+        console.error('Erro ao concluir a venda:');
+        // Lógica para tratamento de erro, se necessário
+      });
+
+      onHide()
   };
 
   return (
@@ -75,7 +112,7 @@ const DetalhesPedido = ({ pedido }) => {
                 <p>Product ID: {produto.orderId}</p>
                 <p>Quantidade: {produto.quantity}</p>
                 <p>Tipo do Produto: {produto.productType}</p>
-                {produto.productType === 1 && produtoDetalhado && ( // Verifica se é tipo 1 e se detalhes estão disponíveis
+                {produto.productType === 1 && produtoDetalhado && (
                   <div>
                     <p>Detalhes do Produto:</p>
                     <p>ID: {produtoDetalhado.id}</p>
@@ -116,8 +153,9 @@ const DetalhesPedido = ({ pedido }) => {
           />
         </Form.Group>
 
-       
-       
+        <Button variant="primary" onClick={handleConfirmarPagamento}>
+          Confirmar Pagamento
+        </Button>
       </Form>
 
       {erro && <p style={{ color: 'red' }}>{erro}</p>}

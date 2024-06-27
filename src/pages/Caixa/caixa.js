@@ -100,15 +100,6 @@ const Caixa = () => {
   };
 
   const handleCloseConfirmacaoVenda = () => {
-
-  
-
-
-
-
-    
-
-    console.log("OK")
     setShowModalConfirmacaoVenda(false);
   };
 
@@ -184,14 +175,9 @@ const Caixa = () => {
             <Modal.Title>Confirmação de Venda</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <DetalhesPedido pedido={pedidos[pedidoSelecionado]} />
-            <p>A venda foi concluída ou cancelada?</p>
-            <Button variant="success" onClick={handleVendaConcluida}>
-              Concluída
-            </Button>
-            <Button variant="danger" onClick={handleCloseConfirmacaoVenda} className="ms-2">
-              Cancelada
-            </Button>
+            <DetalhesPedido pedido={pedidos[pedidoSelecionado]}  onHide={handleCloseConfirmacaoVenda}  />
+            
+            
           </Modal.Body>
         </Modal>
 
