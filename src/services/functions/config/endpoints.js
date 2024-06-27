@@ -35,7 +35,7 @@ export const endPoints = {
     urlOpenBox:backHost + "/api/CashierOrder/open?",
     urlGetBox:backHost +"/api/SalesOrder",
     urlCloseBox:backHost +"/api/CashierOrder/close",
-    urlPutBox:backHost +"/api/CashierOrder",
+    urlPutBox:backHost +"/api/SalesOrder",
   
 
 
@@ -44,7 +44,7 @@ export const endPoints = {
 
 
    
-    
+//?    
 
 
     usuarioLogin: backHost + "/login",

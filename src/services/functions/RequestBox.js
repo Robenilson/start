@@ -251,7 +251,7 @@ const getRole = (roleNumber) => {
 export async function PutCompletBox(data) {
   var config = serviceRetornarConfig(
     "put",
-    `${endPoints.urlPutBox}/${data}`,
+    `${endPoints.urlPutBox}/${data}/complete`,
     true
   );
 
