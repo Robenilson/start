@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FetchUserByID } from '../../../services/functions/RequestPeople';
-import { GetByIdProdutos, GetByIdServicos } from '../../../services/functions/RequestBox';
+import { GetByIdProdutos, GetByIdServicos ,PutCompletBox } from '../../../services/functions/RequestBox';
 import { Form, Button, Table } from 'react-bootstrap';
 
 const DetalhesPedido = ({ pedido }) => {
@@ -27,7 +27,7 @@ const DetalhesPedido = ({ pedido }) => {
     GetByIdProdutos(orderId)
       .then(detalhes => {
 
-        console.log(detalhes)
+        
         setProdutoDetalhado(detalhes);
       })
       .catch(error => {
@@ -116,9 +116,8 @@ const DetalhesPedido = ({ pedido }) => {
           />
         </Form.Group>
 
-        <Button variant="primary" onClick={handleConfirmarPagamento}>
-          Confirmar Pagamento
-        </Button>
+       
+       
       </Form>
 
       {erro && <p style={{ color: 'red' }}>{erro}</p>}

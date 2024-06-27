@@ -12,6 +12,8 @@ import { endPoints } from "./config/endpoints";
 
 
 
+
+
 //Adiciona um nova Venda
 export async function NewSale(data) {
     var config = serviceRetornarConfig(
@@ -26,4 +28,4 @@ export async function NewSale(data) {
       return serviceRetornarErro(error);
     }
   }
-  
+ 

@@ -249,6 +249,7 @@ const getRole = (roleNumber) => {
 
 //Put  Box
 export async function PutCompletBox(data) {
+  console.log(data)
   var config = serviceRetornarConfig(
     "put",
     `${endPoints.urlPutBox}/${data}/complete`,

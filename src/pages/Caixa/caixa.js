@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox, FetchBox, CloseBox, FetchBoxById, PutCompletBox, Name, createDataObjectBox, ViewDataObjectBox } from "../../services/functions/RequestBox";
+import { OpenBox, FetchBox, CloseBox, FetchBoxById, PutCompletBox, Name, createDataObjectBox, ViewDataObjectBox , } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido'; 
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -100,6 +100,15 @@ const Caixa = () => {
   };
 
   const handleCloseConfirmacaoVenda = () => {
+
+  
+
+
+
+
+    
+
+    console.log("OK")
     setShowModalConfirmacaoVenda(false);
   };
 
