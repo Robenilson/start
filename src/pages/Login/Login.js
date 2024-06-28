@@ -4,7 +4,7 @@ import Card from '../../components/Card';
 import { loginUser } from "../../services/functions/RequestLogin";
 import { useNavigate } from 'react-router-dom';
 import { urls } from "../../services/static/js/urls";
-import jwtDecode from 'jwt-decode'; // Update import statement
+import { jwtDecode } from 'jwt-decode'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
