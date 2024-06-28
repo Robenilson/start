@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox, FetchBox, CloseBox, FetchBoxById, PutCompletBox, Name, createDataObjectBox, ViewDataObjectBox , } from "../../services/functions/RequestBox";
-import DetalhesPedido from './componentesCaixa/DetalhesPedido'; 
+import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectBox } from "../../services/functions/RequestBox";
+import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -38,7 +37,7 @@ const Caixa = () => {
     const boxData = await FetchBox();
     const viewData = await ViewDataObjectBox(boxData);
     setPedidos(viewData);
-    console.log(viewData);
+    console.log(pedidos);
   };
 
   useEffect(() => {
@@ -175,9 +174,7 @@ const Caixa = () => {
             <Modal.Title>Confirmação de Venda</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <DetalhesPedido pedido={pedidos[pedidoSelecionado]}  onHide={handleCloseConfirmacaoVenda}  />
-            
-            
+            <DetalhesPedido pedido={pedidos[pedidoSelecionado]} onHide={handleCloseConfirmacaoVenda} />
           </Modal.Body>
         </Modal>
 

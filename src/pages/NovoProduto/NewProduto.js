@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
 import Card from '../../components/Card';
@@ -16,7 +15,7 @@ const NewCadastro = () => {
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [produtoValues, setProdutoValues] = useState({ nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
-  const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '', descricaoServico: '' });
+  const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
   const [error, setError] = useState(null);
@@ -31,9 +30,7 @@ const NewCadastro = () => {
   const servicoFields = [
     { name: 'nomeServico', label: 'Nome do Serviço', type: 'text', placeholder: 'Nome do Serviço' },
     { name: 'valorServico', label: 'Valor', type: 'number', placeholder: 'R$0,00', step: '0.01' },
-    { name: 'horas', label: 'Horas', type: 'number', placeholder: 'Horas' },
-    { name: 'minutos', label: 'Minutos', type: 'number', placeholder: 'Minutos' },
-    { name: 'segundos', label: 'Segundos', type: 'number', placeholder: 'Segundos' },
+    { name: 'tempo', label: 'Tempo (HH:MM:SS)', type: 'text', placeholder: '00:00:00' }, // Campo combinado
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
     { name: 'descricaoServico', label: 'Descrição', type: 'text', placeholder: 'Descrição do Serviço' },
   ];
@@ -84,7 +81,7 @@ const NewCadastro = () => {
 
   const handleCloseServico = () => {
     setShowModalServico(false);
-    setServicoValues({ nomeServico: '', valorServico: '', horas: '', minutos: '', segundos: '', quantidade: '', descricaoServico: '' });
+    setServicoValues({ nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
   };
 
   const handleCadastroProduto = async () => {
@@ -106,10 +103,12 @@ const NewCadastro = () => {
   };
 
   const handleCadastroServico = async () => {
+    const [horas, minutos, segundos] = servicoValues.tempo.split(':').map(Number); // Divida o valor do tempo
+
     const data = {
       name: servicoValues.nomeServico,
-      price: parseInt(servicoValues.valorServico),
-      quantityHours: parseInt(servicoValues.horas) * 3600 + parseInt(servicoValues.minutos) * 60 + parseInt(servicoValues.segundos),
+      price: parseFloat(servicoValues.valorServico),
+      quantityHours: horas * 3600 + minutos * 60 + segundos,
       description: servicoValues.descricaoServico,
     };
 
@@ -142,8 +141,17 @@ const NewCadastro = () => {
 
   const handleEditServico = (index) => {
     const servico = servicos[index];
-    const [horas, minutos, segundos] = servico.horaMinima.split(':');
-    setServicoValues({ nomeServico: servico.nome, valorServico: servico.valor, horas, minutos, segundos, quantidade: servico.quantidade, descricaoServico: servico.descricao });
+    const horas = Math.floor(servico.quantityHours / 3600);
+    const minutos = Math.floor((servico.quantityHours % 3600) / 60);
+    const segundos = servico.quantityHours % 60;
+
+    setServicoValues({
+      nomeServico: servico.nome,
+      valorServico: servico.valor,
+      tempo: `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`, // Valor combinado
+      quantidade: servico.quantidade,
+      descricaoServico: servico.descricao,
+    });
     setServicos(servicos.filter((_, i) => i !== index));
     setShowModalServico(true);
   };

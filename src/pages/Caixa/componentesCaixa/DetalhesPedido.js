@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { FetchUserByID } from '../../../services/functions/RequestPeople';
-import { GetByIdProdutos, GetByIdServicos, PutCompletBox } from '../../../services/functions/RequestBox';
-import { Form, Button, Table } from 'react-bootstrap';
+import { PutCompletBox } from '../../../services/functions/RequestBox';
+import { Form, Button } from 'react-bootstrap';
 
-const DetalhesPedido = ({ pedido  , onHide }) => {
+const DetalhesPedido = ({ pedido, onHide }) => {
   const [cliente, setCliente] = useState(null);
   const [erro, setErro] = useState(null);
   const [formaPagamento, setFormaPagamento] = useState('');
   const [desconto, setDesconto] = useState('');
-  const [produtoDetalhado, setProdutoDetalhado] = useState(null); // Estado para armazenar os detalhes do produto
 
   useEffect(() => {
+    console.log(pedido);
     if (pedido && pedido.clientId) {
       FetchUserByID(pedido.clientId)
         .then(response => {
@@ -20,28 +20,6 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
           setErro('Erro ao buscar o cliente.');
           console.error(error);
         });
-    }
-  }, [pedido]);
-
-  const fetchProdutoDetalhado = (orderId) => {
-    GetByIdProdutos(orderId)
-      .then(detalhes => {
-        setProdutoDetalhado(detalhes);
-      })
-      .catch(error => {
-        setErro('Erro ao buscar detalhes do produto.');
-        console.error(error);
-      });
-  };
-
-  useEffect(() => {
-    // Verifica se há produtos para buscar detalhes
-    if (pedido && pedido.produto) {
-      pedido.produto.forEach(produto => {
-        if (produto.productType === 1) { // Verifica se é do tipo produto
-          fetchProdutoDetalhado(produto.orderId);
-        }
-      });
     }
   }, [pedido]);
 
@@ -72,17 +50,8 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
       desconto: parseFloat(desconto) || 0,
       credito: 0,
       saleStatus: 0,
-      payments: [{
-        id: 0,
-        value: 0,
-        paymentMethodId: 0,
-        paymentMethod: {
-          id: 0,
-          nome: formaPagamento
-        }
-      }]
+      payments: null,
     };
-
 
     // Chamar a função PutCompletBox com os dados montados
     PutCompletBox(data)
@@ -95,7 +64,7 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
         // Lógica para tratamento de erro, se necessário
       });
 
-      onHide()
+    onHide();
   };
 
   return (
@@ -109,17 +78,13 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
           <ul>
             {pedido.produto.map((produto, index) => (
               <li key={index}>
-                <p>Product ID: {produto.orderId}</p>
-                <p>Quantidade: {produto.quantity}</p>
-                <p>Tipo do Produto: {produto.productType}</p>
-                {produto.productType === 1 && produtoDetalhado && (
+                {produto.productType === 1 && (
                   <div>
                     <p>Detalhes do Produto:</p>
-                    <p>ID: {produtoDetalhado.id}</p>
-                    <p>Nome: {produtoDetalhado.name}</p>
-                    <p>Descrição: {produtoDetalhado.description}</p>
-                    <p>Preço: R${produtoDetalhado.price}</p>
-                    <p>Quantidade: {produtoDetalhado.quantity}</p>
+                    <p>Nome: {produto.name}</p>
+                    <p>Descrição: {produto.description}</p>
+                    <p>Preço: R${produto.price}</p>
+                    <p>Quantidade: {produto.quantity}</p>
                   </div>
                 )}
               </li>
