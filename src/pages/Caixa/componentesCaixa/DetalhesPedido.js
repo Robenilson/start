@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { FetchUserByID } from '../../../services/functions/RequestPeople';
-import { GetByIdProdutos, GetByIdServicos, PutCompletBox } from '../../../services/functions/RequestBox';
-import { Form, Button, Table } from 'react-bootstrap';
+import { PutCompletBox } from '../../../services/functions/RequestBox';
+import { Form, Button } from 'react-bootstrap';
 
-const DetalhesPedido = ({ pedido  , onHide }) => {
+const DetalhesPedido = ({ pedido, onHide }) => {
   const [cliente, setCliente] = useState(null);
   const [erro, setErro] = useState(null);
   const [formaPagamento, setFormaPagamento] = useState('');
   const [desconto, setDesconto] = useState('');
-  const [produtoDetalhado, setProdutoDetalhado] = useState(null); // Estado para armazenar os detalhes do produto
+  const [valorTotal, setValorTotal] = useState(0); // Novo estado para capturar o valor total do pedido
+  const [paymentMethod, setPaymentMethod] = useState(''); // Novo estado para capturar o método de pagamento selecionado
 
   useEffect(() => {
+    console.log(pedido);
     if (pedido && pedido.clientId) {
       FetchUserByID(pedido.clientId)
         .then(response => {
@@ -21,27 +23,13 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
           console.error(error);
         });
     }
-  }, [pedido]);
 
-  const fetchProdutoDetalhado = (orderId) => {
-    GetByIdProdutos(orderId)
-      .then(detalhes => {
-        setProdutoDetalhado(detalhes);
-      })
-      .catch(error => {
-        setErro('Erro ao buscar detalhes do produto.');
-        console.error(error);
-      });
-  };
-
-  useEffect(() => {
-    // Verifica se há produtos para buscar detalhes
-    if (pedido && pedido.produto) {
-      pedido.produto.forEach(produto => {
-        if (produto.productType === 1) { // Verifica se é do tipo produto
-          fetchProdutoDetalhado(produto.orderId);
-        }
-      });
+    // Calcular o valor total do pedido apenas se houver produtos
+    if (pedido && pedido.produto && pedido.produto.length > 0) {
+      const total = pedido.produto.reduce((acc, prod) => acc + (prod.price * prod.quantity), 0);
+      setValorTotal(total);
+    } else {
+      setValorTotal(0); // Define como zero se não houver produtos
     }
   }, [pedido]);
 
@@ -53,18 +41,24 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
     setDesconto(e.target.value);
   };
 
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
   const handleConfirmarPagamento = () => {
     console.log('Forma de Pagamento:', formaPagamento);
     console.log('Desconto:', desconto);
 
     // Montando o objeto data conforme especificado
     const data = {
-      dtSale: new Date().toISOString(),
+      id: pedido.id, // ID do pedido ou algum identificador único
+      dtSale: new Date().toISOString(), // Data da venda
       produtos: pedido.produto.map(prod => ({
         productId: prod.orderId,
         quantity: prod.quantity,
         orderId: prod.orderId,
-        productType: prod.productType
+        productType: 1, // Valor fixo conforme especificado
+        name: prod.name // Nome do produto
       })),
       clientId: pedido.clientId || 0,
       employeerId: 0, // Defina o employeerId conforme necessário
@@ -72,30 +66,30 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
       desconto: parseFloat(desconto) || 0,
       credito: 0,
       saleStatus: 0,
-      payments: [{
-        id: 0,
-        value: 0,
-        paymentMethodId: 0,
-        paymentMethod: {
-          id: 0,
-          nome: formaPagamento
+      payments: [
+        {
+          id: 0, // ID do pagamento (se necessário)
+          value: valorTotal || 0, // Valor total do pedido
+          paymentMethod: paymentMethod, // Método de pagamento selecionado
+          orderId: pedido.id // ID do pedido ou algum identificador único
         }
-      }]
+      ]
     };
 
-
     // Chamar a função PutCompletBox com os dados montados
+
+    console.log(data)
     PutCompletBox(data)
       .then(response => {
-        console.log('Venda concluída com sucesso:');
+        console.log('Venda concluída com sucesso:', response.data);
         // Lógica adicional após a conclusão da venda, se necessário
       })
       .catch(error => {
-        console.error('Erro ao concluir a venda:');
+        console.error('Erro ao concluir a venda:', error);
         // Lógica para tratamento de erro, se necessário
       });
 
-      onHide()
+    onHide();
   };
 
   return (
@@ -109,17 +103,13 @@ const DetalhesPedido = ({ pedido  , onHide }) => {
           <ul>
             {pedido.produto.map((produto, index) => (
               <li key={index}>
-                <p>Product ID: {produto.orderId}</p>
-                <p>Quantidade: {produto.quantity}</p>
-                <p>Tipo do Produto: {produto.productType}</p>
-                {produto.productType === 1 && produtoDetalhado && (
+                {produto.productType === 1 && (
                   <div>
                     <p>Detalhes do Produto:</p>
-                    <p>ID: {produtoDetalhado.id}</p>
-                    <p>Nome: {produtoDetalhado.name}</p>
-                    <p>Descrição: {produtoDetalhado.description}</p>
-                    <p>Preço: R${produtoDetalhado.price}</p>
-                    <p>Quantidade: {produtoDetalhado.quantity}</p>
+                    <p>Nome: {produto.name}</p>
+                    <p>Descrição: {produto.description}</p>
+                    <p>Preço: R${produto.price}</p>
+                    <p>Quantidade: {produto.quantity}</p>
                   </div>
                 )}
               </li>

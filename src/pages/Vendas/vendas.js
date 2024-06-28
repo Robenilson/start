@@ -91,6 +91,7 @@ const Vendas = () => {
       quantity: quantity,
       orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       productType: productType,
+      name: selectedItem.nome
     };
 
     const newData = {
@@ -107,12 +108,36 @@ const Vendas = () => {
       ]
     };
 
-    setFormData(newData);
+    // Verificar e ajustar estrutura e tipagem do JSON
+    const validData = {
+      id: newData.id,
+      dtSale: newData.dtSale,
+      produtos: newData.produtos.map(produto => ({
+        productId: String(produto.productId),
+        quantity: Number(produto.quantity),
+        orderId: String(produto.orderId),
+        productType: Number(produto.productType),
+        name: String(produto.name)
+      })),
+      clientId: Number(newData.clientId),
+      employeerId: Number(newData.employeerId),
+      precoTotal: Number(newData.precoTotal),
+      desconto: Number(newData.desconto),
+      credito: Number(newData.credito),
+      saleStatus: Number(newData.saleStatus),
+      payments: newData.payments.map(payment => ({
+        id: Number(payment.id),
+        value: Number(payment.value),
+        paymentMethod: String(payment.paymentMethod),
+        orderId: String(payment.orderId)
+      }))
+    };
+
+    setFormData(validData);
 
     try {
-
-      console.log(newData)
-      await NewSale(newData);
+      console.log(validData);
+      await NewSale(validData);
       setShowSuccess(true);
       setTimeout(clearState, 5000);
     } catch (error) {
