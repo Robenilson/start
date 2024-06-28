@@ -1,20 +1,22 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
-import PedidosTab from './componentesCaixa/PedidosTab'; // Atualize a importação correta para PedidosTab
+import PedidosTab from './componentesCaixa/PedidosTab';
 import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox,  FetchBox, CloseBox ,FetchBoxById, PutCompletBox,
+import { OpenBox,  FetchBox, CloseBox ,FetchBoxById, PutCompletBox,Name,
   createDataObjectBox, ViewDataObjectBox} from "../../services/functions/RequestBox";
+import DetalhesPedido from './componentesCaixa/DetalhesPedido'; 
 const user = JSON.parse(localStorage.getItem('user'));
-
 
 const Caixa = () => {
   const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
   const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
   const [valorInicial, setValorInicial] = useState('');
   const [saldo, setSaldo] = useState(0);
+  const [cliente, setcliente] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const [pedidos, setPedidos] = useState([]);
   const [servicosUtilizados, setServicosUtilizados] = useState([]);
@@ -35,15 +37,21 @@ const Caixa = () => {
     }
   }, []);
 
-  const updateBox = async() =>{
-    await  ViewDataObjectBox(await FetchBox()).then(
-      data=>{console.log(data)}
-    )
- 
-   
-   //setPedidos(data)
+  const updateBox = async () => {
+
+      const boxData = await FetchBox();
+      const viewData = await ViewDataObjectBox(boxData);
+      setPedidos(viewData)
+      console.log(viewData)
+
+    
+
+      
+
+
      
-  }
+  };
+  
 
   useEffect(() => {
     if (caixaAberto) {
@@ -110,7 +118,6 @@ const Caixa = () => {
   };
 
   const handleConfirmarPagamento = () => {
-
     setShowModalPagamento(false);
     setShowModalConfirmacaoVenda(true);
   };
@@ -119,15 +126,14 @@ const Caixa = () => {
     setShowModalConfirmacaoVenda(false);
   };
 
-
-  //Concluir as vendas 
+  // Concluir as vendas
   const handleVendaConcluida = async ()  => {
-    const data={
+    const data = {
       pedidoId: pedidos[pedidoSelecionado].id,
       formaPagamento: formaPagamento
-    }
+    };
     await createDataObjectBox(data).then(
-     data=>{PutCompletBox(data)}
+      data => { PutCompletBox(data) }
     ).then(response => {
       console.log('Venda concluída com sucesso:', response.data);
       const valor = parseFloat(valorInicial);
@@ -135,8 +141,7 @@ const Caixa = () => {
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 5000);
       handleCloseConfirmacaoVenda();
-      })
-    .catch(error => {
+    }).catch(error => {
       console.error('Erro ao concluir ou deletar a venda:', error);
     });
   };
@@ -222,6 +227,7 @@ const Caixa = () => {
             <Modal.Title>Confirmação de Venda</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            <DetalhesPedido pedido={pedidos[pedidoSelecionado]} />
             <p>A venda foi concluída ou cancelada?</p>
             <Button variant="success" onClick={handleVendaConcluida}>
               Concluída

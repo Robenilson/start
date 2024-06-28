@@ -9,6 +9,11 @@ export const endPoints = {
     urlAddNewUser: backHost +"/api/User",
     urlListAllUser:backHost + "/api/User ",
     urlUserCPF:backHost + "/api/User/getByCPF?cpf=",
+    urlUserByid:backHost +  "/api/User",
+
+
+
+   
     //UrlProduct
     urlProductAll:backHost+"/api/SalesProduct/Allproducts",
     urlAddNewProduct:backHost+"/api/SalesProduct/product",

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
 import { endPoints } from "./config/endpoints";
+import   { FetchUserByID} from"./RequestPeople";
 
 
 //Abrir o caixa
@@ -37,6 +38,42 @@ export async function CloseBox(useid,data) {
 }
 
 
+
+
+
+export async function Name(clientId) {
+  // Simulação de uma chamada à API ou banco de dados
+  try {
+    const response = FetchUserByID(clientId).then(
+      data=>{
+        return data;
+
+      }
+    )
+  
+   // const cliente = await response.json();
+ //   return response;
+  } catch (error) {
+    console.error('Erro ao buscar o cliente:', error);
+    return undefined;
+  }
+};
+
+
+
+
+
+
+const getRole = (roleNumber) => {
+  return roleNumber === 1 ? 'Iniciada' :
+         roleNumber === 2 ? 'AguardandoPagamento' :
+         roleNumber === 3 ? '' :
+         roleNumber === 4 ? 'vendedor' :
+         'Role não reconhecido';
+};
+
+
+
 //Lista pedidos do caixa
   export async function FetchBox() {
     var config = serviceRetornarConfig(
@@ -57,7 +94,6 @@ export async function CloseBox(useid,data) {
 
   //Lista pedidoscom o id 
   export async function FetchBoxById(data) {
-    console.log(`${endPoints.urlGetBox}/${data}`);
     var config = serviceRetornarConfig(
       "get",
       `${endPoints.urlGetBox}/${data}`,
@@ -77,7 +113,6 @@ export async function CloseBox(useid,data) {
   export async function createDataObjectBox(userValues) {
     try {
       const  data = {
-        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "dtSale": "2024-06-25T13:59:49.314Z",
         "produtos": [
           {
@@ -115,11 +150,29 @@ export async function CloseBox(useid,data) {
 
 
 
+  
+
   //Converte  para Exibir na tela 
   export async function ViewDataObjectBox(data) {
+    
     try {
-      const value= data
-     
+      let value; 
+
+      if (data && Array.isArray(data)) {
+        value= data.map(s => ({
+          id:s.id,
+          clientId: s.clientId,
+          tipo      : "null",
+          desconto  : s.desconto,
+          precoTotal:s.precoTotal,
+          credito:   s.credito,
+          payments: "null",
+          saleStatus:s.saleStatus,
+          produto: s.produtos,
+          dtSale :s.dtSale
+
+        }));
+      }
      return value;
     } catch (error) {
       console.error('Erro ao converter dados:', error);

@@ -11,6 +11,7 @@ const UserForm = ({ userValues, handleInputChange }) => (
           name="nome"
           value={userValues.nome}
           onChange={handleInputChange}
+          required
         />
       </Form.Group>
 
@@ -43,6 +44,7 @@ const UserForm = ({ userValues, handleInputChange }) => (
           name="dataNascimento"
           value={userValues.dataNascimento}
           onChange={handleInputChange}
+          required
         />
       </Form.Group>
     </Row>
@@ -55,6 +57,7 @@ const UserForm = ({ userValues, handleInputChange }) => (
           name="cpf"
           value={userValues.cpf}
           onChange={handleInputChange}
+          required
         />
       </Form.Group>
 
@@ -71,18 +74,16 @@ const UserForm = ({ userValues, handleInputChange }) => (
     </Row>
 
     <Row className="mb-3">
-    <Form.Group controlId="formPassword">
-      
-      <Form.Label>Senha</Form.Label>
-      <Form.Control
-        type="password"
-        name="password"
-        value={userValues.password}
-        onChange={handleInputChange}
-        placeholder="Digite a senha"
-      />
-    </Form.Group>
-
+      <Form.Group controlId="formPassword">
+        <Form.Label>Senha</Form.Label>
+        <Form.Control
+          type="password"
+          name="password"
+          value={userValues.password}
+          onChange={handleInputChange}
+          placeholder="Digite a senha"
+        />
+      </Form.Group>
     </Row>
 
     <h5>Endereço</h5>
@@ -148,41 +149,41 @@ const UserForm = ({ userValues, handleInputChange }) => (
         <Form.Label>Tipo de Usuário</Form.Label>
         <div>
           <Form.Check
-          type="radio"
-          label="Cliente"
-          name="role"
-          value="1"
-          checked={userValues.role === 'cliente'}
-          onChange={handleInputChange}
-        />
-        <Form.Check
-          type="radio"
-          label="Vendedor"
-          name="role"
-          value="2"
-          checked={userValues.role === 'vendedor'}
-          onChange={handleInputChange}
-        />
-        <Form.Check
-          type="radio"
-          label="Caixa"
-          name="role"
-          value="3"
-          checked={userValues.role === 'caixa'}
-          onChange={handleInputChange}
-        />
-        <Form.Check
-          type="radio"
-          label="Administrador"
-          name="role"
-          value="4"
-          checked={userValues.role === 'administrador'}
-          onChange={handleInputChange}
-        />
-      </div>
-    </Form.Group>
-  </Row>
-</Form>
+            type="radio"
+            label="Cliente"
+            name="role"
+            value="1"
+            checked={userValues.role === 'cliente'}
+            onChange={handleInputChange}
+          />
+          <Form.Check
+            type="radio"
+            label="Vendedor"
+            name="role"
+            value="2"
+            checked={userValues.role === 'vendedor'}
+            onChange={handleInputChange}
+          />
+          <Form.Check
+            type="radio"
+            label="Caixa"
+            name="role"
+            value="3"
+            checked={userValues.role === 'caixa'}
+            onChange={handleInputChange}
+          />
+          <Form.Check
+            type="radio"
+            label="Administrador"
+            name="role"
+            value="4"
+            checked={userValues.role === 'administrador'}
+            onChange={handleInputChange}
+          />
+        </div>
+      </Form.Group>
+    </Row>
+  </Form>
 );
 
 export default UserForm;
