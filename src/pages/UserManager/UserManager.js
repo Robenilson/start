@@ -22,6 +22,7 @@ const UserManager = () => {
     dataNascimento: '',
     cpf: '',
     telefone: '',
+    usertype: '',
     endereco: {
       cep: '',
       cidade: '',
