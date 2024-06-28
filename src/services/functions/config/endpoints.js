@@ -18,6 +18,10 @@ export const endPoints = {
     urlProductAll:backHost+"/api/SalesProduct/Allproducts",
     urlAddNewProduct:backHost+"/api/SalesProduct/product",
     urlDeletProduct:backHost+"/api/Product",
+    urlGetByIdProdutos:backHost+"/api/SalesProduct/GetProductById?id=",
+    urlGetByIdServicos:backHost+"/api/SalesProduct/GetServiceById?id=",
+
+
 
 
     //UrlServices
@@ -31,7 +35,7 @@ export const endPoints = {
     urlOpenBox:backHost + "/api/CashierOrder/open?",
     urlGetBox:backHost +"/api/SalesOrder",
     urlCloseBox:backHost +"/api/CashierOrder/close",
-    urlPutBox:backHost +"/api/CashierOrder",
+    urlPutBox:backHost +"/api/SalesOrder",
   
 
 
@@ -40,7 +44,7 @@ export const endPoints = {
 
 
    
-    
+//?    
 
 
     usuarioLogin: backHost + "/login",

@@ -1,7 +1,6 @@
 
 
 
-
 export function serviceRetornarConfig(method, url, data) {
     const user = localStorage.getItem('user');
     const token = user ? JSON.parse(user).token : null;
