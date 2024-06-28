@@ -8,6 +8,8 @@ const DetalhesPedido = ({ pedido, onHide }) => {
   const [erro, setErro] = useState(null);
   const [formaPagamento, setFormaPagamento] = useState('');
   const [desconto, setDesconto] = useState('');
+  const [valorTotal, setValorTotal] = useState(0); // Novo estado para capturar o valor total do pedido
+  const [paymentMethod, setPaymentMethod] = useState(''); // Novo estado para capturar o método de pagamento selecionado
 
   useEffect(() => {
     console.log(pedido);
@@ -21,6 +23,14 @@ const DetalhesPedido = ({ pedido, onHide }) => {
           console.error(error);
         });
     }
+
+    // Calcular o valor total do pedido apenas se houver produtos
+    if (pedido && pedido.produto && pedido.produto.length > 0) {
+      const total = pedido.produto.reduce((acc, prod) => acc + (prod.price * prod.quantity), 0);
+      setValorTotal(total);
+    } else {
+      setValorTotal(0); // Define como zero se não houver produtos
+    }
   }, [pedido]);
 
   const handleFormaPagamentoChange = (e) => {
@@ -31,18 +41,24 @@ const DetalhesPedido = ({ pedido, onHide }) => {
     setDesconto(e.target.value);
   };
 
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
   const handleConfirmarPagamento = () => {
     console.log('Forma de Pagamento:', formaPagamento);
     console.log('Desconto:', desconto);
 
     // Montando o objeto data conforme especificado
     const data = {
-      dtSale: new Date().toISOString(),
+      id: pedido.id, // ID do pedido ou algum identificador único
+      dtSale: new Date().toISOString(), // Data da venda
       produtos: pedido.produto.map(prod => ({
         productId: prod.orderId,
         quantity: prod.quantity,
         orderId: prod.orderId,
-        productType: prod.productType
+        productType: 1, // Valor fixo conforme especificado
+        name: prod.name // Nome do produto
       })),
       clientId: pedido.clientId || 0,
       employeerId: 0, // Defina o employeerId conforme necessário
@@ -50,17 +66,26 @@ const DetalhesPedido = ({ pedido, onHide }) => {
       desconto: parseFloat(desconto) || 0,
       credito: 0,
       saleStatus: 0,
-      payments: null,
+      payments: [
+        {
+          id: 0, // ID do pagamento (se necessário)
+          value: valorTotal || 0, // Valor total do pedido
+          paymentMethod: paymentMethod, // Método de pagamento selecionado
+          orderId: pedido.id // ID do pedido ou algum identificador único
+        }
+      ]
     };
 
     // Chamar a função PutCompletBox com os dados montados
+
+    console.log(data)
     PutCompletBox(data)
       .then(response => {
-        console.log('Venda concluída com sucesso:');
+        console.log('Venda concluída com sucesso:', response.data);
         // Lógica adicional após a conclusão da venda, se necessário
       })
       .catch(error => {
-        console.error('Erro ao concluir a venda:');
+        console.error('Erro ao concluir a venda:', error);
         // Lógica para tratamento de erro, se necessário
       });
 
