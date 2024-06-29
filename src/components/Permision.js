@@ -15,7 +15,7 @@ const Permision = (props) => {
       break;
     case 'vendedor':
       message = [
-        <OptionNav url="/venda"  name=" Tipo Vendas" />,
+        <OptionNav url="/venda"  name="Vendas" />,
         <OptionNav url={urls.newProdutoPage}  name="Novo Produto" />
       ];
       break;
@@ -26,7 +26,7 @@ const Permision = (props) => {
       message = [
         <OptionNav url={urls.caixaPage}  name="Caixa" />,
         <OptionNav url={urls.relatorio}  name="Relatorio" />,
-        <OptionNav url="/venda"  name=" Tipo Vendas" />,
+        <OptionNav url="/venda"  name="Vendas" />,
         <OptionNav url={urls.newProdutoPage}  name=" Produto " />
 
 

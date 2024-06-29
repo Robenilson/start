@@ -18,7 +18,7 @@ import { endPoints } from "./config/endpoints";
         const product = response.data.map(product => ({
           id: product.id,
           nome: product.name,
-          valor: product.price,
+          valor: parseFloat(product.price),
           quantidade: product.quantity || 0,
           descricao: product.description,
         }));

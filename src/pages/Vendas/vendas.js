@@ -5,7 +5,7 @@ import { fetchService } from '../../services/functions/RequestService';
 import { fetchProduct } from '../../services/functions/RequestProduct';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
 import { NewSale } from '../../services/functions/RequestSales';
-import SelectableTable from './componente/SelectableTable'; 
+import SelectableTable from './componente/SelectableTable';
 
 const Vendas = () => {
   const [cliente, setCliente] = useState(null);
@@ -28,7 +28,7 @@ const Vendas = () => {
     precoTotal: 0,
     desconto: 0,
     credito: 0,
-    saleStatus: 0,
+    saleStatus: 1,
     payments: [
       {
         id: 0,
@@ -78,6 +78,16 @@ const Vendas = () => {
     });
   };
 
+  useEffect(() => {
+    if (selectedItem && confirmationData) {
+      const updatedTotal = selectedItem.valor ? selectedItem.valor * quantity : 0;
+      setConfirmationData((prevConfirmationData) => ({
+        ...prevConfirmationData,
+        total: updatedTotal,
+      }));
+    }
+  }, [quantity, selectedItem]);
+
   const handleConfirm = async () => {
     if (!selectedItem) {
       console.error('Nenhum item selecionado.');
@@ -108,7 +118,6 @@ const Vendas = () => {
       ]
     };
 
-    // Verificar e ajustar estrutura e tipagem do JSON
     const validData = {
       id: newData.id,
       dtSale: newData.dtSale,
@@ -175,21 +184,12 @@ const Vendas = () => {
           orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         }
       ]
-
     });
   };
 
   const handleQuantityChange = (event) => {
     const newQuantity = Number(event.target.value);
     setQuantity(newQuantity);
-    if (selectedItem) {
-      const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
-      setConfirmationData((prevConfirmationData) => ({
-        ...prevConfirmationData,
-        quantity: newQuantity,
-        total: updatedTotal,
-      }));
-    }
   };
 
   const handleValidateUser = async () => {

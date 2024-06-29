@@ -34,7 +34,7 @@ export async function fetchService() {
       const service = response.data.map(service => ({
         id: service.id,
         nome: service.name,
-        valor: service.price,
+        valor: parseFloat(service.price),
         horaMinima: service.quantityHours || 'N/A',
         quantidade: service.quantity || 0,
         descricao: service.description,

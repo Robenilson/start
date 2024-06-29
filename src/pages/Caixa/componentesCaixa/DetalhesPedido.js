@@ -51,34 +51,32 @@ const DetalhesPedido = ({ pedido, onHide }) => {
 
     // Montando o objeto data conforme especificado
     const data = {
-      id: pedido.id, // ID do pedido ou algum identificador único
-      dtSale: new Date().toISOString(), // Data da venda
+      id: pedido.id || '', // ID do pedido ou algum identificador único (tipagem: string)
+      dtSale: new Date().toISOString(), // Data da venda (tipagem: string)
       produtos: pedido.produto.map(prod => ({
-        productId: prod.orderId,
-        quantity: prod.quantity,
-        orderId: prod.orderId,
-        productType: 1, // Valor fixo conforme especificado
-        name: prod.name // Nome do produto
+        productId: prod.productId || '', // ID do produto (tipagem: string)
+        quantity: prod.quantity || 0, // Quantidade do produto (tipagem: number)
+        orderId: prod.orderId || '', // ID do pedido (tipagem: string)
+        productType: prod.productType || 0, // Valor fixo conforme especificado (tipagem: number)
+        name: prod.name || '' // Nome do produto (tipagem: string)
       })),
-      clientId: pedido.clientId || 0,
-      employeerId: 0, // Defina o employeerId conforme necessário
-      precoTotal: pedido.precoTotal || 0,
-      desconto: parseFloat(desconto) || 0,
-      credito: 0,
-      saleStatus: 0,
+      clientId: pedido.clientId || 0, // ID do cliente (tipagem: number)
+      employeerId: pedido.employeerId || 0, // ID do empregado (tipagem: number)
+      precoTotal: pedido.precoTotal || 0, // Preço total do pedido (tipagem: number)
+      desconto: parseFloat(desconto) || 0, // Desconto (tipagem: number)
+      credito: pedido.credito || 0, // Crédito (tipagem: number)
+      saleStatus: pedido.saleStatus || 0, // Status da venda (tipagem: number)
       payments: [
         {
-          id: 0, // ID do pagamento (se necessário)
-          value: valorTotal || 0, // Valor total do pedido
-          paymentMethod: paymentMethod, // Método de pagamento selecionado
-          orderId: pedido.id // ID do pedido ou algum identificador único
+          id: 0, // ID do pagamento (se necessário) (tipagem: number)
+          value: valorTotal || 0, // Valor total do pedido (tipagem: number)
+          paymentMethod: paymentMethod || '', // Método de pagamento selecionado (tipagem: string)
+          orderId: pedido.id || '' // ID do pedido (tipagem: string)
         }
       ]
     };
 
     // Chamar a função PutCompletBox com os dados montados
-
-    console.log(data)
     PutCompletBox(data)
       .then(response => {
         console.log('Venda concluída com sucesso:', response.data);
@@ -107,9 +105,15 @@ const DetalhesPedido = ({ pedido, onHide }) => {
                   <div>
                     <p>Detalhes do Produto:</p>
                     <p>Nome: {produto.name}</p>
-                    <p>Descrição: {produto.description}</p>
-                    <p>Preço: R${produto.price}</p>
                     <p>Quantidade: {produto.quantity}</p>
+                  </div>
+                )}
+                {produto.productType === 2 && (
+                  <div>
+                    <p>Detalhes do Serviço:</p>
+                    <p>Nome: {produto.name}</p>
+                    <p>Quantidade: {produto.quantity}</p>
+                    {/* Adicione outras informações específicas para serviço */}
                   </div>
                 )}
               </li>
