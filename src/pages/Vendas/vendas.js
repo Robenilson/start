@@ -145,7 +145,6 @@ const Vendas = () => {
     setFormData(validData);
 
     try {
-      console.log(validData);
       await NewSale(validData);
       setShowSuccess(true);
       setTimeout(clearState, 5000);

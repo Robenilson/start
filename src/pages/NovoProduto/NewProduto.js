@@ -92,7 +92,7 @@ const NewCadastro = () => {
       quantity: parseInt(produtoValues.quantidade),
     };
     
-    console.log(novoProduto)
+    
 
     
     await newProduct(novoProduto);
@@ -131,7 +131,7 @@ const NewCadastro = () => {
 
     let foundObjects = produtos.filter(item => console.log(item));
 
-    console.log(foundObjects)
+    
 
     
    // const a = produtos.filter((_, i) => i !== index)
