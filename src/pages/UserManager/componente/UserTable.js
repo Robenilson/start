@@ -1,26 +1,33 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 
-const UserTable = ({ users, columns }) => (
-  <Table striped bordered hover className="mt-3 col-md-6">
+const UserTable = ({ users, columns, onEdit, onDelete }) => (
+  <Table striped bordered hover>
     <thead>
       <tr>
-        {columns.map((col, index) => (
-          <th key={index}>{col}</th>
+        {columns.map((column, index) => (
+          <th key={index}>{column}</th>
         ))}
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
       {users.map((user, index) => (
         <tr key={index}>
           <td>{index + 1}</td>
-          {columns.slice(1).map((col, idx) => (
-            <td key={idx}>
-              {col === 'Data de Nascimento'
-                ? new Date(user.dataNascimento).toLocaleDateString()
-                : user[col.toLowerCase()]}
-            </td>
-          ))}
+          <td>{user.nome}</td>
+          <td>{user.sobrenome}</td>
+          <td>{user.email}</td>
+          <td>{user.dataNascimento}</td>
+          <td>{user.cpf}</td>
+          <td>{user.telefone}</td>
+          <td>{user.role}</td>
+          <td>
+           
+            <Button variant="warning" onClick={() => onEdit(user.cpf, user)}>Editar</Button>
+            {' '}
+            <Button variant="danger" onClick={() => onDelete(user)}>Excluir</Button>
+          </td>
         </tr>
       ))}
     </tbody>

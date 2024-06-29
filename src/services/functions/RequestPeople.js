@@ -104,3 +104,16 @@ export async function NewUser(data) {
       throw error;
     }
   }
+
+
+
+  export const UpdateUser = async (userId, updatedUser) => {
+    const response = await axios.put(`/api/users/${userId}`, updatedUser);
+    return response.data;
+  };
+
+
+  export const DeleteUser = async (userId) => {
+    const response = await axios.delete(`/api/users/${userId}`);
+    return response.data;
+  };

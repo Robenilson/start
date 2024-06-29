@@ -32,7 +32,12 @@ const UserManager = () => {
     role: 'cliente',
     password: '',  // Novo campo de senha
   });
+
+
+
+
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingUserId, setEditingUserId] = useState(null); // Estado para armazenar o ID do usuário sendo editado
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,6 +59,7 @@ const UserManager = () => {
   };
 
   const handleShowModal = () => setShowModal(true);
+
   const handleCloseModal = () => {
     setShowModal(false);
     setUserValues({
@@ -73,6 +79,7 @@ const UserManager = () => {
       role: '',
       password: '',  // Certifique-se de que a senha também seja limpa
     });
+    setEditingUserId(null); // Limpar o ID do usuário sendo editado ao fechar o modal
   };
 
   const user = JSON.parse(localStorage.getItem('user'));
@@ -84,9 +91,30 @@ const UserManager = () => {
     handleCloseModal();
   };
 
-  const handleEditUser = async (userId, updatedValues) => {
-    // Chamada ao serviço para editar o usuário
-    await UpdatePessoas();  // Recarregar a lista de pessoas
+  const handleEditUser = async (userId, userData) => {
+    // Define os dados do usuário selecionado no estado `userValues`
+    setUserValues({
+      nome: userData.nome ?? '',
+      sobrenome: userData.sobrenome ?? '',
+      email: userData.email ?? '',
+      dataNascimento: userData.dataNascimento ?? '',
+      cpf: userData.cpf ?? '',
+      telefone: userData.telefone ?? '',
+      endereco: {
+        cep: userData.endereco?.cep ?? '',
+        cidade: userData.endereco?.cidade ?? '',
+        estado: userData.endereco?.estado ?? '',
+        bairro: userData.endereco?.bairro ?? '',
+        numero: userData.endereco?.numero ?? '',
+      },
+      role: userData.role ?? 'cliente', // Define 'cliente' como padrão se o papel não estiver definido
+      password: '', // Mantém a senha vazia para edição
+    });
+    // Define o ID do usuário sendo editado
+    //setEditingUserId(userId);
+  
+    // Abre o modal de edição
+    handleShowModal();
   };
 
   const handleDeleteUser = async (userId) => {
@@ -108,6 +136,7 @@ const UserManager = () => {
 
       if (data && Array.isArray(data)) {
         const users = data.map(user => ({
+          id: user.id, // Adicione o campo ID ou o identificador único do usuário
           nome: user.nome,
           sobrenome: user.sobrenome,
           email: user.email,
@@ -117,7 +146,6 @@ const UserManager = () => {
           role: getRole(user.userType),
         }));
         setPessoas(users);
-        console.log( "USer",users);  // Mova o console.log aqui para verificar os dados antes de definir o estado
       } else {
         console.error("Dados recebidos não são válidos:", data);
       }
@@ -164,24 +192,32 @@ const UserManager = () => {
             <UserTable
               users={clientes}
               columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']}
+              onEdit={handleEditUser} // Passar a função de edição para a tabela
+              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
             />
           </Tab>
           <Tab eventKey="vendedores" title="Vendedores">
             <UserTable
               users={vendedores}
               columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']}
+              onEdit={handleEditUser} // Passar a função de edição para a tabela
+              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
             />
           </Tab>
           <Tab eventKey="caixas" title="Caixas">
             <UserTable
               users={caixas}
               columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']}
+              onEdit={handleEditUser} // Passar a função de edição para a tabela
+              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
             />
           </Tab>
           <Tab eventKey="administradores" title="Administradores">
             <UserTable
               users={administradores}
               columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role']}
+              onEdit={handleEditUser} // Passar a função de edição para a tabela
+              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
             />
           </Tab>
         </Tabs>

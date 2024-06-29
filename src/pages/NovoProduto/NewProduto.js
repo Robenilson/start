@@ -48,7 +48,6 @@ const NewCadastro = () => {
   const updateTabelServicos = async () => {
     try {
       const data = await fetchService();
-      console.log(data)
       setServicos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error updating services:', error);
