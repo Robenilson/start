@@ -22,6 +22,7 @@ const Login = () => {
     try {
       const vRetorno = await loginUser(email, password); // Chamar a função renomeada
 
+
       if (typeof vRetorno === 'string') {
         const userData = jwtDecode(vRetorno);
         userData.token = vRetorno; 
@@ -31,6 +32,38 @@ const Login = () => {
         navigate(urls.userDados);
       } else {
         throw new Error('Token inválido recebido do servidor');
+
+
+    const navigate = useNavigate();
+
+  
+    const [user, setUser] = useState(null)
+  
+
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      setError('');
+        //const vRetorno = await login({ email: email, senha: password });
+
+       const vRetorno = (await axios.post("https://localhost:44363/login?email=admin%40admin.com&password=12345")).data;
+        
+      try {
+  
+        if (typeof vRetorno === 'string') {
+          const userData = jwtDecode(vRetorno);
+          userData.token = vRetorno; 
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+        } else {
+          throw new Error('Token inválido recebido do servidor');
+        }
+      } catch (error) {
+        setError('Erro ao realizar login: ' + error.message);
+      } finally {
+        setLoading(false);
+
       }
     } catch (error) {
       setError('Erro ao realizar login: ' + error.message);
