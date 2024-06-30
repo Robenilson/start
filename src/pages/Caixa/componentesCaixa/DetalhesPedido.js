@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FetchUserByID } from '../../../services/functions/RequestPeople';
 import { PutCompletBox } from '../../../services/functions/RequestBox';
 import { Form, Button } from 'react-bootstrap';
+
 const user = JSON.parse(localStorage.getItem('user'));
 
-
-const DetalhesPedido = ({  pedido, onHide }) => {
+const DetalhesPedido = ({ pedido, onHide }) => {
   const [cliente, setCliente] = useState(null);
   const [erro, setErro] = useState(null);
   const [formaPagamento, setFormaPagamento] = useState('');
@@ -14,16 +14,7 @@ const DetalhesPedido = ({  pedido, onHide }) => {
   const [paymentMethod, setPaymentMethod] = useState(''); // Novo estado para capturar o método de pagamento selecionado
 
   useEffect(() => {
-    if (pedido && pedido.clientId) {
-      FetchUserByID(pedido.clientId)
-        .then(response => {
-          setCliente(response);
-        })
-        .catch(error => {
-          setErro('Erro ao buscar o cliente.');
-          console.error(error);
-        });
-    }
+   
 
     // Calcular o valor total do pedido apenas se houver produtos
     if (pedido && pedido.produto && pedido.produto.length > 0) {
@@ -51,9 +42,8 @@ const DetalhesPedido = ({  pedido, onHide }) => {
     console.log('Desconto:', desconto);
     console.log('Pedido:', pedido);
 
-    // Montando o objeto data conforme especificado
     const data = {
-      id:pedido.id,
+      id: pedido.id,
       dtSale: new Date().toISOString(), // Data da venda (tipagem: string)
       produtos: pedido.produto.map(prod => ({
         productId: prod.productId || '', // ID do produto (tipagem: string)
@@ -63,11 +53,11 @@ const DetalhesPedido = ({  pedido, onHide }) => {
         name: prod.name || '' // Nome do produto (tipagem: string)
       })),
       clientId: pedido.clientId || 0, // ID do cliente (tipagem: number)
-      employeerId: user.EmployeerId || 0, // ID do empregado (tipagem: number)
+      employeerId: parseInt(user.EmployeerId) || 0, // ID do empregado (tipagem: number)
       precoTotal: pedido.precoTotal || 0, // Preço total do pedido (tipagem: number)
       desconto: parseFloat(desconto) || 0, // Desconto (tipagem: number)
       credito: pedido.credito || 0, // Crédito (tipagem: number)
-      saleStatus: 1, // Status da venda (tipagem: number)
+      saleStatus: 4, // Status da venda (tipagem: number)
       payments: [
         {
           value: pedido.precoTotal || 0, // Valor total do pedido (tipagem: number)
@@ -76,19 +66,25 @@ const DetalhesPedido = ({  pedido, onHide }) => {
         }
       ]
     };
-        // Chamar a função PutCompletBox com os dados montados
 
-   
     PutCompletBox(data)
       .then(response => {
         console.log('Venda concluída com sucesso:', response.data);
+        alert('Venda concluída com sucesso!'); // Exibe a mensagem de sucesso com um alert
         // Lógica adicional após a conclusão da venda, se necessário
       })
       .catch(error => {
         console.error('Erro ao concluir a venda:', error);
+        setErro('Erro ao concluir a venda.'); // Define a mensagem de erro
         // Lógica para tratamento de erro, se necessário
       });
 
+    onHide();
+  };
+
+  const handleCancelarVenda = () => {
+    console.log('Venda cancelada');
+    alert('Venda cancelada');
     onHide();
   };
 
@@ -96,7 +92,7 @@ const DetalhesPedido = ({  pedido, onHide }) => {
     <div>
       <div>
         <h5>Detalhes do Pedido</h5>
-        <p>Cliente: {cliente ? cliente.nome : 'Carregando...'}</p>
+        <p>Cliente: {pedido.clientName}</p>
         <p>Preço Total: R${pedido.precoTotal}</p>
         <h6>Produtos:</h6>
         {pedido.produto && pedido.produto.length > 0 ? (
@@ -151,6 +147,9 @@ const DetalhesPedido = ({  pedido, onHide }) => {
 
         <Button variant="primary" onClick={handleConfirmarPagamento}>
           Confirmar Pagamento
+        </Button>
+        <Button variant="danger" onClick={handleCancelarVenda} style={{ marginLeft: '10px' }}>
+          Cancelar Venda
         </Button>
       </Form>
 

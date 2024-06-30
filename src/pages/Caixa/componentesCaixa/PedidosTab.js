@@ -15,7 +15,7 @@ const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
         <tbody>
           {pedidos.map((pedido, index) => (
             <tr key={pedido.id}>
-              <td>{pedido.clientId}</td>
+              <td>{pedido.clientName}</td>
               <td>{pedido.payments === null ? 'Aguardando Pagamento' : 'Pago'}</td>
               <td>
                 <Button variant="primary" onClick={() => handlePedidoFormaPagamento(index)}>

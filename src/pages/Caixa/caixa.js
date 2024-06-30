@@ -33,11 +33,13 @@ const Caixa = () => {
   }, []);
 
   const updateBox = async () => {
-    console.log(user.employeerId)
     const boxData = await FetchBox();
     const viewData = await ViewDataObjectBox(boxData);
+                  
+
+
     setPedidos(viewData);
-    console.log(pedidos);
+    
   };
 
   useEffect(() => {

@@ -201,23 +201,27 @@ const getRole = (roleNumber) => {
 
   
 
- // Converte para exibir na tela
+ 
 export async function ViewDataObjectBox(data) {
   try {
     let value; 
 
     if (data && Array.isArray(data)) {
-      value = data.map(s => ({
-        id: s.id || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        clientId: s.clientId !== undefined ? s.clientId : 0,
-        tipo: s.tipo || "null",
-        desconto: s.desconto !== undefined ? s.desconto : 0,
-        precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,
-        credito: s.credito !== undefined ? s.credito : 0,
-        payments: s.payments && s.payments.length > 0 ? s.payments : null,
-        saleStatus: s.saleStatus !== undefined ? s.saleStatus : 0,
-        produto: s.produtos && s.produtos.length > 0 ? s.produtos : null,
-        dtSale: s.dtSale || "2024-06-28T13:51:16.976Z"
+      value = await Promise.all(data.map(async s => {
+        const clientName = s.clientId !== undefined ? await FetchUserByID(s.clientId) : "Unknown";
+        return {
+          id: s.id,
+          clientId: s.clientId !== undefined ? s.clientId : 0,
+          clientName: clientName.nome, // adiciona o nome do cliente aqui
+          tipo: s.tipo || "null",
+          desconto: s.desconto !== undefined ? s.desconto : 0,
+          precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,
+          credito: s.credito !== undefined ? s.credito : 0,
+          payments: s.payments && s.payments.length > 0 ? s.payments : null,
+          saleStatus: s.saleStatus !== undefined ? s.saleStatus : 0,
+          produto: s.produtos && s.produtos.length > 0 ? s.produtos : null,
+          dtSale: s.dtSale 
+        };
       }));
     }
     
@@ -246,7 +250,6 @@ export async function ViewDataObjectBox(data) {
 
 //Put  Box
 export async function PutCompletBox(data) {
-  console.log(data)
   var config = serviceRetornarConfig(
     "put",
     `${endPoints.urlPutBox}/${data.id}/complete`,
