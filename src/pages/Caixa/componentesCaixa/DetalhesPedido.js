@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FetchUserByID } from '../../../services/functions/RequestPeople';
 import { PutCompletBox } from '../../../services/functions/RequestBox';
 import { Form, Button } from 'react-bootstrap';
+const user = JSON.parse(localStorage.getItem('user'));
 
-const DetalhesPedido = ({ pedido, onHide }) => {
+
+const DetalhesPedido = ({  pedido, onHide }) => {
   const [cliente, setCliente] = useState(null);
   const [erro, setErro] = useState(null);
   const [formaPagamento, setFormaPagamento] = useState('');
@@ -12,7 +14,6 @@ const DetalhesPedido = ({ pedido, onHide }) => {
   const [paymentMethod, setPaymentMethod] = useState(''); // Novo estado para capturar o método de pagamento selecionado
 
   useEffect(() => {
-    console.log(pedido);
     if (pedido && pedido.clientId) {
       FetchUserByID(pedido.clientId)
         .then(response => {
@@ -48,10 +49,11 @@ const DetalhesPedido = ({ pedido, onHide }) => {
   const handleConfirmarPagamento = () => {
     console.log('Forma de Pagamento:', formaPagamento);
     console.log('Desconto:', desconto);
+    console.log('Pedido:', pedido);
 
     // Montando o objeto data conforme especificado
     const data = {
-      id: pedido.id || '', // ID do pedido ou algum identificador único (tipagem: string)
+      id:pedido.id,
       dtSale: new Date().toISOString(), // Data da venda (tipagem: string)
       produtos: pedido.produto.map(prod => ({
         productId: prod.productId || '', // ID do produto (tipagem: string)
@@ -61,22 +63,22 @@ const DetalhesPedido = ({ pedido, onHide }) => {
         name: prod.name || '' // Nome do produto (tipagem: string)
       })),
       clientId: pedido.clientId || 0, // ID do cliente (tipagem: number)
-      employeerId: pedido.employeerId || 0, // ID do empregado (tipagem: number)
+      employeerId: user.EmployeerId || 0, // ID do empregado (tipagem: number)
       precoTotal: pedido.precoTotal || 0, // Preço total do pedido (tipagem: number)
       desconto: parseFloat(desconto) || 0, // Desconto (tipagem: number)
       credito: pedido.credito || 0, // Crédito (tipagem: number)
-      saleStatus: pedido.saleStatus || 0, // Status da venda (tipagem: number)
+      saleStatus: 1, // Status da venda (tipagem: number)
       payments: [
         {
-          id: 0, // ID do pagamento (se necessário) (tipagem: number)
-          value: valorTotal || 0, // Valor total do pedido (tipagem: number)
-          paymentMethod: paymentMethod || '', // Método de pagamento selecionado (tipagem: string)
+          value: pedido.precoTotal || 0, // Valor total do pedido (tipagem: number)
+          paymentMethod: formaPagamento || '', // Método de pagamento selecionado (tipagem: string)
           orderId: pedido.id || '' // ID do pedido (tipagem: string)
         }
       ]
     };
+        // Chamar a função PutCompletBox com os dados montados
 
-    // Chamar a função PutCompletBox com os dados montados
+   
     PutCompletBox(data)
       .then(response => {
         console.log('Venda concluída com sucesso:', response.data);

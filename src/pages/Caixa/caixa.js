@@ -6,7 +6,6 @@ import ConcluidosTab from './componentesCaixa/ConcluidosTab';
 import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
 import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectBox } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
-
 const user = JSON.parse(localStorage.getItem('user'));
 
 const Caixa = () => {
@@ -34,6 +33,7 @@ const Caixa = () => {
   }, []);
 
   const updateBox = async () => {
+    console.log(user.employeerId)
     const boxData = await FetchBox();
     const viewData = await ViewDataObjectBox(boxData);
     setPedidos(viewData);
@@ -67,7 +67,7 @@ const Caixa = () => {
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
       const agora = new Date();
-      await OpenBox(user.EmployeerId, valor.toString());
+      await OpenBox( valor,user.EmployeerId,);
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);
@@ -174,7 +174,7 @@ const Caixa = () => {
             <Modal.Title>Confirmação de Venda</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <DetalhesPedido pedido={pedidos[pedidoSelecionado]} onHide={handleCloseConfirmacaoVenda} />
+            <DetalhesPedido   user={user}   pedido={pedidos[pedidoSelecionado]} onHide={handleCloseConfirmacaoVenda} />
           </Modal.Body>
         </Modal>
 

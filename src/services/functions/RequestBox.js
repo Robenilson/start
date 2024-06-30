@@ -5,11 +5,10 @@ import   { FetchUserByID} from"./RequestPeople";
 
 
 //Abrir o caixa
-export async function OpenBox(useid,data) {
+export async function OpenBox(initialBalance,employeerId) {
     var config = serviceRetornarConfig(
       "post",
-      `${endPoints.urlOpenBox}employeerId=${useid}`,
-      data,
+      `${endPoints.urlOpenBox}initialBalance=${initialBalance}&employeerId=${employeerId}`,
       true
     );
   
