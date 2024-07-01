@@ -99,7 +99,7 @@ const UserManager = () => {
           road: userValues.endereco.bairro ?? '',
           number: parseInt(userValues.endereco.numero) || 0, // Converte para número ou define como 0 se não for válido
         },
-        passwordHash: userValues.passwordHash ?? '',
+        passwordHash: userValues.password.toString() ?? '',
         roleIds: [], // Você precisa ajustar isso conforme a estrutura real de roleIds que deseja enviar
         inative: true, // Definido como exemplo, ajuste conforme necessário
       };

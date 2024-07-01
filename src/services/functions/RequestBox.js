@@ -200,39 +200,46 @@ const getRole = (roleNumber) => {
 
 
   
-
  
-export async function ViewDataObjectBox(data) {
-  try {
-    let value; 
-
-    if (data && Array.isArray(data)) {
-      value = await Promise.all(data.map(async s => {
-        const clientName = s.clientId !== undefined ? await FetchUserByID(s.clientId) : "Unknown";
-        return {
-          id: s.id,
-          clientId: s.clientId !== undefined ? s.clientId : 0,
-          clientName: clientName.nome, // adiciona o nome do cliente aqui
-          tipo: s.tipo || "null",
-          desconto: s.desconto !== undefined ? s.desconto : 0,
-          precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,
-          credito: s.credito !== undefined ? s.credito : 0,
-          payments: s.payments && s.payments.length > 0 ? s.payments : null,
-          saleStatus: s.saleStatus !== undefined ? s.saleStatus : 0,
-          produto: s.produtos && s.produtos.length > 0 ? s.produtos : null,
-          dtSale: s.dtSale 
-        };
-      }));
+  export async function ViewDataObjectBox(data) {
+    try {
+      let value = [];
+  
+      if (data && Array.isArray(data)) {
+        value = await Promise.all(data.map(async s => {
+          // Ignora objetos com saleStatus 4 ou produto null
+          if (s.saleStatus === 4 || s.saleStatus === '4' || !s.produtos || s.produtos.length === 0) {
+            return null;
+          }
+  
+          const clientName = s.clientId !== undefined ? await FetchUserByID(s.clientId) : { nome: "Unknown" };
+  
+          return {
+            id: s.id,
+            clientId: s.clientId !== undefined ? s.clientId : 0,
+            clientName: clientName.nome, // Adiciona o nome do cliente aqui
+            tipo: s.tipo || "null",
+            desconto: s.desconto !== undefined ? s.desconto : 0,
+            precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,
+            credito: s.credito !== undefined ? s.credito : 0,
+            payments: s.payments && s.payments.length > 0 ? s.payments : null,
+            saleStatus: s.saleStatus !== undefined ? s.saleStatus : 0,
+            produto: s.produtos, // Garante que produto não seja null
+            dtSale: s.dtSale 
+          };
+        }));
+        
+        value = value.filter(item => item !== null); // Remove os objetos nulos
+      }
+  
+      return value;
+    } catch (error) {
+      console.error('Erro ao converter dados:', error);
+      throw error;
     }
-    
-    return value;
-  } catch (error) {
-    console.error('Erro ao converter dados:', error);
-    throw error;
   }
-}
-
-
+  
+  
 
 
 

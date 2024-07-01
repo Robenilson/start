@@ -67,6 +67,8 @@ const DetalhesPedido = ({ pedido, onHide }) => {
       ]
     };
 
+    console.log(data)
+
     PutCompletBox(data)
       .then(response => {
         console.log('Venda concluída com sucesso:', response.data);
