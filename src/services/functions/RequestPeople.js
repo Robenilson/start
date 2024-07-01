@@ -132,9 +132,10 @@ export async function NewUser(data) {
 
 
   export async function editUser(data) {
+    console.log(data)
     var config = serviceRetornarConfig(
-      "put",
-      `${endPoints.urlUserByid}`,
+      "PUT",
+      `${endPoints.urlUserByid}/${data.id}`,
       data,
       true
     );
