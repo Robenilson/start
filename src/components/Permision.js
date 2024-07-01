@@ -1,42 +1,40 @@
-import React from 'react'
+import React from 'react';
 import OptionNav from './optionNav';
-import  {urls} from"../services/static/js/urls";
-
+import { urls } from "../services/functions/config/urls";
 
 const Permision = (props) => {
-  
-  const userType = props.userType; 
+  const userType = props.userType;
   let message;
   switch (userType) {
     case 'adm':
       message = [
-        <OptionNav url={urls.relatorio}  name="Relatorio" />
+        <OptionNav key="relatorio" url={urls.relatorio} name="Relatorio" />
       ];
       break;
     case 'vendedor':
       message = [
-        <OptionNav url="/venda"  name="Vendas" />,
-        <OptionNav url={urls.newProdutoPage}  name="Novo Produto" />
+        <OptionNav key="venda" url="/venda" name="Vendas" />,
+        <OptionNav key="newProduto" url={urls.newProdutoPage} name="Novo Produto" />
       ];
       break;
     case 'caixa':
-      message = [<OptionNav url={urls.caixaPage}  name="Caixa" />];
+      message = [
+        <OptionNav key="caixa" url={urls.caixaPage} name="Caixa" />
+      ];
       break;
     default:
       message = [
-        <OptionNav url={urls.caixaPage}  name="Caixa" />,
-        <OptionNav url={urls.relatorio}  name="Relatorio" />,
-        <OptionNav url="/venda"  name="Vendas" />,
-        <OptionNav url={urls.newProdutoPage}  name=" Produto " />
-
-
-
+        <OptionNav key="caixa" url={urls.caixaPage} name="Caixa" />,
+        <OptionNav key="relatorio" url={urls.relatorio} name="Relatorio" />,
+        <OptionNav key="venda" url="/venda" name="Vendas" />,
+        <OptionNav key="newProduto" url={urls.newProdutoPage} name="Produto" />,
+        <OptionNav key="roleManeger" url={urls.roleManager} name="Role" />
       ];
   }
 
   return (
-   <>{message}</>
-  )
-}
+    <>{message}</>
+  );
+};
 
-export default Permision
+export default Permision;

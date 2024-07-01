@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from '../../components/Card';
 import { loginUser } from "../../services/functions/RequestLogin"; // Renomear a função importada
 import { useNavigate } from 'react-router-dom';
-import { urls } from "../../services/static/js/urls";
+import { urls } from "../../services/functions/config/urls";
 import { jwtDecode } from 'jwt-decode'; // Atualização na importação
 
 const Login = () => {

@@ -1,10 +1,10 @@
-import React from 'react'
-import { Nav } from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import React from 'react';
+import { NavLink } from 'react-bootstrap';
 
-export const optionNav = (props) => {
-  return ( 
-  <div><Nav.Link><Link  className="text-black text-decoration-none"  to={props.url}>{props.name}</Link></Nav.Link></div>
-   )
-}
-export default optionNav
+const OptionNav = ({ url, name }) => {
+  return (
+    <NavLink href={url}>{name}</NavLink>
+  );
+};
+
+export default OptionNav;

@@ -7,8 +7,9 @@ import Vendas from './pages/Vendas/vendas';
 import Caixa from './pages/Caixa/caixa';
 import NewProduto from './pages/NovoProduto/NewProduto';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { urls } from "./services/static/js/urls";
+import { urls } from "./services/functions/config/urls";
 import Userdados from './pages/UserManager/UserManager';
+import RoleManager from './pages/roleManager/roleManager';
 
 
 
@@ -24,7 +25,8 @@ const App = () => {
           <Route path={urls.userDados} element={<Userdados />} />
           <Route path={urls.caixaPage}    element={<Caixa />} />
           <Route path={urls.vendasPage}    element={<Vendas />} />
-          <Route path={urls.newProdutoPage}    element={<NewProduto />} />   
+          <Route path={urls.newProdutoPage}    element={<NewProduto />} /> 
+          <Route path={urls.roleManager}    element={<RoleManager />} />   
         </Route>
         
     </Routes>

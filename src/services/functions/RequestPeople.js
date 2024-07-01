@@ -58,6 +58,28 @@ export async function FetchUserByID(data) {
 
 
 
+//Faz  uma pesquisa por id na  tabela usuario 
+export async function deleteUserByID(data) {
+  var config = serviceRetornarConfig(
+    "delete",
+    `${endPoints.urlUserByid}/${data}`,
+    true
+  );
+
+  try {
+    const response= await axios(config);
+    
+    return response.data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+
+
+
 //Adiciona um novo Produto
 export async function NewUser(data) {
     var config = serviceRetornarConfig(
@@ -75,27 +97,28 @@ export async function NewUser(data) {
   }
   
   
+
   export async function createDataObjectUser(userValues) {
     try {
       const data = {
-        nome: userValues.nome.toString(),
-        sobrenome: userValues.sobrenome.toString(),
-        dtNascimento: userValues.dataNascimento.toString(),
-        email: userValues.email.toString(),
-        cpf: userValues.cpf.toString(),
-        phone: userValues.telefone.toString(),
-        userType: 1,
+        id: 0,  // Adiciona o campo 'id' conforme a especificação
+        nome: userValues.nome?.toString() ?? '',
+        sobrenome: userValues.sobrenome?.toString() ?? '',
+        dtNascimento: userValues.dataNascimento?.toString() ?? '',
+        email: userValues.email?.toString() ?? '',
+        cpf: userValues.cpf?.toString() ?? '',
+        phone: userValues.telefone?.toString() ?? '',
+        userType: parseInt(1),  // Define o 'userType' conforme especificado
         address: {
-          zipCode: userValues.endereco.cep.toString(),
-          cityName: userValues.endereco.cidade.toString(),
-          state: userValues.endereco.estado.toString(),
-          road: userValues.endereco.bairro.toString(),
-          number: parseInt(userValues.endereco.numero),
+          id: 0,  // Adiciona o campo 'id' conforme a especificação
+          zipCode: userValues.endereco.cep?.toString() ?? '',
+          cityName: userValues.endereco.cidade?.toString() ?? '',
+          state: userValues.endereco.estado?.toString() ?? '',
+          road: userValues.endereco.bairro?.toString() ?? '',
+          number: userValues.endereco.numero ? parseInt(userValues.endereco.numero) : parseInt(0),
         },
-        roleIds: [
-          "84a4f924-5a1b-4c72-8a29-14b3673f1533"
-        ],
-        password: userValues.password.toString()
+        roleIds: [userValues.role?.toString() ?? ''],
+        password: userValues.password?.toString() ?? ''
       };
   
       return data;
@@ -104,16 +127,23 @@ export async function NewUser(data) {
       throw error;
     }
   }
+  
+  
 
 
-
-  export const UpdateUser = async (userId, updatedUser) => {
-    const response = await axios.put(`/api/users/${userId}`, updatedUser);
-    return response.data;
-  };
-
-
-  export const DeleteUser = async (userId) => {
-    const response = await axios.delete(`/api/users/${userId}`);
-    return response.data;
-  };
+  export async function editUser(data) {
+    var config = serviceRetornarConfig(
+      "put",
+      `${endPoints.urlUserByid}`,
+      data,
+      true
+    );
+  
+    try {
+      const response= await axios(config);
+      return response.data;
+    } catch (error) {
+      return serviceRetornarErro(error);
+    }
+  }
+ 

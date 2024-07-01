@@ -1,19 +1,15 @@
-import axios from 'axios';
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import { Button, Tabs, Tab, Form } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Tabs, Tab, Form, Alert, Modal } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
-import { FetchUser, NewUser, createDataObjectUser } from '../../services/functions/RequestPeople';
-
-const UserContext = createContext();
-
-export const useUserContext = () => useContext(UserContext);
+import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser } from '../../services/functions/RequestPeople';
 
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [pessoas, setPessoas] = useState([]);
   const [userValues, setUserValues] = useState({
     nome: '',
@@ -29,15 +25,14 @@ const UserManager = () => {
       bairro: '',
       numero: '',
     },
-    role: 'cliente',
-    password: '',  // Novo campo de senha
+    role: '',
+    password: '',
   });
-
-
-
-
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingUserId, setEditingUserId] = useState(null); // Estado para armazenar o ID do usuário sendo editado
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(15);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -58,10 +53,7 @@ const UserManager = () => {
     }
   };
 
-  const handleShowModal = () => setShowModal(true);
-
-  const handleCloseModal = () => {
-    setShowModal(false);
+  const handleShowModal = () => {
     setUserValues({
       nome: '',
       sobrenome: '',
@@ -77,22 +69,21 @@ const UserManager = () => {
         numero: '',
       },
       role: '',
-      password: '',  // Certifique-se de que a senha também seja limpa
+      password: '',
     });
-    setEditingUserId(null); // Limpar o ID do usuário sendo editado ao fechar o modal
+    setShowModal(true);
   };
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const handleCloseModal = () => setShowModal(false);
 
   const handleSaveUser = async () => {
-    await createDataObjectUser(userValues).
-    then( data=>{NewUser(data)});
-    await UpdatePessoas();  // Recarregar a lista de pessoas
+    const newDataUser = await createDataObjectUser(userValues);
+    NewUser(newDataUser);
+    await updateUsers();
     handleCloseModal();
   };
 
-  const handleEditUser = async (userId, userData) => {
-    // Define os dados do usuário selecionado no estado `userValues`
+  const handleEditUser = async (userData) => {
     setUserValues({
       nome: userData.nome ?? '',
       sobrenome: userData.sobrenome ?? '',
@@ -107,64 +98,77 @@ const UserManager = () => {
         bairro: userData.endereco?.bairro ?? '',
         numero: userData.endereco?.numero ?? '',
       },
-      role: userData.role ?? 'cliente', // Define 'cliente' como padrão se o papel não estiver definido
-      password: '', // Mantém a senha vazia para edição
+      role: userData.role ?? 'cliente',
+      password: '',
     });
-    // Define o ID do usuário sendo editado
-    //setEditingUserId(userId);
-  
-    // Abre o modal de edição
-    handleShowModal();
+    setShowModal(true);
   };
 
-  const handleDeleteUser = async (userId) => {
-    // Chamada ao serviço para excluir o usuário
-    await UpdatePessoas();  // Recarregar a lista de pessoas
+  const handleDeleteUser = async () => {
+    setShowDeleteModal(false);
+    if (userToDelete) {
+      await deleteUserByID(userToDelete.id);
+      await updateUsers();
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
+    } else {
+      console.error('Objeto de usuário inválido:', userToDelete);
+    }
   };
 
-  const getRole = (roleNumber) => {
-    return roleNumber === 1 ? 'adm' :
-           roleNumber === 2 ? 'cliente' :
-           roleNumber === 3 ? 'caixa' :
-           roleNumber === 4 ? 'vendedor' :
-           'Role não reconhecido';
+  const handleShowDeleteModal = (user) => {
+    setUserToDelete(user);
+    setShowDeleteModal(true);
   };
 
-  const UpdatePessoas = async () => {
+  const handleCloseDeleteModal = () => {
+    setUserToDelete(null);
+    setShowDeleteModal(false);
+  };
+
+  useEffect(() => {
+    updateUsers();
+  }, []);
+
+  const updateUsers = async () => {
     try {
       const data = await FetchUser();
-
       if (data && Array.isArray(data)) {
-        const users = data.map(user => ({
-          id: user.id, // Adicione o campo ID ou o identificador único do usuário
+        const users = data.map((user) => ({
+          id: user.id,
           nome: user.nome,
           sobrenome: user.sobrenome,
           email: user.email,
           dataNascimento: user.dtNascimento,
           cpf: user.cpf,
           telefone: user.phone,
-          role: getRole(user.userType),
+          role: user.role,
         }));
         setPessoas(users);
       } else {
-        console.error("Dados recebidos não são válidos:", data);
+        console.error('Dados recebidos não são válidos:', data);
       }
     } catch (error) {
-      console.error("Erro ao buscar usuários:", error);
+      console.error('Erro ao buscar usuários:', error);
     }
   };
 
-  useEffect(() => {
-    UpdatePessoas();  // Chamada para buscar usuários ao montar o componente
-  }, []);
-
-  const clientes = pessoas.filter(pessoa => pessoa.role === 'cliente' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-  const vendedores = pessoas.filter(pessoa => pessoa.role === 'vendedor' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-  const caixas = pessoas.filter(pessoa => pessoa.role === 'caixa' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-  const administradores = pessoas.filter(pessoa => pessoa.role === 'adm' && pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase()));
-
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+  const getCurrentItems = () => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return pessoas.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const edita = async (editedUserData) => {
+    const newDataUser = await createDataObjectUser(editedUserData);
+    await editUser(newDataUser);
+    await updateUsers();
   };
 
   return (
@@ -187,40 +191,52 @@ const UserManager = () => {
           />
         </Form.Group>
 
+        {showSuccessMessage && (
+          <Alert variant="success" onClose={() => setShowSuccessMessage(false)} dismissible>
+            Usuário excluído com sucesso!
+          </Alert>
+        )}
+
+        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmação de Exclusão</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Tem certeza de que deseja excluir o usuário {userToDelete && `${userToDelete.nome} ${userToDelete.sobrenome}`}?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseDeleteModal}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={handleDeleteUser}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <Tabs defaultActiveKey="clientes" id="user-tabs" className="mt-3">
           <Tab eventKey="clientes" title="Clientes">
             <UserTable
-              users={clientes}
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']}
-              onEdit={handleEditUser} // Passar a função de edição para a tabela
-              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
-            />
-          </Tab>
-          <Tab eventKey="vendedores" title="Vendedores">
-            <UserTable
-              users={vendedores}
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']}
-              onEdit={handleEditUser} // Passar a função de edição para a tabela
-              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
-            />
-          </Tab>
-          <Tab eventKey="caixas" title="Caixas">
-            <UserTable
-              users={caixas}
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone']}
-              onEdit={handleEditUser} // Passar a função de edição para a tabela
-              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
-            />
-          </Tab>
-          <Tab eventKey="administradores" title="Administradores">
-            <UserTable
-              users={administradores}
+              users={getCurrentItems()}
               columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role']}
-              onEdit={handleEditUser} // Passar a função de edição para a tabela
-              onDelete={handleDeleteUser} // Passar a função de exclusão para a tabela
+              onEdit={handleEditUser}
+              onDelete={handleShowDeleteModal}
+              onEditSubmit={edita} // Passa a função edita para o componente UserTable
             />
           </Tab>
         </Tabs>
+
+        <nav>
+          <ul className="pagination">
+            {Array.from({ length: Math.ceil(pessoas.length / itemsPerPage) }, (_, index) => (
+              <li key={index} className="page-item">
+                <button onClick={() => paginate(index + 1)} className="page-link">
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </Card>
   );
