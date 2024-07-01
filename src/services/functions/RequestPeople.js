@@ -118,7 +118,7 @@ export async function NewUser(data) {
           number: userValues.endereco.numero ? parseInt(userValues.endereco.numero) : parseInt(0),
         },
         roleIds: [userValues.role?.toString() ?? ''],
-        password: userValues.password?.toString() ?? ''
+        password: userValues.password?.toString() ?? '',
       };
   
       return data;
@@ -132,10 +132,10 @@ export async function NewUser(data) {
 
 
   export async function editUser(data) {
-    console.log(data)
+   
     var config = serviceRetornarConfig(
-      "PUT",
-      `${endPoints.urlUserByid}/${data.id}`,
+      "put",
+      `${endPoints.urlUserByid}`,
       data,
       true
     );

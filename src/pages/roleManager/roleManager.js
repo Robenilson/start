@@ -107,7 +107,7 @@ const RoleManager = () => {
             <tr>
               <th>#</th>
               <th>Nome da Role</th>
-              {/* <th>Ações</th>*/}
+               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -116,13 +116,13 @@ const RoleManager = () => {
                 <td>{index + 1}</td>
                 <td>{role.name}</td>
 
-                {/*
+               
                   <td>
                   <Button variant="warning" onClick={() => handleEditRole(role)}>Editar</Button>
                   {' '}
                   <Button variant="danger" onClick={() => handleDeleteRole(role.id)}>Excluir</Button>
                 </td>
-              */}
+            
               </tr>
             ))}
           </tbody>

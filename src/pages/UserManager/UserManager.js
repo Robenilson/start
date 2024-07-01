@@ -12,6 +12,7 @@ const UserManager = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [pessoas, setPessoas] = useState([]);
   const [userValues, setUserValues] = useState({
+    id: '',
     nome: '',
     sobrenome: '',
     email: '',
@@ -27,6 +28,7 @@ const UserManager = () => {
     },
     role: '',
     password: '',
+    passwordHash: ''  // Adicionado campo passwordHash
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,6 +57,7 @@ const UserManager = () => {
 
   const handleShowModal = () => {
     setUserValues({
+      id: '',
       nome: '',
       sobrenome: '',
       email: '',
@@ -70,6 +73,7 @@ const UserManager = () => {
       },
       role: '',
       password: '',
+      passwordHash: ''  // Resetando campo passwordHash
     });
     setShowModal(true);
   };
@@ -77,14 +81,44 @@ const UserManager = () => {
   const handleCloseModal = () => setShowModal(false);
 
   const handleSaveUser = async () => {
-    const newDataUser = await createDataObjectUser(userValues);
-    NewUser(newDataUser);
-    await updateUsers();
+    if (userValues.id) {
+      const dataObject = {
+        id: userValues.id ?? 0,
+        nome: userValues.nome ?? '',
+        sobrenome: userValues.sobrenome ?? '',
+        dtNascimento: userValues.dataNascimento ?? '', // Certifique-se de que userValues.dataNascimento esteja no formato correto
+        email: userValues.email ?? '',
+        cpf: userValues.cpf ?? '',
+        phone: userValues.telefone ?? '',
+        userType: 1, // Definido como exemplo, ajuste conforme necessário
+        address: {
+          id: 0, // Definido como exemplo, ajuste conforme necessário
+          zipCode: userValues.endereco.cep ?? '',
+          cityName: userValues.endereco.cidade ?? '',
+          state: userValues.endereco.estado ?? '',
+          road: userValues.endereco.bairro ?? '',
+          number: parseInt(userValues.endereco.numero) || 0, // Converte para número ou define como 0 se não for válido
+        },
+        passwordHash: userValues.passwordHash ?? '',
+        roleIds: [], // Você precisa ajustar isso conforme a estrutura real de roleIds que deseja enviar
+        inative: true, // Definido como exemplo, ajuste conforme necessário
+      };
+
+
+
+      await editUser(dataObject);
+      await updateUsers();
+    } else {
+      const newDataUser = await createDataObjectUser(userValues);
+      NewUser(newDataUser);
+      await updateUsers();
+    }
     handleCloseModal();
   };
 
   const handleEditUser = async (userData) => {
     setUserValues({
+      id: userData.id ?? '',
       nome: userData.nome ?? '',
       sobrenome: userData.sobrenome ?? '',
       email: userData.email ?? '',
@@ -100,6 +134,7 @@ const UserManager = () => {
       },
       role: userData.role ?? 'cliente',
       password: '',
+      passwordHash: userData.passwordHash ?? ''  // Mantendo o valor de passwordHash
     });
     setShowModal(true);
   };
@@ -143,8 +178,10 @@ const UserManager = () => {
           cpf: user.cpf,
           telefone: user.phone,
           role: user.role,
+          passwordHash: user.passwordHash  // Incluindo o campo passwordHash
         }));
         setPessoas(users);
+        
       } else {
         console.error('Dados recebidos não são válidos:', data);
       }
@@ -165,12 +202,6 @@ const UserManager = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const edita = async (editedUserData) => {
-    const newDataUser = await createDataObjectUser(editedUserData);
-    await editUser(newDataUser);
-    await updateUsers();
-  };
-
   return (
     <Card>
       <div className="card-header">Gerenciamento de Usuários</div>
@@ -179,6 +210,7 @@ const UserManager = () => {
           Cadastrar Pessoa
         </Button>
         <ModalComponent show={showModal} onHide={handleCloseModal} title="Cadastrar Pessoa" save={handleSaveUser}>
+       
           <UserForm userValues={userValues} handleInputChange={handleInputChange} />
         </ModalComponent>
 
@@ -221,7 +253,6 @@ const UserManager = () => {
               columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role']}
               onEdit={handleEditUser}
               onDelete={handleShowDeleteModal}
-              onEditSubmit={edita} // Passa a função edita para o componente UserTable
             />
           </Tab>
         </Tabs>
