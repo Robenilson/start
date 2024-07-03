@@ -13,6 +13,7 @@ import { endPoints } from "./config/endpoints";
   
     try {
       const response= await axios(config); 
+      console.log(response.data)
       if (response.data && Array.isArray(response.data)) {
         const product = response.data.map(product => ({
           id: product.id,

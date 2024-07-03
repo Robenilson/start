@@ -145,7 +145,7 @@ const Vendas = () => {
     try {
       await NewSale(validData);
       setShowSuccess(true);
-      setTimeout(clearState, 5000);
+      setTimeout(clearState, 3000);
     } catch (error) {
       console.error('Erro ao criar nova venda:', error);
     }

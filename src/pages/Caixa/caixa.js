@@ -93,7 +93,6 @@ const Caixa = () => {
     localStorage.removeItem('saldo');
     handleCloseFecharCaixa();
   };
-
   const handlePedidoFormaPagamento = (index) => {
     setPedidoSelecionado(index);
     setShowModalConfirmacaoVenda(true);
@@ -103,21 +102,55 @@ const Caixa = () => {
     setShowModalConfirmacaoVenda(false);
   };
 
-  const handleVendaConcluida = async () => {
+  const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
     const data = {
-      pedidoId: pedidos[pedidoSelecionado].id,
+      id: pedido.id,
+      dtSale: new Date().toISOString(),
+      produtos: pedido.produto.map(prod => ({
+        productId: prod.productId || '',
+        quantity: prod.quantity || 0,
+        orderId: prod.orderId || '',
+        productType: prod.productType || 0,
+        name: prod.name || ''
+      })),
+      clientId: pedido.clientId || 0,
+      employeerId: parseInt(user.EmployeerId) || 0,
+      precoTotal: pedido.precoTotal || 0,
+      desconto: parseFloat(desconto) || 0,
+      credito: pedido.credito || 0,
+      saleStatus: 4,
+      payments: [
+        {
+          value: pedido.precoTotal || 0,
+          paymentMethod: formaPagamento || '',
+          orderId: pedido.id || ''
+        }
+      ]
     };
-    try {
-      const dataObject = await createDataObjectBox(data);
-      await PutCompletBox(dataObject);
-      await updateBox(); // Atualiza a tabela de pedidos após a conclusão da venda
-      setShowSuccess(true);
-      handleCloseConfirmacaoVenda();
-      setShowPedidoSuccess(true); // Exibe a mensagem de sucesso
-    } catch (error) {
-      console.error('Erro ao concluir a venda:', error);
-    }
+
+    PutCompletBox(data)
+      .then(response => {
+        setShowPedidoSuccess(true);
+        updateBox(); // Atualize a lista de pedidos após a venda ser concluída
+        setTimeout(clearState, 4000);
+      })
+      .catch(error => {
+        console.error('Erro ao concluir a venda:', error);
+        alert('Erro ao concluir a venda.');
+      });
+
+    handleCloseConfirmacaoVenda();
   };
+  
+
+
+  const clearState = () => {
+    setShowPedidoSuccess(false);
+    
+  };
+
+
+
 
   return (
     <Card>
@@ -129,6 +162,9 @@ const Caixa = () => {
         <Button variant="secondary" onClick={handleFecharCaixa}>
           Fechar Caixa
         </Button>
+
+
+       
 
         <Modal show={showModalAbrirCaixa} onHide={handleCloseAbrirCaixa}>
           <Modal.Header closeButton>
@@ -165,13 +201,20 @@ const Caixa = () => {
         </Modal>
 
         <Modal show={showModalConfirmacaoVenda} onHide={handleCloseConfirmacaoVenda}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmação de Venda</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <DetalhesPedido user={user} pedido={pedidos[pedidoSelecionado]} onHide={handleCloseConfirmacaoVenda} />
-          </Modal.Body>
-        </Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Pagamento</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {pedidoSelecionado !== null && (
+            <DetalhesPedido
+              pedido={pedidos[pedidoSelecionado]}
+              onHide={handleCloseConfirmacaoVenda}
+              handleConfirmarPagamento={handleConfirmarPagamento}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
+
 
         {showSuccess && (
           <Alert variant="success" className="mt-3">

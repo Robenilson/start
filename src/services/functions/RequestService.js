@@ -36,7 +36,6 @@ export async function fetchService() {
         nome: service.name,
         valor: parseFloat(service.price),
         horaMinima: service.quantityHours || 'N/A',
-        quantidade: service.quantity || 0,
         descricao: service.description,
       }));
       return service;
