@@ -13,12 +13,12 @@ export const endPoints = {
     urlUserByid:backHost +  "/api/User",
 
 
-
+    
    
     //Url Product
     urlProductAll:backHost+"/api/SalesProduct/Allproducts",
     urlAddNewProduct:backHost+"/api/SalesProduct/product",
-    urlDeletProduct:backHost+"/api/Product",
+    urlDeletProduct:backHost+"/api/SalesProduct",
     urlGetByIdProdutos:backHost+"/api/SalesProduct/GetProductById?id=",
     urlGetByIdServicos:backHost+"/api/SalesProduct/GetServiceById?id=",
 
@@ -36,7 +36,7 @@ export const endPoints = {
     
     
     //Url Cashier Order
-    urlOpenBox:backHost + "/api/CashierOrder/open?",
+    urlOpenBox:backHost + "/api/CashierOrder",
     urlCloseBox:backHost +"/api/CashierOrder/close",
 
 

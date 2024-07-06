@@ -1,23 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
-import { fetchRoles } from '../../../services/functions/RequestRoleService';
 
 const UserForm = ({ userValues, handleInputChange }) => {
-  const [roles, setRoles] = useState([]);
-
-  useEffect(() => {
-    const getRoles = async () => {
-      try {
-        const rolesData = await fetchRoles();
-        setRoles(rolesData);
-      } catch (error) {
-        console.error('Erro ao buscar roles:', error);
-      }
-    };
-
-    getRoles();
-  }, []);
-
   return (
     <Form>
       <Row className="mb-3">
@@ -168,13 +152,13 @@ const UserForm = ({ userValues, handleInputChange }) => {
             name="role"
             value={userValues.role}
             onChange={handleInputChange}
+            required
           >
             <option value="">Selecione uma role</option>
-            {roles.map((role) => (
-              <option key={role.id} value={role.id}>
-                {role.name}
-              </option>
-            ))}
+            <option value="1">Cliente</option>
+            <option value="2">Admin</option>
+            <option value="3">Vendedor</option>
+            <option value="4">Caixa</option>
           </Form.Control>
         </Form.Group>
       </Row>

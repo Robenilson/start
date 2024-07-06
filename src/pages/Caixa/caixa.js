@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
-import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectBox } from "../../services/functions/RequestBox";
+import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -67,7 +67,11 @@ const Caixa = () => {
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
       const agora = new Date();
-      await OpenBox(valor, user.EmployeerId);
+       const   valueOpenBox =await OpenBox(valor, user.EmployeerId);
+       console.log(valueOpenBox)
+
+
+
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);
@@ -103,41 +107,23 @@ const Caixa = () => {
   };
 
   const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
-    const data = {
-      id: pedido.id,
-      dtSale: new Date().toISOString(),
-      produtos: pedido.produto.map(prod => ({
-        productId: prod.productId || '',
-        quantity: prod.quantity || 0,
-        orderId: prod.orderId || '',
-        productType: prod.productType || 0,
-        name: prod.name || ''
-      })),
-      clientId: pedido.clientId || 0,
-      employeerId: parseInt(user.EmployeerId) || 0,
-      precoTotal: pedido.precoTotal || 0,
-      desconto: parseFloat(desconto) || 0,
-      credito: pedido.credito || 0,
-      saleStatus: 4,
-      payments: [
-        {
-          value: pedido.precoTotal || 0,
-          paymentMethod: formaPagamento || '',
-          orderId: pedido.id || ''
-        }
-      ]
-    };
+    createDataObjectEditBox(pedido, formaPagamento, desconto, user).then(data=>{
+        PutCompletBox(data)
+        .then(response => {
+          setShowPedidoSuccess(true);
+          updateBox(); // Atualize a lista de pedidos após a venda ser concluída
+          setTimeout(clearState, 4000);
+        })
+        .catch(error => {
+          console.error('Erro ao concluir a venda:', error);
+          alert('Erro ao concluir a venda.');
+        });
 
-    PutCompletBox(data)
-      .then(response => {
-        setShowPedidoSuccess(true);
-        updateBox(); // Atualize a lista de pedidos após a venda ser concluída
-        setTimeout(clearState, 4000);
-      })
-      .catch(error => {
-        console.error('Erro ao concluir a venda:', error);
-        alert('Erro ao concluir a venda.');
-      });
+      }
+    )
+
+
+   
 
     handleCloseConfirmacaoVenda();
   };
@@ -162,10 +148,6 @@ const Caixa = () => {
         <Button variant="secondary" onClick={handleFecharCaixa}>
           Fechar Caixa
         </Button>
-
-
-       
-
         <Modal show={showModalAbrirCaixa} onHide={handleCloseAbrirCaixa}>
           <Modal.Header closeButton>
             <Modal.Title>Abrir Caixa</Modal.Title>

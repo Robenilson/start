@@ -8,7 +8,8 @@ import   { FetchUserByID} from"./RequestPeople";
 export async function OpenBox(initialBalance,employeerId) {
     var config = serviceRetornarConfig(
       "post",
-      `${endPoints.urlOpenBox}initialBalance=${initialBalance}&employeerId=${employeerId}`,
+      `${endPoints.urlOpenBox}/open?employeerId=${employeerId}`,
+      initialBalance,
       true
     );
   
@@ -139,6 +140,47 @@ const getRole = (roleNumber) => {
       return serviceRetornarErro(error);
     }
   }
+
+
+
+  export async function createDataObjectEditBox(pedido, formaPagamento, desconto,user) {
+    try {
+
+      const data = {
+        id: pedido.id,
+        dtSale: new Date().toISOString(),
+        produtos: pedido.produto.map(prod => ({
+          productId: prod.productId || '',
+          quantity: prod.quantity || 0,
+          orderId: prod.orderId || '',
+          productType: prod.productType || 0,
+          name: prod.name || ''
+        })),
+        clientId: pedido.clientId || 0,
+        employeerId: parseInt(user.EmployeerId) || 0,
+        precoTotal: pedido.precoTotal || 0,
+        desconto: parseFloat(desconto) || 0,
+        credito: pedido.credito || 0,
+        saleStatus: 4,
+        payments: [
+          {
+            value: pedido.precoTotal || 0,
+            paymentMethod: formaPagamento || '',
+            orderId: pedido.id || ''
+          }
+        ]
+      };
+    
+      return data;
+    } catch (error) {
+      console.error('Erro ao converter dados:', error);
+      throw error;
+    }
+  }
+
+
+
+
 
 
 

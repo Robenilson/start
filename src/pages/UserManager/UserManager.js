@@ -90,7 +90,7 @@ const UserManager = () => {
         email: userValues.email ?? '',
         cpf: userValues.cpf ?? '',
         phone: userValues.telefone ?? '',
-        userType: 1, // Definido como exemplo, ajuste conforme necessário
+        userType: userValues.role ?? 0, // Definido como exemplo, ajuste conforme necessário
         address: {
           id: 0, // Definido como exemplo, ajuste conforme necessário
           zipCode: userValues.endereco.cep ?? '',
@@ -106,11 +106,12 @@ const UserManager = () => {
 
 
 
-      await editUser(dataObject);
+     // await editUser(dataObject);
       await updateUsers();
     } else {
       const newDataUser = await createDataObjectUser(userValues);
-      NewUser(newDataUser);
+   
+     NewUser(newDataUser);
       await updateUsers();
     }
     handleCloseModal();
@@ -167,28 +168,49 @@ const UserManager = () => {
 
   const updateUsers = async () => {
     try {
-      const data = await FetchUser();
-      if (data && Array.isArray(data)) {
-        const users = data.map((user) => ({
-          id: user.id,
-          nome: user.nome,
-          sobrenome: user.sobrenome,
-          email: user.email,
-          dataNascimento: user.dtNascimento,
-          cpf: user.cpf,
-          telefone: user.phone,
-          role: user.role,
-          passwordHash: user.passwordHash  // Incluindo o campo passwordHash
-        }));
-        setPessoas(users);
-        
-      } else {
-        console.error('Dados recebidos não são válidos:', data);
-      }
+        const data = await FetchUser();
+        if (data && Array.isArray(data)) {
+            const users = data.map((user) => {
+                let roleName = '';
+                switch (user.userType) {
+                    case 1:
+                        roleName = 'Cliente';
+                        break;
+                    case 2:
+                        roleName = 'Admin';
+                        break;
+                    case 3:
+                        roleName = 'Vendedor';
+                        break;
+                    case 4:
+                        roleName = 'Caixa';
+                        break;
+                    default:
+                        roleName = 'Unknown';
+                }
+
+                return {
+                    id: user.id,
+                    nome: user.nome,
+                    sobrenome: user.sobrenome,
+                    email: user.email,
+                    dataNascimento: user.dtNascimento,
+                    cpf: user.cpf,
+                    telefone: user.phone,
+                    role: roleName, // Assigning the readable role name
+                    passwordHash: user.passwordHash // Including the passwordHash field
+                };
+            });
+            
+            setPessoas(users);
+        } else {
+            console.error('Dados recebidos não são válidos:', data);
+        }
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+        console.error('Erro ao buscar usuários:', error);
     }
-  };
+};
+
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);

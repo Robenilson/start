@@ -6,7 +6,7 @@ import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
 import { newService, fetchService } from '../../services/functions/RequestService';
-import { newProduct, fetchProduct, DeletProduct } from "../../services/functions/RequestProduct";
+import { newProduct, fetchProduct, DeleteProduct } from "../../services/functions/RequestProduct";
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -125,17 +125,8 @@ const NewCadastro = () => {
     setShowModalProduto(true);
   };
 
-  const handleDeleteProduto = (index) => {
-    
-
-    let foundObjects = produtos.filter(item => console.log(item));
-
-    
-
-    
-   // const a = produtos.filter((_, i) => i !== index)
-      
-    
+  const handleDeleteProduto = (produto) => {
+    DeleteProduct(produto).then(updateTabelProduct())
   };
 
   const handleEditServico = (index) => {

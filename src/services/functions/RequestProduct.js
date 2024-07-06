@@ -13,7 +13,6 @@ import { endPoints } from "./config/endpoints";
   
     try {
       const response= await axios(config); 
-      console.log(response.data)
       if (response.data && Array.isArray(response.data)) {
         const product = response.data.map(product => ({
           id: product.id,
@@ -48,6 +47,26 @@ export async function newProduct(data) {
       return serviceRetornarErro(error);
     }
   }
+
+
+
+//Adiciona um novo Produto
+export async function DeleteProduct(data) {
+  var config = serviceRetornarConfig(
+    "delete",
+    `${endPoints.urlDeletProduct}?id=${data.id}` ,
+    true
+  );
+  try {
+    return (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+
 
   //Apagar um Produto 
 export async function DeletProduct(data) {

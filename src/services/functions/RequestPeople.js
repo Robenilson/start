@@ -108,7 +108,7 @@ export async function NewUser(data) {
         email: userValues.email?.toString() ?? '',
         cpf: userValues.cpf?.toString() ?? '',
         phone: userValues.telefone?.toString() ?? '',
-        userType: parseInt(1),  // Define o 'userType' conforme especificado
+        userType: parseInt(userValues.role) ,  // Define o 'userType' conforme especificado
         address: {
           id: 0,  // Adiciona o campo 'id' conforme a especificação
           zipCode: userValues.endereco.cep?.toString() ?? '',
@@ -117,7 +117,7 @@ export async function NewUser(data) {
           road: userValues.endereco.bairro?.toString() ?? '',
           number: userValues.endereco.numero ? parseInt(userValues.endereco.numero) : parseInt(0),
         },
-        roleIds: [userValues.role?.toString() ?? ''],
+        roleIds: [ "3fa85f64-5717-4562-b3fc-2c963f66afa6"],
         password: userValues.password?.toString() ?? '',
       };
   
