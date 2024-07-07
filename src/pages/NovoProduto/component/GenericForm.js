@@ -1,7 +1,14 @@
-import React from 'react';
-import { Form } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Form, Button,Modal } from 'react-bootstrap';
 
-const GenericForm = ({ fields, values, handleChange }) => {
+
+const GenericForm = ({ fields, values, save,handleChange, mode , }) => {
+  const [isEditMode, setIsEditMode] = useState(mode === 'editar');
+
+  useEffect(() => {
+    setIsEditMode(mode === 'editar');
+  }, [mode]);
+
   return (
     <Form>
       {fields.map((field, index) => (
@@ -16,6 +23,26 @@ const GenericForm = ({ fields, values, handleChange }) => {
           />
         </Form.Group>
       ))}
+
+
+      <Modal.Footer>
+        <Button variant="secondary" >
+          Fechar
+        </Button>
+
+        {isEditMode ? (
+        <Button type="button" onClick={() => console.log('Editar clicado')}>
+          Confirmar Edição
+        </Button>
+      ) : (
+        <Button type="button" onClick={save}>
+          Salvar
+        </Button>
+      )}
+        
+      </Modal.Footer>
+
+      
     </Form>
   );
 };

@@ -19,6 +19,7 @@ const NewCadastro = () => {
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
   const [error, setError] = useState(null);
+  const [mode, setMode] = useState(''); // Adicionado estado `mode`
 
   const produtoFields = [
     { name: 'nomeProduto', label: 'Nome do Produto', type: 'text', placeholder: 'Nome do Produto' },
@@ -70,8 +71,15 @@ const NewCadastro = () => {
     }));
   };
 
-  const handleShowProduto = () => setShowModalProduto(true);
-  const handleShowServico = () => setShowModalServico(true);
+  const handleShowProduto = () => {
+    setMode('cadastrar'); // Define o modo como 'cadastrar'
+    setShowModalProduto(true);
+  };
+
+  const handleShowServico = () => {
+    setMode('cadastrar'); // Define o modo como 'cadastrar'
+    setShowModalServico(true);
+  };
 
   const handleCloseProduto = () => {
     setShowModalProduto(false);
@@ -90,10 +98,6 @@ const NewCadastro = () => {
       price: parseFloat(produtoValues.valorProduto),
       quantity: parseInt(produtoValues.quantidade),
     };
-    
-    
-
-    
     await newProduct(novoProduto);
     await updateTabelProduct();
     setShowSuccess(true);
@@ -108,7 +112,7 @@ const NewCadastro = () => {
       name: servicoValues.nomeServico,
       price: parseFloat(servicoValues.valorServico),
       quantityHours: horas * 3600 + minutos * 60 + segundos,
-      quantityEquipament : servicoValues.quantidade,
+      quantityEquipament: servicoValues.quantidade,
       description: servicoValues.descricaoServico,
     };
 
@@ -122,16 +126,15 @@ const NewCadastro = () => {
   const handleEditProduto = (index) => {
     const produto = produtos[index];
     setProdutoValues({ nomeProduto: produto.nome, valorProduto: produto.valor, quantidade: produto.quantidade, descricaoProduto: produto.descricao });
-    setProdutos(produtos.filter((_, i) => i !== index));
+    setMode('editar'); // Define o modo como 'editar'
     setShowModalProduto(true);
   };
 
   const handleDeleteProduto = (produto) => {
-    DeleteProduct(produto).then(updateTabelProduct())
+    DeleteProduct(produto).then(updateTabelProduct());
   };
 
-  const handleEditServico = (index) => {
-    const servico = servicos[index];
+  const handleEditServico = (servico) => {
     const horas = Math.floor(servico.quantityHours / 3600);
     const minutos = Math.floor((servico.quantityHours % 3600) / 60);
     const segundos = servico.quantityHours % 60;
@@ -143,7 +146,7 @@ const NewCadastro = () => {
       quantidade: servico.quantidade,
       descricaoServico: servico.descricao,
     });
-    setServicos(servicos.filter((_, i) => i !== index));
+    setMode('editar'); // Define o modo como 'editar'
     setShowModalServico(true);
   };
 
@@ -162,12 +165,12 @@ const NewCadastro = () => {
           Cadastrar Serviço
         </Button>
 
-        <ModalComponent show={showModalProduto} onHide={handleCloseProduto} title="Cadastrar Produto" save={handleCadastroProduto}>
-          <GenericForm fields={produtoFields} values={produtoValues} handleChange={handleInputChange(setProdutoValues)} />
+        <ModalComponent show={showModalProduto} onHide={handleCloseProduto} title="Cadastrar Produto" save={handleCadastroProduto} hideButtons='false'>
+          <GenericForm fields={produtoFields} values={produtoValues} save={handleCadastroProduto} handleChange={handleInputChange(setProdutoValues)} mode={mode} />
         </ModalComponent>
 
-        <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço" save={handleCadastroServico}>
-          <GenericForm fields={servicoFields} values={servicoValues} handleChange={handleInputChange(setServicoValues)} />
+        <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço"hideButtons='false'>
+          <GenericForm fields={servicoFields} values={servicoValues}   save={handleCadastroServico}    handleChange={handleInputChange(setServicoValues)} mode={mode}  />
         </ModalComponent>
 
         {showSuccess && (

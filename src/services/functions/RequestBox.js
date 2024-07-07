@@ -142,6 +142,16 @@ const getRole = (roleNumber) => {
 
 
 
+  function getPaymentOption(value) {
+    const paymentOptions = {
+        1: "Cédulas",
+        2: "Cartão de Débito",
+        3: "Cartão de Crédito",
+        4: "Pix"
+    };
+    return paymentOptions[value];
+  }
+
   export async function createDataObjectEditBox(pedido, formaPagamento, desconto,user) {
     try {
 
@@ -164,9 +174,9 @@ const getRole = (roleNumber) => {
         payments: [
           {
             value: pedido.precoTotal || 0,
-            paymentMethod: formaPagamento.toString() || '',
+            paymentMethod: getPaymentOption(formaPagamento)   || '',
             orderId: pedido.id || '',
-            PaymentType:formaPagamento || 0
+            PaymentType: parseInt(formaPagamento) || 0
           }
         ]
       };
