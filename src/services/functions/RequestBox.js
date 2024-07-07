@@ -22,11 +22,10 @@ export async function OpenBox(initialBalance,employeerId) {
 
 
 //fechar o caixa
-export async function CloseBox(useid,data) {
+export async function CloseBox(useid) {
   var config = serviceRetornarConfig(
-    "post",
+    "put",
     `${endPoints.fecharCaixa}/${useid}`,
-    data,
     true
   );
 

@@ -61,6 +61,6 @@ export const endPoints = {
     novoPedido: backHost + "/api/SalesOrder",
     cancelarPedido: backHost + "api/SalesOrder/",
     abriCaixa: backHost + "/api/open?",
-    fecharCaixa: backHost + "/api/close?cashierId="
+    fecharCaixa: backHost + "/api/CashierOrder/close"
 
 };

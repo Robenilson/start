@@ -64,6 +64,7 @@ const Caixa = () => {
   };
 
   const handleConfirmarAbrirCaixa = async () => {
+    console.log()
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
       const agora = new Date();
@@ -87,7 +88,7 @@ const Caixa = () => {
 
   const handleConfirmarFecharCaixa = async () => {
     const agora = new Date();
-    await CloseBox(user.EmployeerId, agora);
+    await CloseBox(user.EmployeerId);
     setCaixaAberto(false);
     setSaldo(0); // Zera o saldo após fechar o caixa
     setHoraFechamento(new Date().toLocaleString());
