@@ -108,6 +108,7 @@ const NewCadastro = () => {
       name: servicoValues.nomeServico,
       price: parseFloat(servicoValues.valorServico),
       quantityHours: horas * 3600 + minutos * 60 + segundos,
+      quantityEquipament : servicoValues.quantidade,
       description: servicoValues.descricaoServico,
     };
 
