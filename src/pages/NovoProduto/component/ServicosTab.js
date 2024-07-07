@@ -9,6 +9,7 @@ const formatHoraMinima = (seconds) => {
 };
 
 const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
+  
   return (
     <Table striped bordered hover className="mt-3">
       <thead>

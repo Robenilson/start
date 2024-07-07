@@ -84,3 +84,61 @@ export async function DeletProduct(data) {
 }
   
   
+
+
+
+
+
+
+
+
+
+
+
+
+export async function createDataProductEdit(produtoValues) {
+  try {
+    const updatedProduct = {
+      id: produtoValues.id,
+      name: produtoValues.nomeProduto,
+      description: produtoValues.descricaoProduto,
+      price: parseFloat(produtoValues.valorProduto),
+      productType: 1,
+      "virtualProduct": {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "string",
+        "description": "string",
+        "price": 0,
+        "quantityHours": 0,
+        "quantityEquipament": 0
+      },      
+      physiqueProduct: {
+        id: produtoValues.id,
+        name: produtoValues.nomeProduto,
+        description: produtoValues.descricaoProduto,
+        price: parseFloat(produtoValues.valorProduto),
+        quantity: parseInt(produtoValues.quantidade)
+      }
+    };
+    return   updatedProduct;
+  } catch (error) {
+    console.error("Erro ao converter dados:", error);
+    throw error; // Corrigido: sem newline após throw
+  }
+}
+
+export async function editProduct(data) {
+  const config = serviceRetornarConfig(
+    "put",
+    `${endPoints.urlDeletProduct}`,
+    data,
+    true
+  );
+
+  try {
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}

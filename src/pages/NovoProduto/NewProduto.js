@@ -5,8 +5,8 @@ import ModalComponent from '../../components/ModalComponet';
 import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
-import { newService, fetchService } from '../../services/functions/RequestService';
-import { newProduct, fetchProduct, DeleteProduct } from "../../services/functions/RequestProduct";
+import { newService, fetchService, editService ,createDataServicoEdit } from '../../services/functions/RequestService';
+import { newProduct, fetchProduct, DeleteProduct ,editProduct, createDataProductEdit} from "../../services/functions/RequestProduct";
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -14,8 +14,8 @@ const NewCadastro = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
-  const [produtoValues, setProdutoValues] = useState({ nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
-  const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
+  const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
+  const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
   const [error, setError] = useState(null);
@@ -83,12 +83,12 @@ const NewCadastro = () => {
 
   const handleCloseProduto = () => {
     setShowModalProduto(false);
-    setProdutoValues({ nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
+    setProdutoValues({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
   };
 
   const handleCloseServico = () => {
     setShowModalServico(false);
-    setServicoValues({ nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
+    setServicoValues({ id: '', nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
   };
 
   const handleCadastroProduto = async () => {
@@ -125,7 +125,7 @@ const NewCadastro = () => {
 
   const handleEditProduto = (index) => {
     const produto = produtos[index];
-    setProdutoValues({ nomeProduto: produto.nome, valorProduto: produto.valor, quantidade: produto.quantidade, descricaoProduto: produto.descricao });
+    setProdutoValues({ id: produto.id, nomeProduto: produto.nome, valorProduto: produto.valor, quantidade: produto.quantidade, descricaoProduto: produto.descricao });
     setMode('editar'); // Define o modo como 'editar'
     setShowModalProduto(true);
   };
@@ -140,6 +140,7 @@ const NewCadastro = () => {
     const segundos = servico.quantityHours % 60;
 
     setServicoValues({
+      id: servico.id,
       nomeServico: servico.nome,
       valorServico: servico.valor,
       tempo: `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`, // Valor combinado
@@ -154,6 +155,32 @@ const NewCadastro = () => {
     setServicos(servicos.filter((_, i) => i !== index));
   };
 
+  const updateSeviceSave =  async () => {
+       await createDataServicoEdit(servicoValues).
+       then(data=>{ editService(data) }).
+       then(
+        setShowSuccess(true),
+        setTimeout(() => setShowSuccess(false), 5000),
+        handleCloseServico(),
+       )
+     
+
+        
+        
+  };
+
+  const updateProductSave =  async() => {
+   
+    await createDataProductEdit(produtoValues).
+    then( data=>{editProduct(data)}).
+    then(
+      setShowSuccess(true),
+      setTimeout(() => setShowSuccess(false), 5000),
+      handleCloseProduto()
+    )  
+     
+  };
+
   return (
     <Card>
       <div className="card-header">Novo Cadastro</div>
@@ -166,11 +193,11 @@ const NewCadastro = () => {
         </Button>
 
         <ModalComponent show={showModalProduto} onHide={handleCloseProduto} title="Cadastrar Produto" save={handleCadastroProduto} hideButtons='false'>
-          <GenericForm fields={produtoFields} values={produtoValues} save={handleCadastroProduto} handleChange={handleInputChange(setProdutoValues)} mode={mode} />
+          <GenericForm fields={produtoFields} values={produtoValues} handleSave={handleCadastroProduto} handleUpdate={updateProductSave} handleChange={handleInputChange(setProdutoValues)} mode={mode} />
         </ModalComponent>
 
-        <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço"hideButtons='false'>
-          <GenericForm fields={servicoFields} values={servicoValues}   save={handleCadastroServico}    handleChange={handleInputChange(setServicoValues)} mode={mode}  />
+        <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço" hideButtons='false'>
+          <GenericForm fields={servicoFields} values={servicoValues} handleSave={handleCadastroServico} handleUpdate={updateSeviceSave} handleChange={handleInputChange(setServicoValues)} mode={mode} />
         </ModalComponent>
 
         {showSuccess && (
