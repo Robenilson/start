@@ -68,10 +68,10 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento }) => {
           <Form.Label>Forma de Pagamento</Form.Label>
           <Form.Control as="select" value={formaPagamento} onChange={handleFormaPagamentoChange}>
             <option value="">Selecione</option>
-            <option value="cedulas">Cédulas</option>
-            <option value="debito">Cartão de Débito</option>
-            <option value="credito">Cartão de Crédito</option>
-            <option value="pix">Pix</option>
+            <option value="1">Cédulas</option>
+            <option value="2">Cartão de Débito</option>
+            <option value="3">Cartão de Crédito</option>
+            <option value="4">Pix</option>
           </Form.Control>
         </Form.Group>
 
