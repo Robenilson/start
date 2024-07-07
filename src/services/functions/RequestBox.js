@@ -164,8 +164,9 @@ const getRole = (roleNumber) => {
         payments: [
           {
             value: pedido.precoTotal || 0,
-            paymentMethod: formaPagamento || '',
-            orderId: pedido.id || ''
+            paymentMethod: formaPagamento.toString() || '',
+            orderId: pedido.id || '',
+            PaymentType:formaPagamento || 0
           }
         ]
       };
