@@ -20,6 +20,7 @@ const UserManager = () => {
     cpf: '',
     telefone: '',
     endereco: {
+       id: 0,
       cep: '',
       cidade: '',
       estado: '',
@@ -28,13 +29,28 @@ const UserManager = () => {
     },
     role: '',
     password: '',
-    passwordHash: ''  // Adicionado campo passwordHash
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(15);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+
+
+  const getRoleName = (userType) => {
+    switch (userType) {
+        case 'Cliente':
+            return 1;
+        case 'Admin':
+            return  2;
+        case 'Vendedor':
+            return  3;
+        case 'Caixa':
+            return   4 ;
+        default:
+            return userType;
+    }
+};
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,6 +81,7 @@ const UserManager = () => {
       cpf: '',
       telefone: '',
       endereco: {
+        
         cep: '',
         cidade: '',
         estado: '',
@@ -73,7 +90,6 @@ const UserManager = () => {
       },
       role: '',
       password: '',
-      passwordHash: ''  // Resetando campo passwordHash
     });
     setShowModal(true);
   };
@@ -83,30 +99,29 @@ const UserManager = () => {
   const handleSaveUser = async () => {
     if (userValues.id) {
       const dataObject = {
-        id: userValues.id ?? 0,
-        nome: userValues.nome ?? '',
-        sobrenome: userValues.sobrenome ?? '',
-        dtNascimento: userValues.dataNascimento ?? '', // Certifique-se de que userValues.dataNascimento esteja no formato correto
-        email: userValues.email ?? '',
-        cpf: userValues.cpf ?? '',
-        phone: userValues.telefone ?? '',
-        userType: userValues.role ?? 0, // Definido como exemplo, ajuste conforme necessário
+        id: userValues.id.toString() ?? 0,
+        nome: userValues.nome.toString() ?? '',
+        sobrenome: userValues.sobrenome.toString() ?? '',
+        dtNascimento: userValues.dataNascimento.toString() ?? '', // Certifique-se de que userValues.dataNascimento esteja no formato correto
+        email: userValues.email.toString() ?? '',
+        cpf: userValues.cpf.toString() ?? '',
+        phone: userValues.telefone.toString() ?? '',
+        userType: parseInt(getRoleName(userValues.role)) ?? parseInt(0), // Ajuste conforme necessário
         address: {
-          id: 0, // Definido como exemplo, ajuste conforme necessário
-          zipCode: userValues.endereco.cep ?? '',
-          cityName: userValues.endereco.cidade ?? '',
-          state: userValues.endereco.estado ?? '',
-          road: userValues.endereco.bairro ?? '',
-          number: parseInt(userValues.endereco.numero) || 0, // Converte para número ou define como 0 se não for válido
+            id: parseInt(0), // Certifique-se de que está pegando o ID correto
+            zipCode: userValues.endereco.cep.toString() ?? '',
+            cityName: userValues.endereco.cidade.toString() ?? '',
+            state: userValues.endereco.estado.toString() ?? '',
+            road: userValues.endereco.bairro.toString() ?? '', // Corrigido para '' ao invés de 'bairro'
+            number: parseInt(userValues.endereco.numero) || 0, // Converte para número ou define como 0 se não for válido
         },
-        passwordHash: userValues.password.toString() ?? '',
-        roleIds: [], // Você precisa ajustar isso conforme a estrutura real de roleIds que deseja enviar
-        inative: true, // Definido como exemplo, ajuste conforme necessário
+        roleIds: [ "3fa85f64-5717-4562-b3fc-2c963f66afa6"], // Ajuste conforme a estrutura real de roleIds que deseja enviar
+        password: userValues.password.toString() ?? '' // Certifique-se de que a senha é uma string
       };
 
 
-
-     // await editUser(dataObject);
+      console.log(dataObject)
+      await editUser(dataObject);
       await updateUsers();
     } else {
       const newDataUser = await createDataObjectUser(userValues);
@@ -127,6 +142,7 @@ const UserManager = () => {
       cpf: userData.cpf ?? '',
       telefone: userData.telefone ?? '',
       endereco: {
+        id: 0,
         cep: userData.endereco?.cep ?? '',
         cidade: userData.endereco?.cidade ?? '',
         estado: userData.endereco?.estado ?? '',
@@ -134,8 +150,7 @@ const UserManager = () => {
         numero: userData.endereco?.numero ?? '',
       },
       role: userData.role ?? 'cliente',
-      password: '',
-      passwordHash: userData.passwordHash ?? ''  // Mantendo o valor de passwordHash
+      password:  userData.password,
     });
     setShowModal(true);
   };

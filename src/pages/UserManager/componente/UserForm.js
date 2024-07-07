@@ -145,23 +145,22 @@ const UserForm = ({ userValues, handleInputChange }) => {
       </Row>
 
       <Row className="mb-3">
-        <Form.Group as={Col} controlId="formRole">
-          <Form.Label>Tipo de Usuário</Form.Label>
-          <Form.Control
+    <Form.Group as={Col} controlId="formRole">
+        <Form.Label>Tipo de Usuário</Form.Label>
+        <Form.Control
             as="select"
             name="role"
-            value={userValues.role}
+            value={userValues.role || "1"} // Define "Cliente" como a opção padrão
             onChange={handleInputChange}
             required
-          >
-            <option value="">Selecione uma role</option>
+        >
             <option value="1">Cliente</option>
             <option value="2">Admin</option>
             <option value="3">Vendedor</option>
             <option value="4">Caixa</option>
-          </Form.Control>
-        </Form.Group>
-      </Row>
+        </Form.Control>
+    </Form.Group>
+    </Row>
     </Form>
   );
 };
