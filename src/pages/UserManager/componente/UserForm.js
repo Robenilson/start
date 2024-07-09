@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form, Row, Col, Button } from 'react-bootstrap';
 
-const UserForm = ({ userValues, handleInputChange }) => {
+const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEditMode }) => {
   return (
     <Form>
       <Row className="mb-3">
@@ -145,22 +145,42 @@ const UserForm = ({ userValues, handleInputChange }) => {
       </Row>
 
       <Row className="mb-3">
-    <Form.Group as={Col} controlId="formRole">
-        <Form.Label>Tipo de Usuário</Form.Label>
-        <Form.Control
+        <Form.Group as={Col} controlId="formRole">
+          <Form.Label>Tipo de Usuário</Form.Label>
+          <Form.Control
             as="select"
             name="role"
             value={userValues.role || "1"} // Define "Cliente" como a opção padrão
             onChange={handleInputChange}
             required
-        >
+          >
             <option value="1">Cliente</option>
             <option value="2">Admin</option>
             <option value="3">Vendedor</option>
             <option value="4">Caixa</option>
-        </Form.Control>
-    </Form.Group>
-    </Row>
+          </Form.Control>
+        </Form.Group>
+      </Row>
+
+      <Row className="mt-4">
+        <Col>
+          <Button variant="secondary" onClick={handleClose}>
+            Fechar
+          </Button>
+        </Col>
+        <Col className="text-end">
+          {!isEditMode && (
+            <Button variant="primary" onClick={save} type="submit">
+              Cadastrar
+            </Button>
+          )}
+          {isEditMode && (
+            <Button variant="success" type="submit">
+              Editar
+            </Button>
+          )}
+        </Col>
+      </Row>
     </Form>
   );
 };

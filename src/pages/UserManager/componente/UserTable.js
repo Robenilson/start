@@ -19,7 +19,6 @@ const UserTable = ({ users, columns, onEdit, onDelete }) => (
             <td>{user.nome}</td>
             <td>{user.sobrenome}</td>
             <td>{user.email}</td>
-            <td>{user.dataNascimento}</td>
             <td>{user.cpf}</td>
             <td>{user.telefone}</td>
             <td>{user.role}</td>

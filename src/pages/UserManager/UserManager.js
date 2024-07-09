@@ -6,7 +6,6 @@ import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
 import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser } from '../../services/functions/RequestPeople';
-
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -20,7 +19,7 @@ const UserManager = () => {
     cpf: '',
     telefone: '',
     endereco: {
-       id: 0,
+      id: 0,
       cep: '',
       cidade: '',
       estado: '',
@@ -30,27 +29,29 @@ const UserManager = () => {
     role: '',
     password: '',
   });
+  const [isEditMode, setIsEditMode] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(15);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
+  const columns = ['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role'];
 
   const getRoleName = (userType) => {
     switch (userType) {
-        case 'Cliente':
-            return 1;
-        case 'Admin':
-            return  2;
-        case 'Vendedor':
-            return  3;
-        case 'Caixa':
-            return   4 ;
-        default:
-            return userType;
+      case 'Cliente':
+        return 1;
+      case 'Admin':
+        return 2;
+      case 'Vendedor':
+        return 3;
+      case 'Caixa':
+        return 4;
+      default:
+        return userType;
     }
-};
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -81,7 +82,6 @@ const UserManager = () => {
       cpf: '',
       telefone: '',
       endereco: {
-        
         cep: '',
         cidade: '',
         estado: '',
@@ -91,46 +91,52 @@ const UserManager = () => {
       role: '',
       password: '',
     });
+    setIsEditMode(false);
     setShowModal(true);
   };
 
   const handleCloseModal = () => setShowModal(false);
 
   const handleSaveUser = async () => {
-    if (userValues.id) {
+    if (isEditMode) {
       const dataObject = {
         id: userValues.id.toString() ?? 0,
         nome: userValues.nome.toString() ?? '',
         sobrenome: userValues.sobrenome.toString() ?? '',
-        dtNascimento: userValues.dataNascimento.toString() ?? '', // Certifique-se de que userValues.dataNascimento esteja no formato correto
+        dtNascimento: userValues.dataNascimento.toString() ?? '',
         email: userValues.email.toString() ?? '',
         cpf: userValues.cpf.toString() ?? '',
         phone: userValues.telefone.toString() ?? '',
-        userType: parseInt(getRoleName(userValues.role)) ?? parseInt(0), // Ajuste conforme necessário
+        userType: parseInt(getRoleName(userValues.role)) ?? parseInt(0),
         address: {
-            id: parseInt(0), // Certifique-se de que está pegando o ID correto
-            zipCode: userValues.endereco.cep.toString() ?? '',
-            cityName: userValues.endereco.cidade.toString() ?? '',
-            state: userValues.endereco.estado.toString() ?? '',
-            road: userValues.endereco.bairro.toString() ?? '', // Corrigido para '' ao invés de 'bairro'
-            number: parseInt(userValues.endereco.numero) || 0, // Converte para número ou define como 0 se não for válido
+          id: parseInt(0),
+          zipCode: userValues.endereco.cep.toString() ?? '',
+          cityName: userValues.endereco.cidade.toString() ?? '',
+          state: userValues.endereco.estado.toString() ?? '',
+          road: userValues.endereco.bairro.toString() ?? '',
+          number: parseInt(userValues.endereco.numero) || 0,
         },
-        roleIds: [ "3fa85f64-5717-4562-b3fc-2c963f66afa6"], // Ajuste conforme a estrutura real de roleIds que deseja enviar
-        password: userValues.password.toString() ?? '' // Certifique-se de que a senha é uma string
+        roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+        password: userValues.password.toString() ?? ''
       };
 
-
-      console.log(dataObject)
       await editUser(dataObject);
-      await updateUsers();
     } else {
       const newDataUser = await createDataObjectUser(userValues);
-   
-     NewUser(newDataUser);
-      await updateUsers();
+      await NewUser(newDataUser);
     }
+
+    await updateUsers();
     handleCloseModal();
   };
+
+  const handleAddUser = async()=>{
+    const newDataUser = await createDataObjectUser(userValues);
+    await NewUser(newDataUser);
+    await updateUsers();
+    handleCloseModal()
+    
+  }
 
   const handleEditUser = async (userData) => {
     setUserValues({
@@ -150,8 +156,9 @@ const UserManager = () => {
         numero: userData.endereco?.numero ?? '',
       },
       role: userData.role ?? 'cliente',
-      password:  userData.password,
+      password: userData.password,
     });
+    setIsEditMode(true);
     setShowModal(true);
   };
 
@@ -183,49 +190,48 @@ const UserManager = () => {
 
   const updateUsers = async () => {
     try {
-        const data = await FetchUser();
-        if (data && Array.isArray(data)) {
-            const users = data.map((user) => {
-                let roleName = '';
-                switch (user.userType) {
-                    case 1:
-                        roleName = 'Cliente';
-                        break;
-                    case 2:
-                        roleName = 'Admin';
-                        break;
-                    case 3:
-                        roleName = 'Vendedor';
-                        break;
-                    case 4:
-                        roleName = 'Caixa';
-                        break;
-                    default:
-                        roleName = 'Unknown';
-                }
+      const data = await FetchUser();
+      if (data && Array.isArray(data)) {
+        const users = data.map((user) => {
+          let roleName = '';
+          switch (user.userType) {
+            case 1:
+              roleName = 'Cliente';
+              break;
+            case 2:
+              roleName = 'Admin';
+              break;
+            case 3:
+              roleName = 'Vendedor';
+              break;
+            case 4:
+              roleName = 'Caixa';
+              break;
+            default:
+              roleName = 'Unknown';
+          }
 
-                return {
-                    id: user.id,
-                    nome: user.nome,
-                    sobrenome: user.sobrenome,
-                    email: user.email,
-                    dataNascimento: user.dtNascimento,
-                    cpf: user.cpf,
-                    telefone: user.phone,
-                    role: roleName, // Assigning the readable role name
-                    passwordHash: user.passwordHash // Including the passwordHash field
-                };
-            });
-            
-            setPessoas(users);
-        } else {
-            console.error('Dados recebidos não são válidos:', data);
-        }
+          return {
+            id: user.id,
+            nome: user.nome,
+            sobrenome: user.sobrenome,
+            email: user.email,
+            dataNascimento: user.dtNascimento,
+            cpf: user.cpf,
+            telefone: user.phone,
+            role: roleName,
+            passwordHash: user.passwordHash
+          };
+        });
+
+        setPessoas(users);
+      } else {
+        console.error('Dados recebidos não são válidos:', data);
+      }
     } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
+      console.error('Erro ao buscar usuários:', error);
     }
-};
-
+  };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -246,9 +252,14 @@ const UserManager = () => {
         <Button variant="primary" onClick={handleShowModal}>
           Cadastrar Pessoa
         </Button>
-        <ModalComponent show={showModal} onHide={handleCloseModal} title="Cadastrar Pessoa" save={handleSaveUser}>
-       
-          <UserForm userValues={userValues} handleInputChange={handleInputChange} />
+        <ModalComponent show={showModal} onHide={handleCloseModal} title={isEditMode ? "Editar Pessoa" : "Cadastrar Pessoa"} hideButtons="true">
+          <UserForm
+            userValues={userValues}
+            handleInputChange={handleInputChange}
+            handleClose={handleCloseModal}
+            save={handleAddUser} 
+            isEditMode={isEditMode}
+          />
         </ModalComponent>
 
         <Form.Group controlId="formSearch">
@@ -287,24 +298,12 @@ const UserManager = () => {
           <Tab eventKey="clientes" title="Clientes">
             <UserTable
               users={getCurrentItems()}
-              columns={['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role']}
+              columns={columns}
               onEdit={handleEditUser}
               onDelete={handleShowDeleteModal}
             />
           </Tab>
         </Tabs>
-
-        <nav>
-          <ul className="pagination">
-            {Array.from({ length: Math.ceil(pessoas.length / itemsPerPage) }, (_, index) => (
-              <li key={index} className="page-item">
-                <button onClick={() => paginate(index + 1)} className="page-link">
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
       </div>
     </Card>
   );

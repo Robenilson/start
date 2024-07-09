@@ -45,27 +45,17 @@ export async function createDataServicoEdit(servicoValues) {
   try {
     const [horas, minutos, segundos] = servicoValues.tempo.split(':').map(Number);
     const updatedService = {
-      id: servicoValues.id,
-      name: servicoValues.nomeServico,
-      description: servicoValues.descricaoServico,
-      price: parseFloat(servicoValues.valorServico),
-      productType: 2,
-      virtualProduct: {
+    
         id: servicoValues.id,
         name: servicoValues.nomeServico,
         description: servicoValues.descricaoServico,
         price: parseFloat(servicoValues.valorServico),
         quantityHours: horas * 3600 + minutos * 60 + segundos,
         quantityEquipament: servicoValues.quantidade,
-      },
-      physiqueProduct: {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        name: "string",
-        description: "string",
-        price: 0,
-        quantity: 0,
-      },
+    
+      
     };
+    console.log(updatedService)
     return  updatedService;
   } catch (error) {
     console.error("Erro ao converter dados:", error);
@@ -76,7 +66,7 @@ export async function createDataServicoEdit(servicoValues) {
 export async function editService(data) {
   const config = serviceRetornarConfig(
     "put",
-    `${endPoints.urlDeletProduct}`,
+    `${endPoints.urlDeletProduct}/editService`,
     data,
     true
   );
