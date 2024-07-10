@@ -101,6 +101,7 @@ export async function NewUser(data) {
   export async function createDataObjectUser(userValues) {
     try {
       const data = {
+
         id: 0,  // Adiciona o campo 'id' conforme a especificação
         nome: userValues.nome?.toString() ?? '',
         sobrenome: userValues.sobrenome?.toString() ?? '',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from '../../components/Card';
-import { loginUser } from "../../services/functions/RequestLogin"; // Renomear a função importada
+import { loginUser } from "../../services/functions/RequestLogin";
 import { useNavigate } from 'react-router-dom';
 import { urls } from "../../services/functions/config/urls";
 import { jwtDecode } from 'jwt-decode'; // Atualização na importação
@@ -20,11 +20,11 @@ const Login = () => {
     setError('');
 
     try {
-      const vRetorno = await loginUser(email, password); // Chamar a função renomeada
+      const vRetorno = await loginUser(email, password); // Call renamed function
 
       if (typeof vRetorno === 'string') {
         const userData = jwtDecode(vRetorno);
-        userData.token = vRetorno; 
+        userData.token = vRetorno;
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
         alert('Login realizado com sucesso!');
@@ -51,7 +51,7 @@ const Login = () => {
               type="email"
               className="form-control my-2 mb-4"
               id="email"
-              value={email || ''}
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Seu email"
             />
@@ -62,7 +62,7 @@ const Login = () => {
               type="password"
               className="form-control my-2 mb-4"
               id="password"
-              value={password || ''}
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Sua senha"
             />
