@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
-import ConcluidosTab from './componentesCaixa/ConcluidosTab';
-import ServicosUtilizadosTab from './componentesCaixa/ServicosUtilizadosTab';
-import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectBox } from "../../services/functions/RequestBox";
+import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -14,10 +12,9 @@ const Caixa = () => {
   const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
   const [valorInicial, setValorInicial] = useState('');
   const [saldo, setSaldo] = useState(0);
-  const [cliente, setcliente] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPedidoSuccess, setShowPedidoSuccess] = useState(false);
   const [pedidos, setPedidos] = useState([]);
-  const [servicosUtilizados, setServicosUtilizados] = useState([]);
   const [caixaAberto, setCaixaAberto] = useState(false);
   const [horaFechamento, setHoraFechamento] = useState(null);
   const [dataAbertura, setDataAbertura] = useState(null);
@@ -37,7 +34,6 @@ const Caixa = () => {
     const boxData = await FetchBox();
     const viewData = await ViewDataObjectBox(boxData);
     setPedidos(viewData);
-    console.log(pedidos);
   };
 
   useEffect(() => {
@@ -45,6 +41,10 @@ const Caixa = () => {
       updateBox();
     }
   }, [caixaAberto]);
+
+  useEffect(() => {
+    updateBox();
+  }, []);
 
   const handleAbrirCaixa = () => {
     setShowModalAbrirCaixa(true);
@@ -64,10 +64,15 @@ const Caixa = () => {
   };
 
   const handleConfirmarAbrirCaixa = async () => {
+    console.log()
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
       const agora = new Date();
-      await OpenBox(user.EmployeerId, valor.toString());
+       const   valueOpenBox =await OpenBox(valor, user.EmployeerId);
+       console.log(valueOpenBox)
+
+
+
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);
@@ -83,8 +88,9 @@ const Caixa = () => {
 
   const handleConfirmarFecharCaixa = async () => {
     const agora = new Date();
-    await CloseBox(user.EmployeerId, agora);
+    await CloseBox(user.EmployeerId);
     setCaixaAberto(false);
+    setSaldo(0); // Zera o saldo após fechar o caixa
     setHoraFechamento(new Date().toLocaleString());
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
@@ -92,7 +98,6 @@ const Caixa = () => {
     localStorage.removeItem('saldo');
     handleCloseFecharCaixa();
   };
-
   const handlePedidoFormaPagamento = (index) => {
     setPedidoSelecionado(index);
     setShowModalConfirmacaoVenda(true);
@@ -102,27 +107,37 @@ const Caixa = () => {
     setShowModalConfirmacaoVenda(false);
   };
 
-  // Concluir as vendas
-  const handleVendaConcluida = async () => {
-    const data = {
-      pedidoId: pedidos[pedidoSelecionado].id,
-    };
-    await createDataObjectBox(data).then(data => {
-      PutCompletBox(data);
-    }).then(response => {
-      console.log('Venda concluída com sucesso:', response.data);
-      setPedidos(prevPedidos => prevPedidos.filter(pedido => pedido.id !== pedidos[pedidoSelecionado].id));
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 5000);
-      handleCloseConfirmacaoVenda();
-    }).catch(error => {
-      console.error('Erro ao concluir ou deletar a venda:', error);
-    });
+  const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
+    createDataObjectEditBox(pedido, formaPagamento, desconto, user).then(data=>{
+        PutCompletBox(data)
+        .then(response => {
+          setShowPedidoSuccess(true);
+          updateBox(); // Atualize a lista de pedidos após a venda ser concluída
+          setTimeout(clearState, 4000);
+        })
+        .catch(error => {
+          console.error('Erro ao concluir a venda:', error);
+          alert('Erro ao concluir a venda.');
+        });
+
+      }
+    )
+
+
+   
+
+    handleCloseConfirmacaoVenda();
+  };
+  
+
+
+  const clearState = () => {
+    setShowPedidoSuccess(false);
+    
   };
 
-  const adicionarServicoUtilizado = (servico) => {
-    setServicosUtilizados([...servicosUtilizados, servico]);
-  };
+
+
 
   return (
     <Card>
@@ -134,7 +149,6 @@ const Caixa = () => {
         <Button variant="secondary" onClick={handleFecharCaixa}>
           Fechar Caixa
         </Button>
-
         <Modal show={showModalAbrirCaixa} onHide={handleCloseAbrirCaixa}>
           <Modal.Header closeButton>
             <Modal.Title>Abrir Caixa</Modal.Title>
@@ -170,17 +184,30 @@ const Caixa = () => {
         </Modal>
 
         <Modal show={showModalConfirmacaoVenda} onHide={handleCloseConfirmacaoVenda}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmação de Venda</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <DetalhesPedido pedido={pedidos[pedidoSelecionado]} onHide={handleCloseConfirmacaoVenda} />
-          </Modal.Body>
-        </Modal>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmar Pagamento</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {pedidoSelecionado !== null && (
+            <DetalhesPedido
+              pedido={pedidos[pedidoSelecionado]}
+              onHide={handleCloseConfirmacaoVenda}
+              handleConfirmarPagamento={handleConfirmarPagamento}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
+
 
         {showSuccess && (
           <Alert variant="success" className="mt-3">
             Operação concluída com sucesso!
+          </Alert>
+        )}
+
+        {showPedidoSuccess && (
+          <Alert variant="success" className="mt-3">
+            Venda realizada com sucesso!
           </Alert>
         )}
 
@@ -206,12 +233,6 @@ const Caixa = () => {
           <Tabs defaultActiveKey="pedidos" id="tabela-abas" className="mt-3">
             <Tab eventKey="pedidos" title="Pedidos">
               <PedidosTab pedidos={pedidos} handlePedidoFormaPagamento={handlePedidoFormaPagamento} />
-            </Tab>
-            <Tab eventKey="concluidos" title="Concluídos">
-              <ConcluidosTab />
-            </Tab>
-            <Tab eventKey="servicos-utilizados" title="Serviços Utilizados">
-              <ServicosUtilizadosTab servicosUtilizados={servicosUtilizados} />
             </Tab>
           </Tabs>
         )}

@@ -58,6 +58,28 @@ export async function FetchUserByID(data) {
 
 
 
+//Faz  uma pesquisa por id na  tabela usuario 
+export async function deleteUserByID(data) {
+  var config = serviceRetornarConfig(
+    "delete",
+    `${endPoints.urlUserByid}/${data}`,
+    true
+  );
+
+  try {
+    const response= await axios(config);
+    
+    return response.data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+
+
+
 //Adiciona um novo Produto
 export async function NewUser(data) {
     var config = serviceRetornarConfig(
@@ -75,27 +97,29 @@ export async function NewUser(data) {
   }
   
   
+
   export async function createDataObjectUser(userValues) {
     try {
       const data = {
-        nome: userValues.nome.toString(),
-        sobrenome: userValues.sobrenome.toString(),
-        dtNascimento: userValues.dataNascimento.toString(),
-        email: userValues.email.toString(),
-        cpf: userValues.cpf.toString(),
-        phone: userValues.telefone.toString(),
-        userType: userValues.userType,
+
+        id: 0,  // Adiciona o campo 'id' conforme a especificação
+        nome: userValues.nome?.toString() ?? '',
+        sobrenome: userValues.sobrenome?.toString() ?? '',
+        dtNascimento: userValues.dataNascimento?.toString() ?? '',
+        email: userValues.email?.toString() ?? '',
+        cpf: userValues.cpf?.toString() ?? '',
+        phone: userValues.telefone?.toString() ?? '',
+        userType: parseInt(userValues.role) || 1 ,  // Define o 'userType' conforme especificado
         address: {
-          zipCode: userValues.endereco && userValues.endereco.cep ? userValues.endereco.cep.toString() : " ",
-          cityName: userValues.endereco && userValues.endereco.cidade ? userValues.endereco.cidade.toString() : " ",
-          state: userValues.endereco && userValues.endereco.estado ? userValues.endereco.estado.toString() : " ",
-          road: userValues.endereco && userValues.endereco.bairro ? userValues.endereco.bairro.toString() : " ",
-          number: userValues.endereco && userValues.endereco.numero ? userValues.endereco.numero : 0, // Use toString() 
-        },        
-        roleIds: [
-          "84a4f924-5a1b-4c72-8a29-14b3673f1533"
-        ],
-        password: userValues.password.toString()
+          id: 0,  // Adiciona o campo 'id' conforme a especificação
+          zipCode: userValues.endereco.cep?.toString() ?? '',
+          cityName: userValues.endereco.cidade?.toString() ?? '',
+          state: userValues.endereco.estado?.toString() ?? '',
+          road: userValues.endereco.bairro?.toString() ?? '',
+          number: userValues.endereco.numero ? parseInt(userValues.endereco.numero) : parseInt(0),
+        },
+        roleIds: [ "3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+        password: userValues.password?.toString() ?? '',
       };
   
       return data;
@@ -104,3 +128,24 @@ export async function NewUser(data) {
       throw error;
     }
   }
+  
+  
+
+
+  export async function editUser(data) {
+   
+    var config = serviceRetornarConfig(
+      "put",
+      `${endPoints.urlUserByid}`,
+      data,
+      true
+    );
+  
+    try {
+      const response= await axios(config);
+      return response.data;
+    } catch (error) {
+      return serviceRetornarErro(error);
+    }
+  }
+ 

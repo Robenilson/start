@@ -6,7 +6,7 @@ import Permision from './Permision';
 import { Outlet } from 'react-router-dom';
 import OptionNav from './optionNav';
 import Card from '../components/Card';
-import  {urls} from"../services/static/js/urls";
+import  {urls} from"../services/functions/config/urls";
 
 function Menu() {
     return (

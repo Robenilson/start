@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
+import { Button, Alert, Tabs, Tab, Form, Modal } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
-import { newService, fetchService } from '../../services/functions/RequestService';
-import { newProduct, fetchProduct, DeletProduct } from "../../services/functions/RequestProduct";
+import { newService, fetchService, editService ,createDataServicoEdit , DeleteService} from '../../services/functions/RequestService';
+import { newProduct, fetchProduct, DeleteProduct ,editProduct, createDataProductEdit} from "../../services/functions/RequestProduct";
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -14,11 +14,14 @@ const NewCadastro = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
-  const [produtoValues, setProdutoValues] = useState({ nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
-  const [servicoValues, setServicoValues] = useState({ nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
+  const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
+  const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
   const [error, setError] = useState(null);
+  const [mode, setMode] = useState(''); // Adicionado estado `mode`
+  const [confirmDeleteProduto, setConfirmDeleteProduto] = useState({ show: false, produto: null }); // Estado para confirmar exclusão de produto
+  const [confirmDeleteServico, setConfirmDeleteServico] = useState({ show: false, servico: null }); // Estado para confirmar exclusão de serviço
 
   const produtoFields = [
     { name: 'nomeProduto', label: 'Nome do Produto', type: 'text', placeholder: 'Nome do Produto' },
@@ -48,7 +51,6 @@ const NewCadastro = () => {
   const updateTabelServicos = async () => {
     try {
       const data = await fetchService();
-      console.log(data)
       setServicos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error updating services:', error);
@@ -71,17 +73,24 @@ const NewCadastro = () => {
     }));
   };
 
-  const handleShowProduto = () => setShowModalProduto(true);
-  const handleShowServico = () => setShowModalServico(true);
+  const handleShowProduto = () => {
+    setMode('cadastrar'); // Define o modo como 'cadastrar'
+    setShowModalProduto(true);
+  };
+
+  const handleShowServico = () => {
+    setMode('cadastrar'); // Define o modo como 'cadastrar'
+    setShowModalServico(true);
+  };
 
   const handleCloseProduto = () => {
     setShowModalProduto(false);
-    setProdutoValues({ nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
+    setProdutoValues({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
   };
 
   const handleCloseServico = () => {
     setShowModalServico(false);
-    setServicoValues({ nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
+    setServicoValues({ id: '', nomeServico: '', valorServico: '', tempo: '', quantidade: '', descricaoServico: '' });
   };
 
   const handleCadastroProduto = async () => {
@@ -91,10 +100,6 @@ const NewCadastro = () => {
       price: parseFloat(produtoValues.valorProduto),
       quantity: parseInt(produtoValues.quantidade),
     };
-    
-    console.log(novoProduto)
-
-    
     await newProduct(novoProduto);
     await updateTabelProduct();
     setShowSuccess(true);
@@ -109,6 +114,7 @@ const NewCadastro = () => {
       name: servicoValues.nomeServico,
       price: parseFloat(servicoValues.valorServico),
       quantityHours: horas * 3600 + minutos * 60 + segundos,
+      quantityEquipament: servicoValues.quantidade,
       description: servicoValues.descricaoServico,
     };
 
@@ -121,43 +127,66 @@ const NewCadastro = () => {
 
   const handleEditProduto = (index) => {
     const produto = produtos[index];
-    setProdutoValues({ nomeProduto: produto.nome, valorProduto: produto.valor, quantidade: produto.quantidade, descricaoProduto: produto.descricao });
-    setProdutos(produtos.filter((_, i) => i !== index));
+    setProdutoValues({ id: produto.id, nomeProduto: produto.nome, valorProduto: produto.valor, quantidade: produto.quantidade, descricaoProduto: produto.descricao });
+    setMode('editar'); // Define o modo como 'editar'
     setShowModalProduto(true);
   };
 
-  const handleDeleteProduto = (index) => {
-    
-
-    let foundObjects = produtos.filter(item => console.log(item));
-
-    console.log(foundObjects)
-
-    
-   // const a = produtos.filter((_, i) => i !== index)
-      
-    
+  const handleDeleteProduto = (produto) => {
+    setConfirmDeleteProduto({ show: true, produto: produto });
   };
 
-  const handleEditServico = (index) => {
-    const servico = servicos[index];
+  const confirmDeleteProdutoHandler = () => {
+    DeleteProduct(confirmDeleteProduto.produto).then(updateTabelProduct());
+    setConfirmDeleteProduto({ show: false, produto: null });
+  };
+
+  const handleEditServico = (servico) => {
     const horas = Math.floor(servico.quantityHours / 3600);
     const minutos = Math.floor((servico.quantityHours % 3600) / 60);
     const segundos = servico.quantityHours % 60;
 
     setServicoValues({
+      id: servico.id,
       nomeServico: servico.nome,
       valorServico: servico.valor,
       tempo: `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`, // Valor combinado
       quantidade: servico.quantidade,
       descricaoServico: servico.descricao,
     });
-    setServicos(servicos.filter((_, i) => i !== index));
+    setMode('editar'); // Define o modo como 'editar'
     setShowModalServico(true);
   };
 
-  const handleDeleteServico = (index) => {
-    setServicos(servicos.filter((_, i) => i !== index));
+  const handleDeleteServico = (servico) => {
+    setConfirmDeleteServico({ show: true, servico: servico });
+  };
+
+  const confirmDeleteServicoHandler = () => {
+    DeleteService(confirmDeleteServico.servico).then(updateTabelServicos());
+    setConfirmDeleteServico({ show: false, servico: null });
+  };
+
+  const updateSeviceSave = async () => {
+    await createDataServicoEdit(servicoValues).
+      then(data => { editService(data) }).
+      then(
+        setShowSuccess(true),
+        setTimeout(() => setShowSuccess(false), 5000),
+        handleCloseServico(),
+      )
+  };
+
+  const updateProductSave = async () => {
+
+    await createDataProductEdit(produtoValues).
+      then(data => { editProduct(data) }).
+      then(
+        setShowSuccess(true),
+        setTimeout(() => setShowSuccess(false), 5000),
+        handleCloseProduto()
+      )
+
   };
 
   return (
@@ -171,13 +200,47 @@ const NewCadastro = () => {
           Cadastrar Serviço
         </Button>
 
-        <ModalComponent show={showModalProduto} onHide={handleCloseProduto} title="Cadastrar Produto" save={handleCadastroProduto}>
-          <GenericForm fields={produtoFields} values={produtoValues} handleChange={handleInputChange(setProdutoValues)} />
+        <ModalComponent show={showModalProduto} onHide={handleCloseProduto} title="Cadastrar Produto" save={handleCadastroProduto} hideButtons='false'>
+          <GenericForm fields={produtoFields} values={produtoValues} handleSave={handleCadastroProduto} handleUpdate={updateProductSave} handleChange={handleInputChange(setProdutoValues)} mode={mode} />
         </ModalComponent>
 
-        <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço" save={handleCadastroServico}>
-          <GenericForm fields={servicoFields} values={servicoValues} handleChange={handleInputChange(setServicoValues)} />
+        <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço" hideButtons='false'>
+          <GenericForm fields={servicoFields} values={servicoValues} handleSave={handleCadastroServico} handleUpdate={updateSeviceSave} handleChange={handleInputChange(setServicoValues)} mode={mode} />
         </ModalComponent>
+
+        <Modal show={confirmDeleteProduto.show} onHide={() => setConfirmDeleteProduto({ show: false, produto: null })}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmar Exclusão</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Tem certeza que deseja excluir o produto "{confirmDeleteProduto.produto?.nome}"?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setConfirmDeleteProduto({ show: false, produto: null })}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteProdutoHandler}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={confirmDeleteServico.show} onHide={() => setConfirmDeleteServico({ show: false, servico: null })}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmar Exclusão</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Tem certeza que deseja excluir o serviço "{confirmDeleteServico.servico?.nome}"?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setConfirmDeleteServico({ show: false, servico: null })}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteServicoHandler}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         {showSuccess && (
           <Alert variant="success" className="mt-3">

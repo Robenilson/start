@@ -9,6 +9,7 @@ const formatHoraMinima = (seconds) => {
 };
 
 const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
+  
   return (
     <Table striped bordered hover className="mt-3">
       <thead>
@@ -18,7 +19,6 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
           <th>Descrição</th>
           <th>Valor</th>
           <th>Hora Mínima</th>
-          <th>Quantidade</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -30,10 +30,9 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
             <td>{servico.descricao}</td>
             <td>R${servico.valor.toFixed(2)}</td>
             <td>{formatHoraMinima(servico.horaMinima)}</td>
-            <td>{servico.quantidade}</td>
             <td>
-              <Button variant="warning" onClick={() => handleEditServico(index)} className="me-2">Editar</Button>
-              <Button variant="danger" onClick={() => handleDeleteServico(index)}>Excluir</Button>
+              <Button variant="warning" onClick={() => handleEditServico(servico)} className="me-2">Editar</Button>
+              <Button variant="danger" onClick={() => handleDeleteServico(servico)}>Excluir</Button>
             </td>
           </tr>
         ))}

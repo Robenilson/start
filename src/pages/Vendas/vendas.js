@@ -5,7 +5,7 @@ import { fetchService } from '../../services/functions/RequestService';
 import { fetchProduct } from '../../services/functions/RequestProduct';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
 import { NewSale } from '../../services/functions/RequestSales';
-import SelectableTable from './componente/SelectableTable'; 
+import SelectableTable from './componente/SelectableTable';
 
 const Vendas = () => {
   const [cliente, setCliente] = useState(null);
@@ -14,7 +14,7 @@ const Vendas = () => {
   const [showModal, setShowModal] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0); // Iniciando com 0
   const [confirmationData, setConfirmationData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [services, setServices] = useState([]);
@@ -28,7 +28,7 @@ const Vendas = () => {
     precoTotal: 0,
     desconto: 0,
     credito: 0,
-    saleStatus: 0,
+    saleStatus: 1,
     payments: [
       {
         id: 0,
@@ -62,21 +62,29 @@ const Vendas = () => {
   const handleButtonClick = (type) => {
     setSaleType(type);
     setShowModal(true);
-    setQuantity(1);
+    setQuantity(0); // Iniciando com 0
   };
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
     setShowModal(false);
-    const minQuantity = saleType === 'produto' ? 1 : parseInt(item.horaMinima);
-    setQuantity(minQuantity);
     setConfirmationData({
       saleType,
       item,
-      quantity: minQuantity,
-      total: item.valor ? item.valor * minQuantity : 0,
+      quantity: quantity, // Inicializando com a quantidade digitada
+      total: item.valor ? item.valor * quantity : 0, // Calculando o total com base na quantidade inicial
     });
   };
+
+  useEffect(() => {
+    if (selectedItem && confirmationData) {
+      const updatedTotal = selectedItem.valor ? selectedItem.valor * quantity : 0;
+      setConfirmationData((prevConfirmationData) => ({
+        ...prevConfirmationData,
+        total: updatedTotal,
+      }));
+    }
+  }, [quantity, selectedItem]);
 
   const handleConfirm = async () => {
     if (!selectedItem) {
@@ -108,7 +116,6 @@ const Vendas = () => {
       ]
     };
 
-    // Verificar e ajustar estrutura e tipagem do JSON
     const validData = {
       id: newData.id,
       dtSale: newData.dtSale,
@@ -124,7 +131,7 @@ const Vendas = () => {
       precoTotal: Number(newData.precoTotal),
       desconto: Number(newData.desconto),
       credito: Number(newData.credito),
-      saleStatus: Number(newData.saleStatus),
+      saleStatus: 2,
       payments: newData.payments.map(payment => ({
         id: Number(payment.id),
         value: Number(payment.value),
@@ -136,10 +143,9 @@ const Vendas = () => {
     setFormData(validData);
 
     try {
-      console.log(validData);
       await NewSale(validData);
       setShowSuccess(true);
-      setTimeout(clearState, 5000);
+      setTimeout(clearState, 3000);
     } catch (error) {
       console.error('Erro ao criar nova venda:', error);
     }
@@ -155,7 +161,7 @@ const Vendas = () => {
     setSelectedItem(null);
     setSaleType('');
     setConfirmationData(null);
-    setQuantity(1);
+    setQuantity(0); // Iniciando com 0
     setShowSuccess(false);
     setCliente(null);
     setFormData({
@@ -175,15 +181,17 @@ const Vendas = () => {
           orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         }
       ]
-
     });
   };
 
   const handleQuantityChange = (event) => {
     const newQuantity = Number(event.target.value);
     setQuantity(newQuantity);
+
+    // Atualiza o total com base na nova quantidade digitada
     if (selectedItem) {
       const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
+     
       setConfirmationData((prevConfirmationData) => ({
         ...prevConfirmationData,
         quantity: newQuantity,
@@ -278,7 +286,7 @@ const Vendas = () => {
               </Form.Label>
               <Form.Control
                 type="number"
-                min={saleType === 'produto' ? 1 : confirmationData.item.horaMinima}
+                min={0} // Ajusta para iniciar em 0
                 value={quantity}
                 onChange={handleQuantityChange}
               />
@@ -290,14 +298,14 @@ const Vendas = () => {
               Confirmar Venda
             </Button>
             <Button variant="danger" onClick={handleCancel}>
-              Cancelar Venda
+              Cancelar
             </Button>
           </div>
         )}
 
         {showSuccess && (
           <Alert variant="success" className="mt-3">
-            Pedido concluído com sucesso!
+            Venda realizada com sucesso!
           </Alert>
         )}
       </div>
