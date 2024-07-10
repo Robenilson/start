@@ -84,7 +84,7 @@ export async function editService(data) {
 export async function DeleteService(data) {
   var config = serviceRetornarConfig(
     "delete",
-    `${endPoints.urlDeletProduct}deleteService?id=${data.id}` ,
+    `${endPoints.urlDeletProduct}/deleteService?id=${data.id}` ,
     true
   );
   try {
