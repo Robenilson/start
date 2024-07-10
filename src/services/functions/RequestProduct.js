@@ -54,7 +54,7 @@ export async function newProduct(data) {
 export async function DeleteProduct(data) {
   var config = serviceRetornarConfig(
     "delete",
-    `${endPoints.urlDeletProduct}?id=${data.id}` ,
+    `${endPoints.urlDeletProduct}/deleteProduct?id=${data.id}` ,
     true
   );
   try {

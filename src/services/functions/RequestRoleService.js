@@ -4,6 +4,27 @@ import { endPoints } from "./config/endpoints";
 
 
 
+
+//Adiciona um novo Produto
+export async function DeleteProduct(data) {
+  var config = serviceRetornarConfig(
+    "delete",
+    `${endPoints.urlDeletProduct}/deleteProduct?id=${data.id}` ,
+    true
+  );
+  try {
+    return (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+
+
+
+
 export async function newRole(data) {
     var config = serviceRetornarConfig(
       "post",

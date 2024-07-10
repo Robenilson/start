@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tabs, Tab, Form, Alert, Modal } from 'react-bootstrap';
+import { Button, Tabs, Tab, Form, Alert, Modal, Pagination } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
 import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser } from '../../services/functions/RequestPeople';
+
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [pessoas, setPessoas] = useState([]);
   const [userValues, setUserValues] = useState({
     id: '',
@@ -96,9 +98,7 @@ const UserManager = () => {
   };
 
   const handleCloseModal = () => setShowModal(false);
-
-  const handleSaveUser = async () => {
-    if (isEditMode) {
+  const handleEdtUser = async () => {
       const dataObject = {
         id: userValues.id.toString() ?? 0,
         nome: userValues.nome.toString() ?? '',
@@ -121,22 +121,20 @@ const UserManager = () => {
       };
 
       await editUser(dataObject);
-    } else {
-      const newDataUser = await createDataObjectUser(userValues);
-      await NewUser(newDataUser);
-    }
-
+    
     await updateUsers();
     handleCloseModal();
   };
 
-  const handleAddUser = async()=>{
+  const handleAddUser = async () => {
+    handleCloseModal();
     const newDataUser = await createDataObjectUser(userValues);
     await NewUser(newDataUser);
     await updateUsers();
-    handleCloseModal()
-    
-  }
+    setShowSuccessModal(true);
+  };
+
+  const handleCloseSuccessModal = () => setShowSuccessModal(false);
 
   const handleEditUser = async (userData) => {
     setUserValues({
@@ -155,7 +153,7 @@ const UserManager = () => {
         bairro: userData.endereco?.bairro ?? '',
         numero: userData.endereco?.numero ?? '',
       },
-      role: userData.role ?? 'cliente',
+      role: userData.role ?? '1',
       password: userData.password,
     });
     setIsEditMode(true);
@@ -238,12 +236,34 @@ const UserManager = () => {
   };
 
   const getCurrentItems = () => {
+    const filteredPessoas = pessoas.filter((pessoa) =>
+      pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return pessoas.slice(indexOfFirstItem, indexOfLastItem);
+    return filteredPessoas.slice(indexOfFirstItem, indexOfLastItem);
   };
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  const renderPagination = () => {
+    const pageNumbers = [];
+    const totalItems = pessoas.filter((pessoa) =>
+      pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    ).length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <Pagination.Item key={i} active={i === currentPage} onClick={() => paginate(i)}>
+          {i}
+        </Pagination.Item>
+      );
+    }
+
+    return <Pagination>{pageNumbers}</Pagination>;
+  };
 
   return (
     <Card>
@@ -257,7 +277,8 @@ const UserManager = () => {
             userValues={userValues}
             handleInputChange={handleInputChange}
             handleClose={handleCloseModal}
-            save={handleAddUser} 
+            save={handleAddUser}
+            edit={handleEdtUser}
             isEditMode={isEditMode}
           />
         </ModalComponent>
@@ -294,6 +315,20 @@ const UserManager = () => {
           </Modal.Footer>
         </Modal>
 
+        <Modal show={showSuccessModal} onHide={handleCloseSuccessModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Sucesso</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Usuário cadastrado com sucesso!
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={handleCloseSuccessModal}>
+              Fechar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <Tabs defaultActiveKey="clientes" id="user-tabs" className="mt-3">
           <Tab eventKey="clientes" title="Clientes">
             <UserTable
@@ -302,6 +337,7 @@ const UserManager = () => {
               onEdit={handleEditUser}
               onDelete={handleShowDeleteModal}
             />
+            {renderPagination()}
           </Tab>
         </Tabs>
       </div>

@@ -78,3 +78,18 @@ export async function editService(data) {
     return serviceRetornarErro(error);
   }
 }
+
+
+//Adiciona um novo Produto
+export async function DeleteService(data) {
+  var config = serviceRetornarConfig(
+    "delete",
+    `${endPoints.urlDeletProduct}deleteService?id=${data.id}` ,
+    true
+  );
+  try {
+    return (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}

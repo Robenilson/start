@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Tabs, Tab, Form } from 'react-bootstrap';
+import { Button, Alert, Tabs, Tab, Form, Modal } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import ProdutosTab from './component/ProdutosTab';
 import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
-import { newService, fetchService, editService ,createDataServicoEdit } from '../../services/functions/RequestService';
+import { newService, fetchService, editService ,createDataServicoEdit , DeleteService} from '../../services/functions/RequestService';
 import { newProduct, fetchProduct, DeleteProduct ,editProduct, createDataProductEdit} from "../../services/functions/RequestProduct";
 
 const NewCadastro = () => {
@@ -20,6 +20,8 @@ const NewCadastro = () => {
   const [searchTermServico, setSearchTermServico] = useState('');
   const [error, setError] = useState(null);
   const [mode, setMode] = useState(''); // Adicionado estado `mode`
+  const [confirmDeleteProduto, setConfirmDeleteProduto] = useState({ show: false, produto: null }); // Estado para confirmar exclusão de produto
+  const [confirmDeleteServico, setConfirmDeleteServico] = useState({ show: false, servico: null }); // Estado para confirmar exclusão de serviço
 
   const produtoFields = [
     { name: 'nomeProduto', label: 'Nome do Produto', type: 'text', placeholder: 'Nome do Produto' },
@@ -131,7 +133,12 @@ const NewCadastro = () => {
   };
 
   const handleDeleteProduto = (produto) => {
-    DeleteProduct(produto).then(updateTabelProduct());
+    setConfirmDeleteProduto({ show: true, produto: produto });
+  };
+
+  const confirmDeleteProdutoHandler = () => {
+    DeleteProduct(confirmDeleteProduto.produto).then(updateTabelProduct());
+    setConfirmDeleteProduto({ show: false, produto: null });
   };
 
   const handleEditServico = (servico) => {
@@ -151,34 +158,35 @@ const NewCadastro = () => {
     setShowModalServico(true);
   };
 
-  const handleDeleteServico = (index) => {
-    setServicos(servicos.filter((_, i) => i !== index));
+  const handleDeleteServico = (servico) => {
+    setConfirmDeleteServico({ show: true, servico: servico });
   };
 
-  const updateSeviceSave =  async () => {
-       await createDataServicoEdit(servicoValues).
-       then(data=>{ editService(data) }).
-       then(
+  const confirmDeleteServicoHandler = () => {
+    DeleteService(confirmDeleteServico.servico).then(updateTabelServicos());
+    setConfirmDeleteServico({ show: false, servico: null });
+  };
+
+  const updateSeviceSave = async () => {
+    await createDataServicoEdit(servicoValues).
+      then(data => { editService(data) }).
+      then(
         setShowSuccess(true),
         setTimeout(() => setShowSuccess(false), 5000),
         handleCloseServico(),
-       )
-     
-
-        
-        
+      )
   };
 
-  const updateProductSave =  async() => {
-   
+  const updateProductSave = async () => {
+
     await createDataProductEdit(produtoValues).
-    then( data=>{editProduct(data)}).
-    then(
-      setShowSuccess(true),
-      setTimeout(() => setShowSuccess(false), 5000),
-      handleCloseProduto()
-    )  
-     
+      then(data => { editProduct(data) }).
+      then(
+        setShowSuccess(true),
+        setTimeout(() => setShowSuccess(false), 5000),
+        handleCloseProduto()
+      )
+
   };
 
   return (
@@ -199,6 +207,40 @@ const NewCadastro = () => {
         <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço" hideButtons='false'>
           <GenericForm fields={servicoFields} values={servicoValues} handleSave={handleCadastroServico} handleUpdate={updateSeviceSave} handleChange={handleInputChange(setServicoValues)} mode={mode} />
         </ModalComponent>
+
+        <Modal show={confirmDeleteProduto.show} onHide={() => setConfirmDeleteProduto({ show: false, produto: null })}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmar Exclusão</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Tem certeza que deseja excluir o produto "{confirmDeleteProduto.produto?.nome}"?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setConfirmDeleteProduto({ show: false, produto: null })}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteProdutoHandler}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={confirmDeleteServico.show} onHide={() => setConfirmDeleteServico({ show: false, servico: null })}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmar Exclusão</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Tem certeza que deseja excluir o serviço "{confirmDeleteServico.servico?.nome}"?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setConfirmDeleteServico({ show: false, servico: null })}>
+              Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteServicoHandler}>
+              Excluir
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         {showSuccess && (
           <Alert variant="success" className="mt-3">

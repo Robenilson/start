@@ -108,7 +108,7 @@ export async function NewUser(data) {
         email: userValues.email?.toString() ?? '',
         cpf: userValues.cpf?.toString() ?? '',
         phone: userValues.telefone?.toString() ?? '',
-        userType: parseInt(userValues.role) ,  // Define o 'userType' conforme especificado
+        userType: parseInt(userValues.role) || 1 ,  // Define o 'userType' conforme especificado
         address: {
           id: 0,  // Adiciona o campo 'id' conforme a especificação
           zipCode: userValues.endereco.cep?.toString() ?? '',

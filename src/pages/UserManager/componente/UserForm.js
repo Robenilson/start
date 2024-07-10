@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 
-const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEditMode }) => {
+const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEditMode }) => {
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    const checkFormValidity = () => {
+      const { nome, sobrenome, cpf, email, dataNascimento, password } = userValues;
+      return nome && sobrenome && cpf && email && dataNascimento && password;
+    };
+
+    setIsFormValid(checkFormValidity());
+  }, [userValues]);
+
   return (
     <Form>
       <Row className="mb-3">
@@ -10,7 +21,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="nome"
-            value={userValues.nome}
+            value={userValues.nome || ''}
             onChange={handleInputChange}
             required
           />
@@ -21,7 +32,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="sobrenome"
-            value={userValues.sobrenome}
+            value={userValues.sobrenome || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -33,7 +44,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="email"
             name="email"
-            value={userValues.email}
+            value={userValues.email || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -43,7 +54,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="date"
             name="dataNascimento"
-            value={userValues.dataNascimento}
+            value={userValues.dataNascimento || ''}
             onChange={handleInputChange}
             required
           />
@@ -56,7 +67,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="cpf"
-            value={userValues.cpf}
+            value={userValues.cpf || ''}
             onChange={handleInputChange}
             required
           />
@@ -67,7 +78,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="telefone"
-            value={userValues.telefone}
+            value={userValues.telefone || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -79,7 +90,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="password"
             name="password"
-            value={userValues.password}
+            value={userValues.password || ''}
             onChange={handleInputChange}
             placeholder="Digite a senha"
           />
@@ -94,7 +105,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="endereco.cep"
-            value={userValues.endereco.cep}
+            value={userValues.endereco?.cep || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -104,7 +115,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="endereco.cidade"
-            value={userValues.endereco.cidade}
+            value={userValues.endereco?.cidade || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -116,7 +127,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="endereco.estado"
-            value={userValues.endereco.estado}
+            value={userValues.endereco?.estado || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -126,7 +137,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="endereco.bairro"
-            value={userValues.endereco.bairro}
+            value={userValues.endereco?.bairro || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -138,7 +149,7 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="text"
             name="endereco.numero"
-            value={userValues.endereco.numero}
+            value={userValues.endereco?.numero || ''}
             onChange={handleInputChange}
           />
         </Form.Group>
@@ -170,12 +181,12 @@ const UserForm = ({ userValues,save , edit, handleInputChange, handleClose, isEd
         </Col>
         <Col className="text-end">
           {!isEditMode && (
-            <Button variant="primary" onClick={save} type="submit">
+            <Button variant="primary" onClick={save} disabled={!isFormValid}>
               Cadastrar
             </Button>
           )}
           {isEditMode && (
-            <Button variant="success" type="submit">
+            <Button variant="success" onClick={edit} disabled={!isFormValid}>
               Editar
             </Button>
           )}

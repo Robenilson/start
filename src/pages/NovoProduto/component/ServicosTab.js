@@ -32,7 +32,7 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
             <td>{formatHoraMinima(servico.horaMinima)}</td>
             <td>
               <Button variant="warning" onClick={() => handleEditServico(servico)} className="me-2">Editar</Button>
-              <Button variant="danger" onClick={() => handleDeleteServico(index)}>Excluir</Button>
+              <Button variant="danger" onClick={() => handleDeleteServico(servico)}>Excluir</Button>
             </td>
           </tr>
         ))}
