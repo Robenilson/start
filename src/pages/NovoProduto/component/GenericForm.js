@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
 
-const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpdate }) => {
+const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpdate, handleClose }) => {
   const [isEditMode, setIsEditMode] = useState(mode === 'editar');
   const [isFormValid, setIsFormValid] = useState(false);
 
@@ -25,18 +25,33 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
       {fields.map((field, index) => (
         <Form.Group key={index}>
           <Form.Label>{field.label}</Form.Label>
-          <Form.Control
-            type={field.type}
-            value={values[field.name]}
-            onChange={(e) => handleInputChange(field.name, e.target.value)}
-            placeholder={field.placeholder}
-            step={field.step}
-          />
+          {field.type === 'select' ? (
+            <Form.Control
+              as="select"
+              value={values[field.name]}
+              onChange={(e) => handleInputChange(field.name, e.target.value)}
+            >
+              {field.options.map((option, idx) => (
+                <option key={idx} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Control>
+          ) : (
+            <Form.Control
+              type={field.type}
+              value={values[field.name]}
+              onChange={(e) => handleInputChange(field.name, e.target.value)}
+              placeholder={field.placeholder}
+              step={field.step}
+              inputMode={field.type === 'number' ? 'decimal' : undefined}
+            />
+          )}
         </Form.Group>
       ))}
 
       <Modal.Footer>
-        <Button variant="secondary">
+        <Button variant="secondary" onClick={handleClose}>
           Fechar
         </Button>
 

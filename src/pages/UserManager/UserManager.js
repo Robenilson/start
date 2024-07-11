@@ -39,7 +39,7 @@ const UserManager = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  const columns = ['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role'];
+  const columns = [ 'Nome', 'Sobrenome', 'Email',  'CPF','Telefone',  'Role'];
 
   const getRoleName = (userType) => {
     switch (userType) {
@@ -120,10 +120,8 @@ const UserManager = () => {
         roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
         password: userValues.password.toString() ?? ''
       };
-
       await editUser(dataObject);
-    
-    await updateUsers();
+      await updateUsers();
     handleCloseModal();
   };
 
@@ -138,6 +136,7 @@ const UserManager = () => {
   const handleCloseSuccessModal = () => setShowSuccessModal(false);
 
   const handleEditUser = async (userData) => {
+    console.log(userData)
     setUserValues({
       id: userData.id ?? '',
       nome: userData.nome ?? '',
@@ -190,26 +189,9 @@ const UserManager = () => {
   const updateUsers = async () => {
     try {
       const data = await FetchUser();
-      if (data && Array.isArray(data)) {
-        const users = data.map((user) => {
-          let roleName = '';
-          switch (user.userType) {
-            case 1:
-              roleName = 'Cliente';
-              break;
-            case 2:
-              roleName = 'Admin';
-              break;
-            case 3:
-              roleName = 'Vendedor';
-              break;
-            case 4:
-              roleName = 'Caixa';
-              break;
-            default:
-              roleName = 'Unknown';
-          }
 
+      if (data && Array.isArray(data)) {
+        const users = data.map((user) => { 
           return {
             id: user.id,
             nome: user.nome,
@@ -218,7 +200,7 @@ const UserManager = () => {
             dataNascimento: user.dtNascimento,
             cpf: user.cpf,
             telefone: user.phone,
-            role: roleName,
+            role: user.userType,
             passwordHash: user.passwordHash
           };
         });

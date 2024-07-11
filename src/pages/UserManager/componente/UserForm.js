@@ -13,6 +13,15 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
     setIsFormValid(checkFormValidity());
   }, [userValues]);
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (`0${date.getMonth() + 1}`).slice(-2); // Months are zero-based
+    const day = (`0${date.getDate()}`).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <Form>
       <Row className="mb-3">
@@ -54,7 +63,7 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           <Form.Control
             type="date"
             name="dataNascimento"
-            value={userValues.dataNascimento || ''}
+            value={formatDate(userValues.dataNascimento)}
             onChange={handleInputChange}
             required
           />

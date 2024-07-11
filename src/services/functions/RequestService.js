@@ -24,6 +24,7 @@ export async function fetchService() {
 
   try {
     const response = await axios(config);
+    console.log(response.data)
     if (response.data && Array.isArray(response.data)) {
       const service = response.data.map((service) => ({
         id: service.id,
