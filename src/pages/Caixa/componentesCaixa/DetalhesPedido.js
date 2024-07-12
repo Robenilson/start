@@ -4,7 +4,7 @@ import { Form, Button } from 'react-bootstrap';
 
 const user = JSON.parse(localStorage.getItem('user'));
 
-const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento }) => {
+const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento ,   cancel }) => {
   const [formaPagamento, setFormaPagamento] = useState('');
   const [desconto, setDesconto] = useState('');
   const [valorTotal, setValorTotal] = useState(0);
@@ -28,6 +28,11 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento }) => {
 
   const handleConfirmar = () => {
     handleConfirmarPagamento(pedido, formaPagamento, desconto);
+  };
+
+  const handleCancel = () => {
+    cancel(pedido);
+    onHide()
   };
 
   return (
@@ -89,7 +94,7 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento }) => {
       <Button variant="success" onClick={handleConfirmar}>
         Confirmar Pagamento
       </Button>
-      <Button variant="danger" onClick={onHide}>
+      <Button variant="danger" onClick={handleCancel}>
         Cancelar
       </Button>
     </div>

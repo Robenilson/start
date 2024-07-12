@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Alert, Tabs, Tab, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
-import ProdutosTab from './component/ProdutosTab';
-import ServicosTab from './component/ServicosTab';
 import GenericForm from './component/GenericForm';
-import { newService, fetchService, editService, createDataServicoEdit, DeleteService } from '../../services/functions/RequestService';
-import { newProduct, fetchProduct, DeleteProduct, editProduct, createDataProductEdit } from "../../services/functions/RequestProduct";
+import {
+  newService,
+  fetchService,
+  editService,
+  DeleteService
+} from '../../services/functions/RequestService';
+import {
+  newProduct,
+  fetchProduct,
+  DeleteProduct,
+  editProduct
+} from '../../services/functions/RequestProduct';
+
+import ConfirmationModal from './component/ConfirmationModal';
+import SuccessAlert from './component/SuccessAlert';
+import LoadingModal from './component/LoadingModal';
+import CadastroTabs from './component/CadastroTabs';
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
@@ -22,7 +35,7 @@ const NewCadastro = () => {
   const [mode, setMode] = useState('');
   const [confirmDeleteProduto, setConfirmDeleteProduto] = useState({ show: false, produto: null });
   const [confirmDeleteServico, setConfirmDeleteServico] = useState({ show: false, servico: null });
-  const [loading, setLoading] = useState(false); // Estado para controlar o modal de loading
+  const [loading, setLoading] = useState(false);
 
   const produtoFields = [
     { name: 'nomeProduto', label: 'Nome do Produto', type: 'text', placeholder: 'Nome do Produto' },
@@ -40,7 +53,7 @@ const NewCadastro = () => {
   ];
 
   const updateTabelProduct = async () => {
-    setLoading(true); // Mostrar modal de loading
+    setLoading(true);
     try {
       const data = await fetchProduct();
       setProdutos(Array.isArray(data) ? data : []);
@@ -48,11 +61,11 @@ const NewCadastro = () => {
       console.error('Error updating products:', error);
       setProdutos([]);
     }
-    setLoading(false); // Ocultar modal de loading
+    setLoading(false);
   };
 
   const updateTabelServicos = async () => {
-    setLoading(true); // Mostrar modal de loading
+    setLoading(true);
     try {
       const data = await fetchService();
       setServicos(Array.isArray(data) ? data : []);
@@ -60,7 +73,7 @@ const NewCadastro = () => {
       console.error('Error updating services:', error);
       setServicos([]);
     }
-    setLoading(false); // Ocultar modal de loading
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -99,13 +112,14 @@ const NewCadastro = () => {
   };
 
   const handleCadastroProduto = async () => {
-    const novoProduto = {
+    const data = {
       name: produtoValues.nomeProduto,
-      description: produtoValues.descricaoProduto,
       price: parseFloat(produtoValues.valorProduto),
       quantity: parseInt(produtoValues.quantidade),
+      description: produtoValues.descricaoProduto,
     };
-    await newProduct(novoProduto);
+
+    await newProduct(data);
     await updateTabelProduct();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
@@ -118,10 +132,12 @@ const NewCadastro = () => {
     const data = {
       name: servicoValues.nomeServico,
       price: parseFloat(servicoValues.valorServico),
-      quantityHours: tempoEmMinutos, // Valor em minutos
-      quantityEquipament: servicoValues.quantidade,
-      description: servicoValues.descricaoServico,
+      quantityHours: parseInt(tempoEmMinutos),
+      quantityEquipament: parseInt(servicoValues.quantidade),
+      description:servicoValues.descricaoServico,
     };
+
+    console.log(data)
 
     await newService(data);
     await updateTabelServicos();
@@ -133,10 +149,10 @@ const NewCadastro = () => {
   const handleEditProduto = (produto) => {
     setProdutoValues({
       id: produto.id,
-      nomeProduto: produto.name,
-      valorProduto: produto.price,
-      quantidade: produto.quantity,
-      descricaoProduto: produto.description,
+      nomeProduto: produto.nome,
+      valorProduto: produto.valor,
+      quantidade: produto.quantidade,
+      descricaoProduto: produto.descricao,
     });
 
     setMode('editar');
@@ -171,8 +187,9 @@ const NewCadastro = () => {
     setConfirmDeleteServico({ show: true, servico: servico });
   };
 
-  const confirmDeleteServicoHandler = () => {
-    DeleteService(confirmDeleteServico.servico).then(updateTabelServicos());
+  const confirmDeleteServicoHandler = async () => {
+    await DeleteService(confirmDeleteServico.servico);
+    await updateTabelServicos();
     setConfirmDeleteServico({ show: false, servico: null });
   };
 
@@ -182,16 +199,33 @@ const NewCadastro = () => {
     const data = {
       name: servicoValues.nomeServico,
       price: parseFloat(servicoValues.valorServico),
-      quantityHours: tempoEmMinutos, // Valor em minutos
+      quantityHours: tempoEmMinutos,
       quantityEquipament: servicoValues.quantidade,
       description: servicoValues.descricaoServico,
     };
 
-    await editService(data);
+    await (data);
     await updateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
+  };
+
+  const updateProductSave = async () => {
+    const data = {    
+      id: produtoValues.id,
+      name: produtoValues.nomeProduto,
+      description: produtoValues.descricaoProduto,
+      price: parseFloat(produtoValues.valorProduto),
+      quantity: parseInt(produtoValues.quantidade)    
+    };
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 5000);
+    handleCloseProduto();
+    console.log(data)
+    await editProduct(data);
+    await updateTabelProduct();
+    
   };
 
   return (
@@ -206,92 +240,62 @@ const NewCadastro = () => {
         </Button>
 
         <ModalComponent show={showModalProduto} onHide={handleCloseProduto} title="Cadastrar Produto">
-          <GenericForm fields={produtoFields} values={produtoValues} handleSave={handleCadastroProduto} handleChange={handleInputChange(setProdutoValues)} mode={mode} handleUpdate={updateSeviceSave} handleClose={handleCloseProduto} />
+          <GenericForm
+            fields={produtoFields}
+            values={produtoValues}
+            handleSave={handleCadastroProduto}
+            handleChange={handleInputChange(setProdutoValues)}
+            mode={mode}
+            handleUpdate={updateProductSave}
+            handleClose={handleCloseProduto}
+          />
         </ModalComponent>
 
         <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço">
-          <GenericForm fields={servicoFields} values={servicoValues} handleSave={handleCadastroServico} handleChange={handleInputChange(setServicoValues)} mode={mode} handleUpdate={updateSeviceSave} handleClose={handleCloseServico} />
+          <GenericForm
+            fields={servicoFields}
+            values={servicoValues}
+            handleSave={handleCadastroServico}
+            handleChange={handleInputChange(setServicoValues)}
+            mode={mode}
+            handleUpdate={updateSeviceSave}
+            handleClose={handleCloseServico}
+          />
         </ModalComponent>
 
-        <Modal show={confirmDeleteProduto.show} onHide={() => setConfirmDeleteProduto({ show: false, produto: null })}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmar Exclusão</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Tem certeza que deseja excluir o produto "{confirmDeleteProduto.produto?.nome}"?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setConfirmDeleteProduto({ show: false, produto: null })}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onClick={confirmDeleteProdutoHandler}>
-              Excluir
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        <ConfirmationModal
+          show={confirmDeleteProduto.show}
+          onHide={() => setConfirmDeleteProduto({ show: false, produto: null })}
+          onConfirm={confirmDeleteProdutoHandler}
+          title="Confirmar Exclusão"
+          body={`Tem certeza que deseja excluir o produto "${confirmDeleteProduto.produto?.nome}"?`}
+        />
 
-        <Modal show={confirmDeleteServico.show} onHide={() => setConfirmDeleteServico({ show: false, servico: null })}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmar Exclusão</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Tem certeza que deseja excluir o serviço "{confirmDeleteServico.servico?.nome}"?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setConfirmDeleteServico({ show: false, servico: null })}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onClick={confirmDeleteServicoHandler}>
-              Excluir
-            </Button>
-          </Modal.Footer>
-        </Modal>
+        <ConfirmationModal
+          show={confirmDeleteServico.show}
+          onHide={() => setConfirmDeleteServico({ show: false, servico: null })}
+          onConfirm={confirmDeleteServicoHandler}
+          title="Confirmar Exclusão"
+          body={`Tem certeza que deseja excluir o serviço "${confirmDeleteServico.servico?.nome}"?`}
+        />
 
-        {showSuccess && (
-          <Alert variant="success" className="mt-3">
-            Cadastro concluído com sucesso!
-          </Alert>
-        )}
+        <SuccessAlert show={showSuccess} />
 
-        <Tabs defaultActiveKey="produtos" id="tabela-abas" className="mt-3">
-          <Tab eventKey="produtos" title="Produtos">
-            <Form.Control
-              type="text"
-              placeholder="Buscar Produtos"
-              value={searchTermProduto}
-              onChange={(e) => setSearchTermProduto(e.target.value)}
-              className="mb-3"
-            />
-            <ProdutosTab
-              produtos={produtos.filter(produto => produto.nome && produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase()))}
-              handleEditProduto={handleEditProduto}
-              handleDeleteProduto={handleDeleteProduto}
-            />
-          </Tab>
-          <Tab eventKey="servicos" title="Serviços">
-            <Form.Control
-              type="text"
-              placeholder="Buscar Serviços"
-              value={searchTermServico}
-              onChange={(e) => setSearchTermServico(e.target.value)}
-              className="mb-3"
-            />
-            <ServicosTab
-              servicos={servicos.filter(servico => servico.nome && servico.nome.toLowerCase().includes(searchTermServico.toLowerCase()))}
-              handleEditServico={handleEditServico}
-              handleDeleteServico={handleDeleteServico}
-            />
-          </Tab>
-        </Tabs>
+        <CadastroTabs
+          produtos={produtos}
+          servicos={servicos}
+          searchTermProduto={searchTermProduto}
+          searchTermServico={searchTermServico}
+          setSearchTermProduto={setSearchTermProduto}
+          setSearchTermServico={setSearchTermServico}
+          handleEditProduto={handleEditProduto}
+          handleDeleteProduto={handleDeleteProduto}
+          handleEditServico={handleEditServico}
+          handleDeleteServico={handleDeleteServico}
+        />
+
+        <LoadingModal show={loading} />
       </div>
-
-      {/* Modal de Loading */}
-      <Modal show={loading} centered>
-        <Modal.Body className="text-center">
-          <Spinner animation="border" />
-          <div>Carregando...</div>
-        </Modal.Body>
-      </Modal>
     </Card>
   );
 };

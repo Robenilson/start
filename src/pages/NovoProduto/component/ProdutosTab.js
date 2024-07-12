@@ -23,7 +23,7 @@ const ProdutosTab = ({ produtos, handleEditProduto, handleDeleteProduto }) => {
             <td>R${produto.valor.toFixed(2)}</td>
             <td>{produto.quantidade}</td>
             <td>
-              <Button variant="warning" onClick={() => handleEditProduto(index)} className="me-2">Editar</Button>
+              <Button variant="warning" onClick={() => handleEditProduto(produto)} className="me-2">Editar</Button>
               <Button variant="danger" onClick={() => handleDeleteProduto(produto)}>Excluir</Button>
             </td>
           </tr>

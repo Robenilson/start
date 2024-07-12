@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
-import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox } from "../../services/functions/RequestBox";
+import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -128,6 +128,15 @@ const Caixa = () => {
 
     handleCloseConfirmacaoVenda();
   };
+
+
+  const handlCancelOrder = async(pedido)=>{
+
+  await PutCanceltBox(pedido.id)
+  setShowPedidoSuccess(true);
+  updateBox(); // Atualize a lista de pedidos após a venda ser concluída
+  setTimeout(clearState, 4000);
+  }
   
 
 
@@ -193,6 +202,7 @@ const Caixa = () => {
               pedido={pedidos[pedidoSelecionado]}
               onHide={handleCloseConfirmacaoVenda}
               handleConfirmarPagamento={handleConfirmarPagamento}
+              cancel={handlCancelOrder}
             />
           )}
         </Modal.Body>
@@ -207,7 +217,7 @@ const Caixa = () => {
 
         {showPedidoSuccess && (
           <Alert variant="success" className="mt-3">
-            Venda realizada com sucesso!
+            Operação realizada com sucesso!
           </Alert>
         )}
 

@@ -327,3 +327,22 @@ export async function PutCompletBox(data) {
 }
 
 
+export async function PutCanceltBox(data) {
+  console.log(data)
+  var config = serviceRetornarConfig(
+    "put",
+    `${endPoints.urlPutBox}/${data}/cancel`,
+    data,
+    true
+  );
+
+  try {
+    return (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+

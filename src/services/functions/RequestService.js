@@ -24,7 +24,6 @@ export async function fetchService() {
 
   try {
     const response = await axios(config);
-    console.log(response.data)
     if (response.data && Array.isArray(response.data)) {
       const service = response.data.map((service) => ({
         id: service.id,
@@ -56,7 +55,6 @@ export async function createDataServicoEdit(servicoValues) {
     
       
     };
-    console.log(updatedService)
     return  updatedService;
   } catch (error) {
     console.error("Erro ao converter dados:", error);
