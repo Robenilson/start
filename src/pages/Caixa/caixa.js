@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
+import PassaportTab from './componentesCaixa/PassaportTab';
 import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
+import LoadingModal from '../../components/LoadingModal';
+
 
 const user = JSON.parse(localStorage.getItem('user'));
 
 const Caixa = () => {
+  const [loading, setLoading] = useState(false);
   const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
   const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
   const [valorInicial, setValorInicial] = useState('');
@@ -31,8 +35,10 @@ const Caixa = () => {
   }, []);
 
   const updateBox = async () => {
+    setLoading(true);
     const boxData = await FetchBox();
     const viewData = await ViewDataObjectBox(boxData);
+    setLoading(false);
     setPedidos(viewData);
   };
 
@@ -67,11 +73,10 @@ const Caixa = () => {
     console.log()
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
+      setLoading(true);
       const agora = new Date();
        const   valueOpenBox =await OpenBox(valor, user.EmployeerId);
        console.log(valueOpenBox)
-
-
 
       setSaldo(valor);
       setCaixaAberto(true);
@@ -84,9 +89,11 @@ const Caixa = () => {
     } else {
       alert('O valor inicial deve ser igual ou maior que 100.');
     }
+    setLoading(false);
   };
 
   const handleConfirmarFecharCaixa = async () => {
+    setLoading(true);
     const agora = new Date();
     await CloseBox(user.EmployeerId);
     setCaixaAberto(false);
@@ -96,6 +103,7 @@ const Caixa = () => {
     setTimeout(() => setShowSuccess(false), 5000);
     localStorage.removeItem('dataAbertura');
     localStorage.removeItem('saldo');
+    setLoading(false);
     handleCloseFecharCaixa();
   };
   const handlePedidoFormaPagamento = (index) => {
@@ -108,6 +116,7 @@ const Caixa = () => {
   };
 
   const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
+    setLoading(true);
     createDataObjectEditBox(pedido, formaPagamento, desconto, user).then(data=>{
         PutCompletBox(data)
         .then(response => {
@@ -119,34 +128,25 @@ const Caixa = () => {
           console.error('Erro ao concluir a venda:', error);
           alert('Erro ao concluir a venda.');
         });
-
       }
     )
-
-
-   
+    setLoading(false);
 
     handleCloseConfirmacaoVenda();
   };
 
-
-  const handlCancelOrder = async(pedido)=>{
-
-  await PutCanceltBox(pedido.id)
-  setShowPedidoSuccess(true);
-  updateBox(); // Atualize a lista de pedidos após a venda ser concluída
-  setTimeout(clearState, 4000);
+  const handlCancelOrder = async(pedido) => {
+    setLoading(true);
+    await PutCanceltBox(pedido.id);
+    setShowPedidoSuccess(true);
+    updateBox(); // Atualize a lista de pedidos após a venda ser concluída
+    setLoading(false);
+    setTimeout(clearState, 3000);
   }
-  
-
 
   const clearState = () => {
     setShowPedidoSuccess(false);
-    
   };
-
-
-
 
   return (
     <Card>
@@ -193,21 +193,20 @@ const Caixa = () => {
         </Modal>
 
         <Modal show={showModalConfirmacaoVenda} onHide={handleCloseConfirmacaoVenda}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmar Pagamento</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {pedidoSelecionado !== null && (
-            <DetalhesPedido
-              pedido={pedidos[pedidoSelecionado]}
-              onHide={handleCloseConfirmacaoVenda}
-              handleConfirmarPagamento={handleConfirmarPagamento}
-              cancel={handlCancelOrder}
-            />
-          )}
-        </Modal.Body>
-      </Modal>
-
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmar Pagamento</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {pedidoSelecionado !== null && (
+              <DetalhesPedido
+                pedido={pedidos[pedidoSelecionado]}
+                onHide={handleCloseConfirmacaoVenda}
+                handleConfirmarPagamento={handleConfirmarPagamento}
+                cancel={handlCancelOrder}
+              />
+            )}
+          </Modal.Body>
+        </Modal>
 
         {showSuccess && (
           <Alert variant="success" className="mt-3">
@@ -244,8 +243,12 @@ const Caixa = () => {
             <Tab eventKey="pedidos" title="Pedidos">
               <PedidosTab pedidos={pedidos} handlePedidoFormaPagamento={handlePedidoFormaPagamento} />
             </Tab>
+            <Tab eventKey="passaport" title="Passaport">
+              <PassaportTab />
+            </Tab>
           </Tabs>
         )}
+        <LoadingModal show={loading} />
       </div>
     </Card>
   );

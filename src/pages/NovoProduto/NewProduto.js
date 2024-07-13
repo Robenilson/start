@@ -18,8 +18,12 @@ import {
 
 import ConfirmationModal from './component/ConfirmationModal';
 import SuccessAlert from './component/SuccessAlert';
-import LoadingModal from './component/LoadingModal';
+import LoadingModal from '../../components/LoadingModal';
 import CadastroTabs from './component/CadastroTabs';
+
+
+
+
 
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);

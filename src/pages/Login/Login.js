@@ -5,6 +5,8 @@ import { loginUser } from "../../services/functions/RequestLogin";
 import { useNavigate } from 'react-router-dom';
 import { urls } from "../../services/functions/config/urls";
 import { jwtDecode } from 'jwt-decode'; // Atualização na importação
+import LoadingModal from '../../components/LoadingModal';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -73,6 +75,7 @@ const Login = () => {
             </button>
           </div>
         </form>
+        <LoadingModal show={loading} />
       </div>
     </Card>
   );

@@ -6,12 +6,15 @@ import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 import '../../App.css';
 import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser } from '../../services/functions/RequestPeople';
+import LoadingModal from '../../components/LoadingModal';
+
 
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [pessoas, setPessoas] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [userValues, setUserValues] = useState({
     id: '',
     nome: '',
@@ -100,6 +103,7 @@ const UserManager = () => {
 
   const handleCloseModal = () => setShowModal(false);
   const handleEdtUser = async () => {
+    
       const dataObject = {
         id: userValues.id.toString() ?? 0,
         nome: userValues.nome.toString() ?? '',
@@ -120,23 +124,27 @@ const UserManager = () => {
         roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
         password: userValues.password.toString() ?? ''
       };
+      handleCloseModal();
+      setLoading(true);
       await editUser(dataObject);
       await updateUsers();
-    handleCloseModal();
+    
+    setLoading(false);
   };
 
   const handleAddUser = async () => {
     handleCloseModal();
+    setLoading(true);
     const newDataUser = await createDataObjectUser(userValues);
     await NewUser(newDataUser);
     await updateUsers();
     setShowSuccessModal(true);
+    setLoading(false);
   };
 
   const handleCloseSuccessModal = () => setShowSuccessModal(false);
 
   const handleEditUser = async (userData) => {
-    console.log(userData)
     setUserValues({
       id: userData.id ?? '',
       nome: userData.nome ?? '',
@@ -162,6 +170,7 @@ const UserManager = () => {
 
   const handleDeleteUser = async () => {
     setShowDeleteModal(false);
+    setLoading(true);
     if (userToDelete) {
       await deleteUserByID(userToDelete.id);
       await updateUsers();
@@ -170,6 +179,7 @@ const UserManager = () => {
     } else {
       console.error('Objeto de usuário inválido:', userToDelete);
     }
+    setLoading(false);
   };
 
   const handleShowDeleteModal = (user) => {
@@ -187,6 +197,7 @@ const UserManager = () => {
   }, []);
 
   const updateUsers = async () => {
+    setLoading(true);
     try {
       const data = await FetchUser();
 
@@ -212,6 +223,7 @@ const UserManager = () => {
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
     }
+    setLoading(false);
   };
 
   const handleSearchChange = (e) => {
@@ -323,6 +335,7 @@ const UserManager = () => {
             {renderPagination()}
           </Tab>
         </Tabs>
+        <LoadingModal show={loading} />
       </div>
     </Card>
   );
