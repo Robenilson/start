@@ -233,13 +233,20 @@ const NewCadastro = () => {
   return (
     <Card>
       <div className="col-md-12">
-        <Button variant="primary" className="mt-3" onClick={handleShowProduto}>
-          Cadastrar Produto
-        </Button>
 
-        <Button variant="primary" className="mt-3 ml-3" onClick={handleShowServico}>
-          Cadastrar Serviço
-        </Button>
+     <div className="row ">
+       <div className="col-1">
+           <Button variant="primary" className="mt-3" onClick={handleShowProduto}>Cadastrar Produto</Button>
+       </div> 
+
+      <div className="col-1">
+         <Button variant="primary" className="mt-3 ml-6" onClick={handleShowServico}>Cadastrar Serviço
+          </Button>
+      </div>
+    </div>
+      
+
+        
 
         <ModalComponent show={showModalProduto} onHide={handleCloseProduto} title="Cadastrar Produto">
           <GenericForm

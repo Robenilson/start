@@ -8,7 +8,7 @@ const Credito = () => {
   return (
     <>
       <Card>
-        <div className="card-header">Relatorios</div>
+        <div className="card-header">Acompanhar de Serviços</div>
         <div className="card-body">
           
         </div>
