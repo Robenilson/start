@@ -2,7 +2,7 @@ import './App.css';
 import React from 'react';
 import Menu from './components/menu';
 import Login from './pages/Login/Login';
-import Relatorio from './pages/Relatorio/Relatorio';
+import Credito from './pages/Credito/Credito';
 import Vendas from './pages/Vendas/vendas';
 import Caixa from './pages/Caixa/caixa';
 import NewProduto from './pages/NovoProduto/NewProduto';
@@ -21,7 +21,7 @@ const App = () => {
     <Routes>
         <Route path={urls.loginPage}  exact element={<Login />} />
         <Route element={<Menu />}>         
-          <Route path={urls.relatorio} element={<Relatorio />} />
+          <Route path={urls.credito} element={<Credito />} />
           <Route path={urls.userDados} element={<Userdados />} />
           <Route path={urls.caixaPage}    element={<Caixa />} />
           <Route path={urls.vendasPage}    element={<Vendas />} />

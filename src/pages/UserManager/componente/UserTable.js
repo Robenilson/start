@@ -2,7 +2,7 @@
 import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 
-const UserTable = ({ users, columns, onEdit, onDelete }) => {
+const UserTable = ({ users, columns, onEdit, onDelete,creditos }) => {
   const getRoleName = (role) => {
     switch (role) {
       case 1:
@@ -43,6 +43,8 @@ const UserTable = ({ users, columns, onEdit, onDelete }) => {
                 <Button variant="warning" onClick={() => onEdit(user)}>Editar</Button>
                 {' '}
                 <Button variant="danger" onClick={() => onDelete(user)}>Excluir</Button>
+                {' '}
+                <Button variant="btn btn-success" onClick={() => creditos(user)}>Creditos</Button>
               </td>
             </tr>
           ))}

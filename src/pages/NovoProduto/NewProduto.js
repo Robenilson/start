@@ -141,8 +141,6 @@ const NewCadastro = () => {
       description:servicoValues.descricaoServico,
     };
 
-    console.log(data)
-
     await newService(data);
     await updateTabelServicos();
     setShowSuccess(true);
@@ -208,7 +206,7 @@ const NewCadastro = () => {
       description: servicoValues.descricaoServico,
     };
 
-    await (data);
+    await editService(data);
     await updateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);

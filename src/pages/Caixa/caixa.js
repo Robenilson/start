@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
 import Card from '../../components/Card';
 import PedidosTab from './componentesCaixa/PedidosTab';
-import PassaportTab from './componentesCaixa/PassaportTab';
 import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 import LoadingModal from '../../components/LoadingModal';
@@ -243,9 +242,7 @@ const Caixa = () => {
             <Tab eventKey="pedidos" title="Pedidos">
               <PedidosTab pedidos={pedidos} handlePedidoFormaPagamento={handlePedidoFormaPagamento} />
             </Tab>
-            <Tab eventKey="passaport" title="Passaport">
-              <PassaportTab />
-            </Tab>
+          
           </Tabs>
         )}
         <LoadingModal show={loading} />

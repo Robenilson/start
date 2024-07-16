@@ -5,7 +5,7 @@ export const urls = {
     vendasPage:"/venda",
     newProdutoPage:"/newProduto",
     userDados:"/dadosUser",
-    relatorio:"/relatorio",
+    credito:"/credito",
     roleManager:"/roleManager"
   
   

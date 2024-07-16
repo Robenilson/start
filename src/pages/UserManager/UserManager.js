@@ -8,7 +8,6 @@ import '../../App.css';
 import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser } from '../../services/functions/RequestPeople';
 import LoadingModal from '../../components/LoadingModal';
 
-
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -41,8 +40,9 @@ const UserManager = () => {
   const [itemsPerPage] = useState(15);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showCreditosModal, setShowCreditosModal] = useState(false);
 
-  const columns = [ 'Nome', 'Sobrenome', 'Email',  'CPF','Telefone',  'Role'];
+  const columns = ['Nome', 'Sobrenome', 'Email', 'CPF', 'Telefone', 'Role'];
 
   const getRoleName = (userType) => {
     switch (userType) {
@@ -103,32 +103,30 @@ const UserManager = () => {
 
   const handleCloseModal = () => setShowModal(false);
   const handleEdtUser = async () => {
-    
-      const dataObject = {
-        id: userValues.id.toString() ?? 0,
-        nome: userValues.nome.toString() ?? '',
-        sobrenome: userValues.sobrenome.toString() ?? '',
-        dtNascimento: userValues.dataNascimento.toString() ?? '',
-        email: userValues.email.toString() ?? '',
-        cpf: userValues.cpf.toString() ?? '',
-        phone: userValues.telefone.toString() ?? '',
-        userType: parseInt(getRoleName(userValues.role)) ?? parseInt(0),
-        address: {
-          id: parseInt(0),
-          zipCode: userValues.endereco.cep.toString() ?? '',
-          cityName: userValues.endereco.cidade.toString() ?? '',
-          state: userValues.endereco.estado.toString() ?? '',
-          road: userValues.endereco.bairro.toString() ?? '',
-          number: parseInt(userValues.endereco.numero) || 0,
-        },
-        roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
-        password: userValues.password.toString() ?? ''
-      };
-      handleCloseModal();
-      setLoading(true);
-      await editUser(dataObject);
-      await updateUsers();
-    
+    const dataObject = {
+      id: userValues.id.toString() ?? 0,
+      nome: userValues.nome.toString() ?? '',
+      sobrenome: userValues.sobrenome.toString() ?? '',
+      dtNascimento: userValues.dataNascimento.toString() ?? '',
+      email: userValues.email.toString() ?? '',
+      cpf: userValues.cpf.toString() ?? '',
+      phone: userValues.telefone.toString() ?? '',
+      userType: parseInt(getRoleName(userValues.role)) ?? parseInt(0),
+      address: {
+        id: parseInt(0),
+        zipCode: userValues.endereco.cep.toString() ?? '',
+        cityName: userValues.endereco.cidade.toString() ?? '',
+        state: userValues.endereco.estado.toString() ?? '',
+        road: userValues.endereco.bairro.toString() ?? '',
+        number: parseInt(userValues.endereco.numero) || 0,
+      },
+      roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
+      password: userValues.password.toString() ?? ''
+    };
+    handleCloseModal();
+    setLoading(true);
+    await editUser(dataObject);
+    await updateUsers();
     setLoading(false);
   };
 
@@ -192,6 +190,14 @@ const UserManager = () => {
     setShowDeleteModal(false);
   };
 
+  const handlecreditos = () => {
+    setShowCreditosModal(true);
+  };
+
+  const handleCloseCreditosModal = () => {
+    setShowCreditosModal(false);
+  };
+
   useEffect(() => {
     updateUsers();
   }, []);
@@ -202,7 +208,7 @@ const UserManager = () => {
       const data = await FetchUser();
 
       if (data && Array.isArray(data)) {
-        const users = data.map((user) => { 
+        const users = data.map((user) => {
           return {
             id: user.id,
             nome: user.nome,
@@ -230,40 +236,38 @@ const UserManager = () => {
     setSearchTerm(e.target.value);
   };
 
-  const getCurrentItems = () => {
-    const filteredPessoas = pessoas.filter((pessoa) =>
-      pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = pessoas.filter((user) => {
+    return (
+      user.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.sobrenome.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  });
 
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return filteredPessoas.slice(indexOfFirstItem, indexOfLastItem);
-  };
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const getCurrentItems = () => currentItems;
 
   const renderPagination = () => {
     const pageNumbers = [];
-    const totalItems = pessoas.filter((pessoa) =>
-      pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase())
-    ).length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <Pagination.Item key={i} active={i === currentPage} onClick={() => paginate(i)}>
-          {i}
-        </Pagination.Item>
-      );
+    for (let i = 1; i <= Math.ceil(filteredUsers.length / itemsPerPage); i++) {
+      pageNumbers.push(i);
     }
-
-    return <Pagination>{pageNumbers}</Pagination>;
+    return (
+      <Pagination>
+        {pageNumbers.map((number) => (
+          <Pagination.Item key={number} active={number === currentPage} onClick={() => setCurrentPage(number)}>
+            {number}
+          </Pagination.Item>
+        ))}
+      </Pagination>
+    );
   };
 
   return (
     <Card>
-      <div className="card-header">Gerenciamento de Usuários</div>
-      <div className="card-body">
+      <div className="user-manager-container">
         <Button variant="primary" onClick={handleShowModal}>
           Cadastrar Pessoa
         </Button>
@@ -324,6 +328,20 @@ const UserManager = () => {
           </Modal.Footer>
         </Modal>
 
+        <Modal show={showCreditosModal} onHide={handleCloseCreditosModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Distribuição de créditos</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {/* Conteúdo do modal de distribuição de créditos */}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseCreditosModal}>
+              Fechar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
         <Tabs defaultActiveKey="clientes" id="user-tabs" className="mt-3">
           <Tab eventKey="clientes" title="Clientes">
             <UserTable
@@ -331,6 +349,7 @@ const UserManager = () => {
               columns={columns}
               onEdit={handleEditUser}
               onDelete={handleShowDeleteModal}
+              creditos={handlecreditos}
             />
             {renderPagination()}
           </Tab>
