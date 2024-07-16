@@ -29,7 +29,7 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
             <td>{servico.nome}</td>
             <td>{servico.descricao}</td>
             <td>R${servico.valor.toFixed(2)}</td>
-            <td>{formatHoraMinima(servico.horaMinima)}</td>
+            <td>{servico.horaMinima} minutos</td>
             <td>
               <Button variant="warning" onClick={() => handleEditServico(servico)} className="me-2">Editar</Button>
               <Button variant="danger" onClick={() => handleDeleteServico(servico)}>Excluir</Button>
