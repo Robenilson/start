@@ -224,7 +224,6 @@ const NewCadastro = () => {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
-    console.log(data)
     await editProduct(data);
     await updateTabelProduct();
     

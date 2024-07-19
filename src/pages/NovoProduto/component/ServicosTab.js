@@ -1,12 +1,7 @@
 import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 
-const formatHoraMinima = (seconds) => {
-  const horas = Math.floor(seconds / 3600);
-  const minutos = Math.floor((seconds % 3600) / 60);
-  const segundos = seconds % 60;
-  return `${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`;
-};
+
 
 const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
   

@@ -37,8 +37,9 @@ const Caixa = () => {
     setLoading(true);
     const boxData = await FetchBox();
     const viewData = await ViewDataObjectBox(boxData);
-    setLoading(false);
     setPedidos(viewData);
+    setLoading(false);
+   
   };
 
   useEffect(() => {
@@ -74,8 +75,8 @@ const Caixa = () => {
     if (valor >= 100) {
       setLoading(true);
       const agora = new Date();
-       const   valueOpenBox =await OpenBox(valor, user.EmployeerId);
-       console.log(valueOpenBox)
+      const   valueOpenBox =await OpenBox(valor, user.EmployeerId);
+      
 
       setSaldo(valor);
       setCaixaAberto(true);

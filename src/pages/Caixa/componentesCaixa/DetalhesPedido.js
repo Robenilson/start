@@ -91,12 +91,20 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento ,   cancel })
         </Form.Group>
       </Form>
 
-      <Button variant="success" onClick={handleConfirmar}>
-        Confirmar Pagamento
-      </Button>
-      <Button variant="danger" onClick={handleCancel}>
-        Cancelar
-      </Button>
+      <div className="row mt-4  mb-4">
+  <div className="col d-flex justify-content-around">
+
+  <Button variant="danger" onClick={handleCancel} className="mx-2">
+      Cancelar
+    </Button>  
+    <Button variant="success" onClick={handleConfirmar} className="mx-2">
+      Confirmar 
+    </Button>
+    
+  </div>
+</div>
+
+      
     </div>
   );
 };
