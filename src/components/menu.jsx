@@ -12,9 +12,9 @@ function Menu() {
     return (
       <>
        <Card >
-       <div className="card-header  ">
+       <div className="card-header  menu ">
             <Navbar  bg="light" expand="lg">
-            <Container  >
+            <Container     >
                     <Navbar.Brand>
                     <OptionNav url= {urls.userDados} name="Home" />
                     </Navbar.Brand>
