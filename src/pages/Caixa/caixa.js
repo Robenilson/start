@@ -5,6 +5,7 @@ import PedidosTab from './componentesCaixa/PedidosTab';
 import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox } from "../../services/functions/RequestBox";
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 import LoadingModal from '../../components/LoadingModal';
+import Vendas from '../Vendas/vendas';
 
 
 const user = JSON.parse(localStorage.getItem('user'));
@@ -23,6 +24,10 @@ const Caixa = () => {
   const [dataAbertura, setDataAbertura] = useState(null);
   const [showModalConfirmacaoVenda, setShowModalConfirmacaoVenda] = useState(false);
   const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
+  const [showModalVenda, setShowModalVenda] = useState(false);
+
+
+  const handleClose = () => setShowModalVenda(false);
 
   useEffect(() => {
     const dataAberturaSalva = localStorage.getItem('dataAbertura');
@@ -67,6 +72,11 @@ const Caixa = () => {
 
   const handleCloseFecharCaixa = () => {
     setShowModalFecharCaixa(false);
+  };
+
+
+  const handleNWeVendas = () => {
+    setShowModalVenda(true);
   };
 
   const handleConfirmarAbrirCaixa = async () => {
@@ -115,6 +125,11 @@ const Caixa = () => {
     setShowModalConfirmacaoVenda(false);
   };
 
+
+  const handleVendas = () => {
+   
+  };
+
   const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
     setLoading(true);
     createDataObjectEditBox(pedido, formaPagamento, desconto, user).then(data=>{
@@ -149,9 +164,16 @@ const Caixa = () => {
   };
 
   return (
+    <>
+
+    
     <Card>
+      
       <div className="card-header">Caixa</div>
       <div className="card-body">
+      <Button variant="primary" onClick={handleNWeVendas} className="me-2 btn btn-info">
+          Nova  Venda
+        </Button>
         <Button variant="primary" onClick={handleAbrirCaixa} className="me-2">
           Abrir Caixa
         </Button>
@@ -249,6 +271,25 @@ const Caixa = () => {
         <LoadingModal show={loading} />
       </div>
     </Card>
+
+
+
+
+    <Modal show={showModalVenda} size="lg" onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title> Nova Venda </Modal.Title>
+      </Modal.Header>
+        <Vendas  />
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Fechar
+        </Button>
+      </Modal.Footer>
+    </Modal>
+
+   
+
+    </>
   );
 };
 

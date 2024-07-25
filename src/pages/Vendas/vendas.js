@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import Card from '../../components/Card';
+import { Form } from 'react-bootstrap';
+import   Card  from './../../components/Card';
 import { fetchService } from '../../services/functions/RequestService';
 import { fetchProduct } from '../../services/functions/RequestProduct';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
 import { NewSale } from '../../services/functions/RequestSales';
-import SelectableTable from './componente/SelectableTable';
+import UserValidationForm from './componente/UserValidationForm';
+import SaleTypeSelection from './componente/SaleTypeSelection';
+import ConfirmationModal from './componente/ConfirmationModal';
+import ConfirmationDetails from './componente/ConfirmationDetails';
+import SuccessAlert from './componente/SuccessAlert';
 
 const Vendas = () => {
   const [cliente, setCliente] = useState(null);
@@ -14,7 +18,7 @@ const Vendas = () => {
   const [showModal, setShowModal] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
-  const [quantity, setQuantity] = useState(0); // Iniciando com 0
+  const [quantity, setQuantity] = useState(0);
   const [confirmationData, setConfirmationData] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [services, setServices] = useState([]);
@@ -62,7 +66,7 @@ const Vendas = () => {
   const handleButtonClick = (type) => {
     setSaleType(type);
     setShowModal(true);
-    setQuantity(0); // Iniciando com 0
+    setQuantity(0);
   };
 
   const handleItemClick = (item) => {
@@ -71,8 +75,8 @@ const Vendas = () => {
     setConfirmationData({
       saleType,
       item,
-      quantity: quantity, // Inicializando com a quantidade digitada
-      total: item.valor ? item.valor * quantity : 0, // Calculando o total com base na quantidade inicial
+      quantity: quantity,
+      total: item.valor ? item.valor * quantity : 0,
     });
   };
 
@@ -161,7 +165,7 @@ const Vendas = () => {
     setSelectedItem(null);
     setSaleType('');
     setConfirmationData(null);
-    setQuantity(0); // Iniciando com 0
+    setQuantity(0);
     setShowSuccess(false);
     setCliente(null);
     setFormData({
@@ -188,10 +192,8 @@ const Vendas = () => {
     const newQuantity = Number(event.target.value);
     setQuantity(newQuantity);
 
-    // Atualiza o total com base na nova quantidade digitada
     if (selectedItem) {
       const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
-     
       setConfirmationData((prevConfirmationData) => ({
         ...prevConfirmationData,
         quantity: newQuantity,
@@ -219,95 +221,36 @@ const Vendas = () => {
     <Card>
       <div className="form-group row text-center m-0 mb-1">
         <Form>
-          <Form.Group>
-            <Form.Label>Cpf do Cliente</Form.Label>
-            <Form.Control
-              type="text"
-              value={cpf || ''}
-              onChange={(e) => setCpf(e.target.value)}
-              placeholder="Cpf do Cliente"
-              disabled={!!nomeUsuario}
-            />
-            <Button onClick={handleValidateUser} disabled={!!nomeUsuario}>
-              Validar Usuário
-            </Button>
-          </Form.Group>
-          {nomeUsuario && (
-            <Form.Group className="mt-3">
-              <Form.Label>Nome do Cliente</Form.Label>
-              <Form.Control
-                type="text"
-                value={nomeUsuario}
-                readOnly
-              />
-            </Form.Group>
-          )}
-          <Form.Group className="mt-3">
-            <Form.Label>Tipo de Venda</Form.Label>
-            <div>
-              <Button variant="primary" onClick={() => handleButtonClick('produto')} className="me-2">
-                Produto
-              </Button>
-              <Button variant="secondary" onClick={() => handleButtonClick('serviço')}>
-                Serviço
-              </Button>
-            </div>
-          </Form.Group>
+          <UserValidationForm
+            cpf={cpf}
+            setCpf={setCpf}
+            nomeUsuario={nomeUsuario}
+            handleValidateUser={handleValidateUser}
+          />
+          <SaleTypeSelection handleButtonClick={handleButtonClick} />
         </Form>
 
-        <Modal show={showModal} onHide={() => setShowModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Selecione um {saleType}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <SelectableTable
-              data={saleType === 'produto' ? produtos : services}
-              saleType={saleType}
-              handleItemClick={handleItemClick}
-            />
-          </Modal.Body>
-        </Modal>
+        <ConfirmationModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          saleType={saleType}
+          produtos={produtos}
+          services={services}
+          handleItemClick={handleItemClick}
+        />
 
         {confirmationData && (
-          <div className="mt-5">
-            <h4>Confirmação de Venda</h4>
-            <p>
-              <strong>Tipo de Venda:</strong> {confirmationData.saleType}
-            </p>
-            <p>
-              <strong>Item:</strong> {confirmationData.item.nome}
-            </p>
-            <p>
-              <strong>Preço Unitário:</strong> R${confirmationData.item.valor?.toFixed(2)}
-            </p>
-            <Form.Group>
-              <Form.Label>
-                {saleType === 'produto' ? 'Quantidade' : 'Horas de Uso'}
-              </Form.Label>
-              <Form.Control
-                type="number"
-                min={0} // Ajusta para iniciar em 0
-                value={quantity}
-                onChange={handleQuantityChange}
-              />
-            </Form.Group>
-            <p>
-              <strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}
-            </p>
-            <Button variant="success" onClick={handleConfirm} className="me-2">
-              Confirmar Venda
-            </Button>
-            <Button variant="danger" onClick={handleCancel}>
-              Cancelar
-            </Button>
-          </div>
+          <ConfirmationDetails
+            confirmationData={confirmationData}
+            quantity={quantity}
+            handleQuantityChange={handleQuantityChange}
+            handleConfirm={handleConfirm}
+            handleCancel={handleCancel}
+            saleType={saleType}
+          />
         )}
 
-        {showSuccess && (
-          <Alert variant="success" className="mt-3">
-            Venda realizada com sucesso!
-          </Alert>
-        )}
+        <SuccessAlert showSuccess={showSuccess} />
       </div>
     </Card>
   );
