@@ -27,7 +27,10 @@ const Caixa = () => {
   const [showModalVenda, setShowModalVenda] = useState(false);
 
 
-  const handleClose = () => setShowModalVenda(false);
+  const handleClose = () =>{
+    updateBox();
+    setShowModalVenda(false);
+  } 
 
   useEffect(() => {
     const dataAberturaSalva = localStorage.getItem('dataAbertura');
@@ -41,6 +44,7 @@ const Caixa = () => {
   const updateBox = async () => {
     setLoading(true);
     const boxData = await FetchBox();
+    console.log(boxData)
     const viewData = await ViewDataObjectBox(boxData);
     setPedidos(viewData);
     setLoading(false);
@@ -80,7 +84,6 @@ const Caixa = () => {
   };
 
   const handleConfirmarAbrirCaixa = async () => {
-    console.log()
     const valor = parseFloat(valorInicial);
     if (valor >= 100) {
       setLoading(true);

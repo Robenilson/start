@@ -2,7 +2,7 @@ import './App.css';
 import React from 'react';
 import Menu from './components/menu';
 import Login from './pages/Login/Login';
-import Credito from './pages/Credito/Credito';
+import Credito from './pages/AcompanhaServico/AcompanhaServico';
 import Vendas from './pages/Vendas/vendas';
 import Caixa from './pages/Caixa/caixa';
 import NewProduto from './pages/NovoProduto/NewProduto';
