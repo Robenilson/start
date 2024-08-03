@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
-import { Button, Modal, Form, Table } from 'react-bootstrap';
+import { Button, Modal, Form, Table, Dropdown } from 'react-bootstrap';
 
 const AcompanhaServico = () => {
   const [showModal, setShowModal] = useState(false);
   const [servicos, setServicos] = useState([]);
   const [cpf, setCpf] = useState('');
   const [usuario, setUsuario] = useState(null);
-  const [historicoServicos, setHistoricoServicos] = useState([]);
+  const [selectedServico, setSelectedServico] = useState(null);
+  const [historicoServicos, setHistoricoServicos] = useState([]); // Adicionado estado para histórico de serviços
 
   const mockUsuario = {
     nome: 'João da Silva',
     cpf: '123.456.789-00',
-  };
-
-  const mockServico = {
-    nomeServico: 'Serviço Exemplo',
-    tempoAlugado: 3600, // 1 hora em segundos
+    servicos: [
+      { nomeServico: 'Xbox', tempoAlugado: 3600 },
+      { nomeServico: 'playstation 5', tempoAlugado: 5400 }
+    ],
   };
 
   const handlePesquisarCPF = () => {
@@ -26,21 +26,24 @@ const AcompanhaServico = () => {
   };
 
   const handleIniciarServico = () => {
-    const novoServico = {
-      nomeUsuario: usuario.nome,
-      cpf: usuario.cpf,
-      nomeServico: mockServico.nomeServico,
-      tempoAlugado: mockServico.tempoAlugado,
-      ativo: true,
-    };
-    setServicos([...servicos, novoServico]);
-    setShowModal(false);
+    if (selectedServico) {
+      const novoServico = {
+        nomeUsuario: usuario.nome,
+        cpf: usuario.cpf,
+        nomeServico: selectedServico.nomeServico,
+        tempoAlugado: selectedServico.tempoAlugado,
+        ativo: true,
+      };
+      setServicos([...servicos, novoServico]);
+      setShowModal(false);
+      setSelectedServico(null);
+    }
   };
 
   const handlePararServico = (index) => {
     const servicoParaParar = servicos[index];
-    setHistoricoServicos([...historicoServicos, servicoParaParar]);
-    setServicos(servicos.filter((_, i) => i !== index));
+    setHistoricoServicos([...historicoServicos, servicoParaParar]); // Adiciona ao histórico
+    setServicos(servicos.filter((_, i) => i !== index)); // Remove da lista de serviços ativos
   };
 
   useEffect(() => {
@@ -93,7 +96,28 @@ const AcompanhaServico = () => {
                   <div>
                     <p>Nome: {usuario.nome}</p>
                     <p>CPF: {usuario.cpf}</p>
-                    <Button onClick={handleIniciarServico}>Iniciar Serviço</Button>
+                    <Dropdown>
+                      <Dropdown.Toggle variant="success" id="dropdown-basic">
+                        Selecionar Serviço
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        {usuario.servicos.map((servico, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            onClick={() => setSelectedServico(servico)}
+                          >
+                            {servico.nomeServico}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    {selectedServico && (
+                      <div>
+                        <p>Serviço Selecionado: {selectedServico.nomeServico}</p>
+                        <Button onClick={handleIniciarServico}>Iniciar Serviço</Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </Form>
@@ -121,7 +145,6 @@ const AcompanhaServico = () => {
                     <Button
                       variant="danger"
                       onClick={() => handlePararServico(index)}
-                      disabled={!servico.ativo}
                     >
                       Parar
                     </Button>
