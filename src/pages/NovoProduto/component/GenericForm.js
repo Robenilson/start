@@ -37,11 +37,11 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
                 </option>
               ))}
             </Form.Control>
-          ) : field.type === 'radio' ? (
+          ) : field.type === 'checkbox' ? (
             field.options.map((option, idx) => (
               <Form.Check 
                 key={idx}
-                type="radio"
+                type="checkbox"
                 label={option.label}
                 value={option.value}
                 checked={values[field.name] === option.value}

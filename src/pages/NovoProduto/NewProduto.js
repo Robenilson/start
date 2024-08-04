@@ -32,7 +32,7 @@ const NewCadastro = () => {
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
-  const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:'false' });
+  const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:'' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
   const [error, setError] = useState(null);
@@ -56,7 +56,7 @@ const NewCadastro = () => {
     { name: 'tempo', label: 'Tempo', type: 'select', options: [{ value: '15', label: '15 minutos' }, { value: '30', label: '30 minutos' }, { value: '60', label: '1 hora' }] },
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
     { name: 'descricaoServico', label: 'Descrição', type: 'text', placeholder: 'Descrição do Serviço' },
-    { name: 'computador', label: 'Computador', type: 'radio', options: [{ value: 'true', label: 'Sim' }, { value: 'false', label: 'Não' }] },
+    { name: 'computador', label: 'Este serviço utiliza um computador?', type: 'checkbox', options: [{ value: 'true', label: 'Sim' }, { value: 'false', label: 'Não' }] },
   ];
   const updateTabelProduct = async () => {
     setLoading(true);
@@ -114,7 +114,7 @@ const NewCadastro = () => {
 
   const handleCloseServico = () => {
     setShowModalServico(false);
-    setServicoValues({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:"false" });
+    setServicoValues({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:"" });
   };
 
   const handleCadastroProduto = async () => {
