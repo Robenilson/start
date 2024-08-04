@@ -32,7 +32,7 @@ const NewCadastro = () => {
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
-  const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '' });
+  const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:'false' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
   const [error, setError] = useState(null);
@@ -48,14 +48,16 @@ const NewCadastro = () => {
     { name: 'descricaoProduto', label: 'Descrição', type: 'text', placeholder: 'Descrição do Produto' },
   ];
 
+
+  
   const servicoFields = [
     { name: 'nomeServico', label: 'Nome do Serviço', type: 'text', placeholder: 'Nome do Serviço' },
     { name: 'valorServico', label: 'Valor', type: 'number', placeholder: 'R$0,00', step: '0.01' },
     { name: 'tempo', label: 'Tempo', type: 'select', options: [{ value: '15', label: '15 minutos' }, { value: '30', label: '30 minutos' }, { value: '60', label: '1 hora' }] },
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
     { name: 'descricaoServico', label: 'Descrição', type: 'text', placeholder: 'Descrição do Serviço' },
+    { name: 'computador', label: 'Computador', type: 'radio', options: [{ value: 'true', label: 'Sim' }, { value: 'false', label: 'Não' }] },
   ];
-
   const updateTabelProduct = async () => {
     setLoading(true);
     try {
@@ -112,7 +114,7 @@ const NewCadastro = () => {
 
   const handleCloseServico = () => {
     setShowModalServico(false);
-    setServicoValues({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '' });
+    setServicoValues({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:"false" });
   };
 
   const handleCadastroProduto = async () => {
@@ -138,9 +140,11 @@ const NewCadastro = () => {
       price: parseFloat(servicoValues.valorServico),
       quantityHours: parseInt(tempoEmMinutos),
       quantityEquipament: parseInt(servicoValues.quantidade),
-      description:servicoValues.descricaoServico,
+      description: servicoValues.descricaoServico,
+      isComputer: Boolean(servicoValues.computador), // Conversão para booleano
     };
-
+    console.log(data)
+  
     await newService(data);
     await updateTabelServicos();
     setShowSuccess(true);

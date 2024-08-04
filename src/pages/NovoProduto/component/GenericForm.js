@@ -37,6 +37,18 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
                 </option>
               ))}
             </Form.Control>
+          ) : field.type === 'radio' ? (
+            field.options.map((option, idx) => (
+              <Form.Check 
+                key={idx}
+                type="radio"
+                label={option.label}
+                value={option.value}
+                checked={values[field.name] === option.value}
+                onChange={(e) => handleInputChange(field.name, e.target.value)}
+                name={field.name} 
+              />
+            ))
           ) : (
             <Form.Control
               type={field.type}
