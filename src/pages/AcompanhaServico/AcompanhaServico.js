@@ -14,8 +14,8 @@ const AcompanhaServico = () => {
     nome: 'João da Silva',
     cpf: '123.456.789-00',
     servicos: [
-      { nomeServico: 'Xbox', tempoAlugado: 3600 },
-      { nomeServico: 'playstation 5', tempoAlugado: 5400 }
+      { nomeServico: 'Serviço Exemplo 1', tempoAlugado: 3600 },
+      { nomeServico: 'Serviço Exemplo 2', tempoAlugado: 5400 },
     ],
   };
 
@@ -73,9 +73,10 @@ const AcompanhaServico = () => {
     <>
       <Card>
         <div className="card-header">Acompanhar de Serviços</div>
-        <div className="card-body d-flex flex-column align-items-center">
-          <Button onClick={() => setShowModal(true)}>Iniciar</Button>
-
+        <div className="card-body">
+          <div className="d-flex justify-content-end mr-3">
+          <Button className="me-2" onClick={() => setShowModal(true)}>Iniciar</Button>
+          </div>
           <Modal show={showModal} onHide={() => setShowModal(false)}>
             <Modal.Header closeButton>
               <Modal.Title>Pesquisar CPF</Modal.Title>
@@ -100,7 +101,6 @@ const AcompanhaServico = () => {
                       <Dropdown.Toggle variant="success" id="dropdown-basic">
                         Selecionar Serviço
                       </Dropdown.Toggle>
-
                       <Dropdown.Menu>
                         {usuario.servicos.map((servico, index) => (
                           <Dropdown.Item
