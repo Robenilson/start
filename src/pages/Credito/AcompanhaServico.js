@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
+import { FetchUserCPF } from '../../services/functions/RequestPeople';
+import { FetchBoxUserId } from '../../services/functions/RequestBox';
 import { Button, Modal, Form, Table, Dropdown } from 'react-bootstrap';
 
 const AcompanhaServico = () => {
@@ -8,20 +10,54 @@ const AcompanhaServico = () => {
   const [cpf, setCpf] = useState('');
   const [usuario, setUsuario] = useState(null);
   const [selectedServico, setSelectedServico] = useState(null);
-  const [historicoServicos, setHistoricoServicos] = useState([]); // Adicionado estado para histórico de serviços
+  const [historicoServicos, setHistoricoServicos] = useState([]);
 
-  const mockUsuario = {
-    nome: 'João da Silva',
-    cpf: '123.456.789-00',
-    servicos: [
-      { nomeServico: 'Serviço Exemplo 1', tempoAlugado: 3600 },
-      { nomeServico: 'Serviço Exemplo 2', tempoAlugado: 5400 },
-    ],
-  };
+  async function filterOrdersWithProductsByType(productType) {
+    const data = await FetchBoxUserId();
+    const filteredOrders = data
+      .map((order) => {
+        const filteredProducts = order.produtos.filter(
+          (product) => product.productType === productType
+        );
+        if (filteredProducts.length > 0) {
+          return { ...order, produtos: filteredProducts };
+        }
+        return null;
+      })
+      .filter((order) => order !== null);
+    return filteredOrders;
+  }
 
-  const handlePesquisarCPF = () => {
-    if (cpf === '123.456.789-00') {
-      setUsuario(mockUsuario);
+  const handlePesquisarCPF = async () => {
+    const user = await FetchUserCPF(cpf);
+    setUsuario(user); // Atualize o estado com os dados do usuário
+
+    if (user) {
+      const productTypeToFilter = 2;
+      filterOrdersWithProductsByType(productTypeToFilter)
+        .then((filteredOrders) => {
+          const novosServicos = [];
+          filteredOrders.forEach((order) => {
+            order.produtos.forEach((product) => {
+              novosServicos.push({
+                nomeServico: product.name,
+                tempoAlugado: parseInt(`${product.quantity}00`), // valor exemplo, ajuste conforme necessário
+                orderId: order.id,
+                productId: product.productId,
+                productType: product.productType,
+                dtSale: order.dtSale,
+                clientId: order.clientId,
+              });
+            });
+          });
+          setUsuario({ ...user, servicos: novosServicos }); // Atualize o estado com os serviços filtrados
+        })
+        .catch((error) => {
+          console.error('Error filtering orders:', error);
+        })
+        .finally(() => {
+          console.log('Filtering complete.');
+        });
     }
   };
 
@@ -42,8 +78,8 @@ const AcompanhaServico = () => {
 
   const handlePararServico = (index) => {
     const servicoParaParar = servicos[index];
-    setHistoricoServicos([...historicoServicos, servicoParaParar]); // Adiciona ao histórico
-    setServicos(servicos.filter((_, i) => i !== index)); // Remove da lista de serviços ativos
+    setHistoricoServicos([...historicoServicos, servicoParaParar]);
+    setServicos(servicos.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
@@ -56,7 +92,6 @@ const AcompanhaServico = () => {
         )
       );
     }, 1000);
-
     return () => clearInterval(intervalId);
   }, []);
 
@@ -64,9 +99,7 @@ const AcompanhaServico = () => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    return `${h.toString().padStart(2, '0')}:${m
-      .toString()
-      .padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -75,7 +108,9 @@ const AcompanhaServico = () => {
         <div className="card-header">Acompanhar de Serviços</div>
         <div className="card-body">
           <div className="d-flex justify-content-end mr-3">
-          <Button className="me-2" onClick={() => setShowModal(true)}>Iniciar</Button>
+            <Button className="me-2" onClick={() => setShowModal(true)}>
+              Iniciar
+            </Button>
           </div>
           <Modal show={showModal} onHide={() => setShowModal(false)}>
             <Modal.Header closeButton>
@@ -92,7 +127,9 @@ const AcompanhaServico = () => {
                     onChange={(e) => setCpf(e.target.value)}
                   />
                 </Form.Group>
-                <Button onClick={handlePesquisarCPF}>Pesquisar</Button>
+                <Button className="mt-3" onClick={handlePesquisarCPF}>
+                  Pesquisar
+                </Button>
                 {usuario && (
                   <div>
                     <p>Nome: {usuario.nome}</p>
@@ -102,7 +139,7 @@ const AcompanhaServico = () => {
                         Selecionar Serviço
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
-                        {usuario.servicos.map((servico, index) => (
+                        {usuario.servicos && usuario.servicos.map((servico, index) => (
                           <Dropdown.Item
                             key={index}
                             onClick={() => setSelectedServico(servico)}
@@ -115,7 +152,9 @@ const AcompanhaServico = () => {
                     {selectedServico && (
                       <div>
                         <p>Serviço Selecionado: {selectedServico.nomeServico}</p>
-                        <Button onClick={handleIniciarServico}>Iniciar Serviço</Button>
+                        <Button onClick={handleIniciarServico}>
+                          Iniciar Serviço
+                        </Button>
                       </div>
                     )}
                   </div>

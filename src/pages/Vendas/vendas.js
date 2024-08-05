@@ -217,6 +217,8 @@ const Vendas = () => {
     }
   };
 
+  
+
   return (
     <Card>
       <div className="form-group row text-center m-0 mb-1">

@@ -90,6 +90,18 @@ const getRole = (roleNumber) => {
   }
 
 
+//Lista pedidos do caixa por id do cliente
+export async function FetchBoxUserId(id) {
+ const pedidos= await FetchBox();
+ 
+
+ return pedidos
+}
+
+
+
+
+
 
   //Lista pedidoscom o id 
   export async function FetchBoxById(data) {
@@ -273,13 +285,13 @@ const getRole = (roleNumber) => {
             id: s.id,
             clientId: s.clientId !== undefined ? s.clientId : 0,
             clientName: clientName.nome, // Adiciona o nome do cliente aqui
-            tipo: s.tipo || "null",
+            tipo: s.tipo || "null",// Garante que produto não seja null
             desconto: s.desconto !== undefined ? s.desconto : 0,
             precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,
             credito: s.credito !== undefined ? s.credito : 0,
             payments: s.payments && s.payments.length > 0 ? s.payments : null,
             saleStatus: s.saleStatus !== undefined ? s.saleStatus : 0,
-            produto: s.produtos, // Garante que produto não seja null
+            produto: s.produtos, 
             dtSale: s.dtSale 
           };
         }));
@@ -328,7 +340,6 @@ export async function PutCompletBox(data) {
 
 
 export async function PutCanceltBox(data) {
-  console.log(data)
   var config = serviceRetornarConfig(
     "put",
     `${endPoints.urlPutBox}/${data}/cancel`,
