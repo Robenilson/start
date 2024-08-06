@@ -39,7 +39,7 @@ export const endPoints = {
     urlOpenBox:backHost + "/api/CashierOrder",
     urlCloseBox:backHost +"/api/CashierOrder/close",
 
-
+    ControllService:backHost +"/api/ControllService",
 
   
 

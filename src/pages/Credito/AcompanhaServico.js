@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
 import { FetchBoxUserId } from '../../services/functions/RequestBox';
-import { Button, Modal, Form, Table, Dropdown } from 'react-bootstrap';
+import { ControllServiceStop,ControllServiceGet} from '../../services/functions/RequestControllService';
+
+import ModalPesquisarCPF from './components/ModalPesquisarCPF';
+import ServicoTable from './components/ServicoTable';
+import { Button } from 'react-bootstrap';
 
 const AcompanhaServico = () => {
   const [showModal, setShowModal] = useState(false);
@@ -10,7 +14,6 @@ const AcompanhaServico = () => {
   const [cpf, setCpf] = useState('');
   const [usuario, setUsuario] = useState(null);
   const [selectedServico, setSelectedServico] = useState(null);
-  const [historicoServicos, setHistoricoServicos] = useState([]);
 
   async function filterOrdersWithProductsByType(productType) {
     const data = await FetchBoxUserId();
@@ -30,7 +33,8 @@ const AcompanhaServico = () => {
 
   const handlePesquisarCPF = async () => {
     const user = await FetchUserCPF(cpf);
-    setUsuario(user); // Atualize o estado com os dados do usuário
+    console.log(user)
+    setUsuario(user);
 
     if (user) {
       const productTypeToFilter = 2;
@@ -41,7 +45,7 @@ const AcompanhaServico = () => {
             order.produtos.forEach((product) => {
               novosServicos.push({
                 nomeServico: product.name,
-                tempoAlugado: parseInt(`${product.quantity}00`), // valor exemplo, ajuste conforme necessário
+                tempoAlugado: product.quantity * 3600, // Convertendo tempo para segundos (exemplo: quantidade x 3600 segundos)
                 orderId: order.id,
                 productId: product.productId,
                 productType: product.productType,
@@ -50,13 +54,10 @@ const AcompanhaServico = () => {
               });
             });
           });
-          setUsuario({ ...user, servicos: novosServicos }); // Atualize o estado com os serviços filtrados
+          setUsuario({ ...user, servicos: novosServicos });
         })
         .catch((error) => {
           console.error('Error filtering orders:', error);
-        })
-        .finally(() => {
-          console.log('Filtering complete.');
         });
     }
   };
@@ -78,7 +79,14 @@ const AcompanhaServico = () => {
 
   const handlePararServico = (index) => {
     const servicoParaParar = servicos[index];
-    setHistoricoServicos([...historicoServicos, servicoParaParar]);
+    console.log(usuario)
+    ControllServiceStop(usuario ,formatTime(servicoParaParar.tempoAlugado))
+
+
+
+    
+   
+
     setServicos(servicos.filter((_, i) => i !== index));
   };
 
@@ -103,98 +111,33 @@ const AcompanhaServico = () => {
   };
 
   return (
-    <>
-      <Card>
-        <div className="card-header">Acompanhar de Serviços</div>
-        <div className="card-body">
-          <div className="d-flex justify-content-end mr-3">
-            <Button className="me-2" onClick={() => setShowModal(true)}>
-              Iniciar
-            </Button>
-          </div>
-          <Modal show={showModal} onHide={() => setShowModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Pesquisar CPF</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form>
-                <Form.Group controlId="formCpf">
-                  <Form.Label>CPF</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Digite o CPF"
-                    value={cpf}
-                    onChange={(e) => setCpf(e.target.value)}
-                  />
-                </Form.Group>
-                <Button className="mt-3" onClick={handlePesquisarCPF}>
-                  Pesquisar
-                </Button>
-                {usuario && (
-                  <div>
-                    <p>Nome: {usuario.nome}</p>
-                    <p>CPF: {usuario.cpf}</p>
-                    <Dropdown>
-                      <Dropdown.Toggle variant="success" id="dropdown-basic">
-                        Selecionar Serviço
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        {usuario.servicos && usuario.servicos.map((servico, index) => (
-                          <Dropdown.Item
-                            key={index}
-                            onClick={() => setSelectedServico(servico)}
-                          >
-                            {servico.nomeServico}
-                          </Dropdown.Item>
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                    {selectedServico && (
-                      <div>
-                        <p>Serviço Selecionado: {selectedServico.nomeServico}</p>
-                        <Button onClick={handleIniciarServico}>
-                          Iniciar Serviço
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </Form>
-            </Modal.Body>
-          </Modal>
-
-          <Table striped bordered hover className="mt-4">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Serviço</th>
-                <th>Tempo Alugado</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {servicos.map((servico, index) => (
-                <tr key={index}>
-                  <td>{servico.nomeUsuario}</td>
-                  <td>{servico.cpf}</td>
-                  <td>{servico.nomeServico}</td>
-                  <td>{formatTime(servico.tempoAlugado)}</td>
-                  <td>
-                    <Button
-                      variant="danger"
-                      onClick={() => handlePararServico(index)}
-                    >
-                      Parar
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+    <Card>
+      <div className="card-header">Acompanhar de Serviços</div>
+      <div className="card-body">
+        <div className="d-flex justify-content-end mr-3">
+          <Button className="me-2" onClick={() => setShowModal(true)}>
+            Iniciar
+          </Button>
         </div>
-      </Card>
-    </>
+        <ModalPesquisarCPF
+          showModal={showModal}
+          setShowModal={setShowModal}
+          cpf={cpf}
+          setCpf={setCpf}
+          usuario={usuario}
+          setUsuario={setUsuario}
+          handlePesquisarCPF={handlePesquisarCPF}
+          selectedServico={selectedServico}
+          setSelectedServico={setSelectedServico}
+          handleIniciarServico={handleIniciarServico}
+        />
+        <ServicoTable
+          servicos={servicos}
+          handlePararServico={handlePararServico}
+          formatTime={formatTime}
+        />
+      </div>
+    </Card>
   );
 };
 
