@@ -144,7 +144,6 @@ const NewCadastro = () => {
       isComputer: Boolean(servicoValues.computador), // Conversão para booleano
     };
    
-  
     await newService(data);
     await updateTabelServicos();
     setShowSuccess(true);

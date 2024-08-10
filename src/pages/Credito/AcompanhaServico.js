@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
-import { FetchBoxUserId } from '../../services/functions/RequestBox';
+import LoadingModal from '../../components/LoadingModal';
 import { ControllServiceStop,ControllServiceGet} from '../../services/functions/RequestControllService';
 
 import ModalPesquisarCPF from './components/ModalPesquisarCPF';
@@ -9,57 +9,42 @@ import ServicoTable from './components/ServicoTable';
 import { Button } from 'react-bootstrap';
 
 const AcompanhaServico = () => {
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [servicos, setServicos] = useState([]);
   const [cpf, setCpf] = useState('');
   const [usuario, setUsuario] = useState(null);
   const [selectedServico, setSelectedServico] = useState(null);
 
-  async function filterOrdersWithProductsByType(productType) {
-    const data = await FetchBoxUserId();
-    const filteredOrders = data
-      .map((order) => {
-        const filteredProducts = order.produtos.filter(
-          (product) => product.productType === productType
-        );
-        if (filteredProducts.length > 0) {
-          return { ...order, produtos: filteredProducts };
-        }
-        return null;
-      })
-      .filter((order) => order !== null);
-    return filteredOrders;
-  }
+  
 
   const handlePesquisarCPF = async () => {
+    setLoading(true);
     const user = await FetchUserCPF(cpf);
-    console.log(user)
     setUsuario(user);
 
     if (user) {
-      const productTypeToFilter = 2;
-      filterOrdersWithProductsByType(productTypeToFilter)
-        .then((filteredOrders) => {
-          const novosServicos = [];
-          filteredOrders.forEach((order) => {
-            order.produtos.forEach((product) => {
-              novosServicos.push({
-                nomeServico: product.name,
-                tempoAlugado: product.quantity * 3600, // Convertendo tempo para segundos (exemplo: quantidade x 3600 segundos)
-                orderId: order.id,
-                productId: product.productId,
-                productType: product.productType,
-                dtSale: order.dtSale,
-                clientId: order.clientId,
-              });
-            });
-          });
-          setUsuario({ ...user, servicos: novosServicos });
-        })
-        .catch((error) => {
-          console.error('Error filtering orders:', error);
-        });
+      const novosServicos = [];
+      const service = ControllServiceGet(user.id);      
+      service.then((data) => {
+        // Supondo que 'data' seja uma lista de serviços
+        const serviçosAtualizados = data.map((item) => ({
+          nomeServico: item.serviceName,
+          tempoAlugado: item.totalTime * 3600, // Convertendo tempo para segundos
+          orderId: item.orderId,
+          productId: item.id,
+          is_Active: item.is_Active,
+        }));
+        setUsuario({ ...user, servicos: serviçosAtualizados });
+      })
+      .catch((error) => {
+        console.error('Error filtering orders:', error);
+      });
+     
+        
     }
+    setLoading(false);
+
   };
 
   const handleIniciarServico = () => {
@@ -67,6 +52,7 @@ const AcompanhaServico = () => {
       const novoServico = {
         nomeUsuario: usuario.nome,
         cpf: usuario.cpf,
+        productId: selectedServico.productId,
         nomeServico: selectedServico.nomeServico,
         tempoAlugado: selectedServico.tempoAlugado,
         ativo: true,
@@ -79,17 +65,19 @@ const AcompanhaServico = () => {
 
   const handlePararServico = (index) => {
     const servicoParaParar = servicos[index];
-    console.log(usuario)
-    ControllServiceStop(usuario ,formatTime(servicoParaParar.tempoAlugado))
-
-
-
-    
-   
-
+    console.log(servicoParaParar.productId ,parseInt(formatTimeToMinutes(formatTime(servicoParaParar.tempoAlugado))))
+    ControllServiceStop(servicoParaParar.productId ,parseInt(formatTimeToMinutes(formatTime(servicoParaParar.tempoAlugado))))
     setServicos(servicos.filter((_, i) => i !== index));
   };
 
+
+  function formatTimeToMinutes(timeStr) {
+    // Dividir o tempo na forma HH:MM:SS
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number)  
+    // Converter para minutos
+    const totalMinutes = hours * 60 + minutes + Math.floor(seconds / 60);   
+    return totalMinutes;
+  }
   useEffect(() => {
     const intervalId = setInterval(() => {
       setServicos((prevServicos) =>
@@ -112,6 +100,7 @@ const AcompanhaServico = () => {
 
   return (
     <Card>
+      <LoadingModal show={loading} />
       <div className="card-header">Acompanhar de Serviços</div>
       <div className="card-body">
         <div className="d-flex justify-content-end mr-3">
