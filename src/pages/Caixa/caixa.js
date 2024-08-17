@@ -172,20 +172,20 @@ const Caixa = () => {
     
     <Card>
       
-      <div className="card-header">Caixa</div>
+      <div className="card-header ">Caixa</div>
       <div className="card-body">
-      <Button variant="primary" onClick={handleNWeVendas} className="me-2 btn btn-info">
+      <Button variant="primary" onClick={handleNWeVendas} className="me-2 fonte  btn btn-info">
           Nova  Venda
         </Button>
-        <Button variant="primary" onClick={handleAbrirCaixa} className="me-2">
+        <Button variant="primary" onClick={handleAbrirCaixa} className="me-2 fonte  btn btn-info">
           Abrir Caixa
         </Button>
-        <Button variant="secondary" onClick={handleFecharCaixa}>
+        <Button variant="secondary" className="me-2 fonte  btn btn-info" onClick={handleFecharCaixa}>
           Fechar Caixa
         </Button>
         <Modal show={showModalAbrirCaixa} onHide={handleCloseAbrirCaixa}>
           <Modal.Header closeButton>
-            <Modal.Title>Abrir Caixa</Modal.Title>
+            <Modal.Title >Abrir Caixa</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>

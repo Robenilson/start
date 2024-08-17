@@ -1,0 +1,97 @@
+/* Estilo geral do modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Sobreposição escura */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* Estilo do conteúdo do modal */
+  .modal-content {
+    background-color: #1e1e1e; /* Fundo escuro */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    width: 80%;
+    max-width: 600px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    color: #ff0000; /* Fonte vermelha */
+  }
+  
+  /* Efeito de hover para o conteúdo do modal */
+  .modal-content:hover {
+    background-color: #2d2d2d;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Estilo da cabeçalho do modal */
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .modal-header h5 {
+    margin: 0;
+    color: #ff0000; /* Fonte vermelha */
+  }
+  
+  /* Botão de fechar */
+  .close-button {
+    background: none;
+    border: none;
+    color: #ff0000; /* Fonte vermelha */
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .close-button:hover {
+    color: #ff4d4d; /* Vermelho mais claro no hover */
+  }
+  
+  /* Estilo dos botões dentro do modal */
+  .modal-footer .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .modal-footer .btn-secondary {
+    background: #757575;
+  }
+  
+  .modal-footer .btn-secondary:hover {
+    background: #616161;
+    transform: scale(1.05);
+  }
+  
+  .modal-footer .btn-primary {
+    background: #00eaff;
+  }
+  
+  .modal-footer .btn-primary:hover {
+    background: #00b2e6;
+    transform: scale(1.05);
+  }
+  
+  .modal-footer .btn-danger {
+    background: #e53935;
+  }
+  
+  .modal-footer .btn-danger:hover {
+    background: #c62828;
+    transform: scale(1.05);
+  }
+  

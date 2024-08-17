@@ -1,13 +1,28 @@
 import React from 'react';
-import { Modal } from 'react-bootstrap';
+import './css/App.css'; // Certifique-se de que o caminho esteja correto
 
-const ModalComponent = ({ show, onHide, title = 'Default Title', children, customClass, hideButtons = false }) => (
-  <Modal show={show} onHide={onHide} dialogClassName={customClass}>
-    <Modal.Header closeButton>
-      <Modal.Title>{title}</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>{children}</Modal.Body>
-  </Modal>
-);
+const ModalComponent = ({ show, save,onHide, title, hideButtons, children }) => {
+  if (!show) return null;
+ 
+  return (
+    <div className="modal-overlay" onClick={onHide}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h5>{title}</h5>
+          <button className="close-button" onClick={onHide}>×</button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
+        {!hideButtons && (
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={onHide}>Cancelar</button>
+            <button className="btn btn-primary"onClick={save}  >Confirmar</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default ModalComponent;
