@@ -332,6 +332,60 @@
   border-radius: 8px;
   text-align: center;
 }
+
+
+.notification-icon {
+
+  position: relative;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.notification-count {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.notification-dropdown {
+  background-color: #1e1e1e; /* Fundo escuro */
+  color: red;
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 30px;
+  right: 0;
+ 
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  z-index: 1000;
+}
+
+.notification-dropdown ul {
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.notification-dropdown li {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.notification-dropdown li:last-child {
+  border-bottom: none;
+}
+
+
+
 .card-header{
   color: #39ff14; /* Verde neon */
 }
