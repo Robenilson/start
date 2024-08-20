@@ -6,7 +6,7 @@ import { ControllServiceStop,ControllServiceGet} from '../../services/functions/
 
 import ModalPesquisarCPF from './components/ModalPesquisarCPF';
 import ServicoTable from './components/ServicoTable';
-import { Button } from 'react-bootstrap';
+
 
 const AcompanhaServico = () => {
   const [loading, setLoading] = useState(false);
@@ -100,14 +100,15 @@ const AcompanhaServico = () => {
 
   return (
     <Card>
+      <div className="user-manager-container">
       <LoadingModal show={loading} />
       <div className="card-header">Acompanhar de Serviços</div>
       <div className="card-body">
-        <div className="d-flex justify-content-end mr-3">
-          <Button className="me-2" onClick={() => setShowModal(true)}>
+      <center>
+          <button className="btn primary-btn" onClick={() => setShowModal(true)}>
             Iniciar
-          </Button>
-        </div>
+          </button>
+       </center>
         <ModalPesquisarCPF
           showModal={showModal}
           setShowModal={setShowModal}
@@ -125,6 +126,7 @@ const AcompanhaServico = () => {
           handlePararServico={handlePararServico}
           formatTime={formatTime}
         />
+      </div>
       </div>
     </Card>
   );

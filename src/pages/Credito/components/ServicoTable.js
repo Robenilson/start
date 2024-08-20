@@ -1,8 +1,8 @@
 import React from 'react';
-import { Table, Button } from 'react-bootstrap';
 
 const ServicoTable = ({ servicos, handlePararServico, formatTime }) => (
-  <Table striped bordered hover className="mt-4">
+  <div className="table-container" > 
+  <table className="user-table">
     <thead>
       <tr>
         <th>Nome</th>
@@ -20,17 +20,18 @@ const ServicoTable = ({ servicos, handlePararServico, formatTime }) => (
           <td>{servico.nomeServico}</td>
           <td>{formatTime(servico.tempoAlugado)}</td>
           <td>
-            <Button
-              variant="danger"
+            <button
+              className="custom-button danger"
               onClick={() => handlePararServico(index)}
             >
               Parar
-            </Button>
+            </button>
           </td>
         </tr>
       ))}
     </tbody>
-  </Table>
+  </table>
+  </div>
 );
 
 export default ServicoTable;

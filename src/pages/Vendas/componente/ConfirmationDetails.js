@@ -3,8 +3,8 @@ import { Form, Button } from 'react-bootstrap';
 
 const ConfirmationDetails = ({ confirmationData, quantity, handleQuantityChange, handleConfirm, handleCancel, saleType }) => {
   return (
-    <div className="mt-5">
-      <h4>Confirmação de Venda</h4>
+    <div >
+      <h5 className='detalhes'>Confirmação  Venda</h5>
       <p>
         <strong>Tipo de Venda:</strong> {confirmationData.saleType}
       </p>
@@ -28,12 +28,12 @@ const ConfirmationDetails = ({ confirmationData, quantity, handleQuantityChange,
       <p>
         <strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}
       </p>
-      <Button variant="success" onClick={handleConfirm} className="me-2">
+      <button variant="success" onClick={handleConfirm} className="btn primary-btn">
         Confirmar Venda
-      </Button>
-      <Button variant="danger" onClick={handleCancel}>
+      </button>
+      <button variant="danger" onClick={handleCancel} className="btn primary-btn">
         Cancelar
-      </Button>
+      </button>
     </div>
   );
 };

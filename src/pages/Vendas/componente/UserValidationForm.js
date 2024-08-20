@@ -12,9 +12,9 @@ const UserValidationForm = ({ cpf, setCpf, nomeUsuario, handleValidateUser }) =>
         placeholder="Cpf do Cliente"
         disabled={!!nomeUsuario}
       />
-      <Button onClick={handleValidateUser} disabled={!!nomeUsuario}>
+      <button onClick={handleValidateUser} className="btn primary-btn" disabled={!!nomeUsuario}>
         Validar Usuário
-      </Button>
+      </button>
       {nomeUsuario && (
         <Form.Group className="mt-3">
           <Form.Label>Nome do Cliente</Form.Label>

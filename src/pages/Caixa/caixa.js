@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Alert, Tabs, Tab } from 'react-bootstrap';
-import Card from '../../components/Card';
+import ModalComponent from '../../components/ModalComponet';
 import PedidosTab from './componentesCaixa/PedidosTab';
-import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox } from "../../services/functions/RequestBox";
+import Card from '../../components/Card';
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 import LoadingModal from '../../components/LoadingModal';
 import Vendas from '../Vendas/vendas';
-
+import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox } from "../../services/functions/RequestBox";
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -26,11 +25,10 @@ const Caixa = () => {
   const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
   const [showModalVenda, setShowModalVenda] = useState(false);
 
-
-  const handleClose = () =>{
+  const handleClose = () => {
     updateBox();
     setShowModalVenda(false);
-  } 
+  };
 
   useEffect(() => {
     const dataAberturaSalva = localStorage.getItem('dataAbertura');
@@ -44,11 +42,9 @@ const Caixa = () => {
   const updateBox = async () => {
     setLoading(true);
     const boxData = await FetchBox();
-    console.log(boxData)
     const viewData = await ViewDataObjectBox(boxData);
     setPedidos(viewData);
     setLoading(false);
-   
   };
 
   useEffect(() => {
@@ -78,7 +74,6 @@ const Caixa = () => {
     setShowModalFecharCaixa(false);
   };
 
-
   const handleNWeVendas = () => {
     setShowModalVenda(true);
   };
@@ -88,9 +83,7 @@ const Caixa = () => {
     if (valor >= 100) {
       setLoading(true);
       const agora = new Date();
-      const   valueOpenBox =await OpenBox(valor, user.EmployeerId);
-      
-
+      await OpenBox(valor, user.EmployeerId);
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);
@@ -110,7 +103,7 @@ const Caixa = () => {
     const agora = new Date();
     await CloseBox(user.EmployeerId);
     setCaixaAberto(false);
-    setSaldo(0); // Zera o saldo após fechar o caixa
+    setSaldo(0);
     setHoraFechamento(new Date().toLocaleString());
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
@@ -119,6 +112,7 @@ const Caixa = () => {
     setLoading(false);
     handleCloseFecharCaixa();
   };
+
   const handlePedidoFormaPagamento = (index) => {
     setPedidoSelecionado(index);
     setShowModalConfirmacaoVenda(true);
@@ -128,39 +122,31 @@ const Caixa = () => {
     setShowModalConfirmacaoVenda(false);
   };
 
-
-  const handleVendas = () => {
-   
-  };
-
   const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
     setLoading(true);
-    createDataObjectEditBox(pedido, formaPagamento, desconto, user).then(data=>{
-        PutCompletBox(data)
-        .then(response => {
-          setShowPedidoSuccess(true);
-          updateBox(); // Atualize a lista de pedidos após a venda ser concluída
-          setTimeout(clearState, 4000);
-        })
-        .catch(error => {
-          console.error('Erro ao concluir a venda:', error);
-          alert('Erro ao concluir a venda.');
-        });
-      }
-    )
+    createDataObjectEditBox(pedido, formaPagamento, desconto, user)
+      .then(data => PutCompletBox(data))
+      .then(() => {
+        setShowPedidoSuccess(true);
+        updateBox();
+        setTimeout(clearState, 4000);
+      })
+      .catch(error => {
+        console.error('Erro ao concluir a venda:', error);
+        alert('Erro ao concluir a venda.');
+      });
     setLoading(false);
-
     handleCloseConfirmacaoVenda();
   };
 
-  const handlCancelOrder = async(pedido) => {
+  const handlCancelOrder = async (pedido) => {
     setLoading(true);
     await PutCanceltBox(pedido.id);
     setShowPedidoSuccess(true);
-    updateBox(); // Atualize a lista de pedidos após a venda ser concluída
+    updateBox();
     setLoading(false);
     setTimeout(clearState, 3000);
-  }
+  };
 
   const clearState = () => {
     setShowPedidoSuccess(false);
@@ -168,60 +154,59 @@ const Caixa = () => {
 
   return (
     <>
+      <Card>
+        
+        <div className="user-manager-container">
 
-    
-    <Card>
-      
-      <div className="card-header ">Caixa</div>
-      <div className="card-body">
-      <Button variant="primary" onClick={handleNWeVendas} className="me-2 fonte  btn btn-info">
-          Nova  Venda
-        </Button>
-        <Button variant="primary" onClick={handleAbrirCaixa} className="me-2 fonte  btn btn-info">
-          Abrir Caixa
-        </Button>
-        <Button variant="secondary" className="me-2 fonte  btn btn-info" onClick={handleFecharCaixa}>
-          Fechar Caixa
-        </Button>
-        <Modal show={showModalAbrirCaixa} onHide={handleCloseAbrirCaixa}>
-          <Modal.Header closeButton>
-            <Modal.Title >Abrir Caixa</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group>
-                <Form.Label>Valor Inicial</Form.Label>
-                <Form.Control
-                  type="number"
+          <center>
+       
+          <button onClick={handleNWeVendas} className="btn primary-btn">
+            Nova Venda
+          </button>
+          <button onClick={handleAbrirCaixa} className="btn primary-btn">
+            Abrir Caixa
+          </button>
+          <button className="btn primary-btn" onClick={handleFecharCaixa}>
+            Fechar Caixa
+          </button>
+
+          </center>
+
+          <ModalComponent
+            show={showModalAbrirCaixa}
+            onHide={handleCloseAbrirCaixa}
+            save={handleConfirmarAbrirCaixa}
+            title="Abrir Caixa"
+          >
+            <form>
+              <div >
+                <label className='titles'>Valor Inicial</label>
+                <input
+                  type="text"
                   value={valorInicial}
                   onChange={(e) => setValorInicial(e.target.value)}
                   placeholder="Valor Inicial"
                 />
-              </Form.Group>
-              <Button variant="success" onClick={handleConfirmarAbrirCaixa}>
-                Confirmar
-              </Button>
-            </Form>
-          </Modal.Body>
-        </Modal>
+              </div>
+            </form>
+          </ModalComponent>
 
-        <Modal show={showModalFecharCaixa} onHide={handleCloseFecharCaixa}>
-          <Modal.Header closeButton>
-            <Modal.Title>Fechar Caixa</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+          <ModalComponent
+            show={showModalFecharCaixa}
+            onHide={handleCloseFecharCaixa}
+            save={handleConfirmarFecharCaixa}
+            title="Fechar Caixa"
+          >
             <p>Você está prestes a fechar o caixa. Deseja continuar?</p>
-            <Button variant="success" onClick={handleConfirmarFecharCaixa}>
-              Confirmar
-            </Button>
-          </Modal.Body>
-        </Modal>
+          </ModalComponent>
 
-        <Modal show={showModalConfirmacaoVenda} onHide={handleCloseConfirmacaoVenda}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmar Pagamento</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
+          <ModalComponent
+            show={showModalConfirmacaoVenda}
+            onHide={handleCloseConfirmacaoVenda}
+            title="Confirmar Pagamento"
+            save={handleConfirmarPagamento}
+            hideButtons={false}
+          >
             {pedidoSelecionado !== null && (
               <DetalhesPedido
                 pedido={pedidos[pedidoSelecionado]}
@@ -230,68 +215,59 @@ const Caixa = () => {
                 cancel={handlCancelOrder}
               />
             )}
-          </Modal.Body>
-        </Modal>
+          </ModalComponent>
 
-        {showSuccess && (
-          <Alert variant="success" className="mt-3">
-            Operação concluída com sucesso!
-          </Alert>
-        )}
+          {showSuccess && (
+            <div className="alert alert-success mt-3">
+              Operação concluída com sucesso!
+            </div>
+          )}
 
-        {showPedidoSuccess && (
-          <Alert variant="success" className="mt-3">
-            Operação realizada com sucesso!
-          </Alert>
-        )}
+          {showPedidoSuccess && (
+            <div className="alert alert-success mt-3">
+              Operação realizada com sucesso!
+            </div>
+          )}
 
-        <div className="mt-3">
-          <h5>Saldo: R${saldo.toFixed(2)}</h5>
-        </div>
-
-        {dataAbertura && (
           <div className="mt-3">
-            <Alert variant="info">
-              Caixa aberto em {dataAbertura.toLocaleString()}
-            </Alert>
+            <h5>Saldo: R${saldo.toFixed(2)}</h5>
           </div>
-        )}
 
-        {!caixaAberto && horaFechamento && (
-          <Alert variant="info" className="mt-3">
-            Caixa fechado em {horaFechamento} com saldo de R${saldo.toFixed(2)}
-          </Alert>
-        )}
+          {dataAbertura && (
+            <div className="mt-3">
+              <div className="alert alert-info">
+                Caixa aberto em {dataAbertura.toLocaleString()}
+              </div>
+            </div>
+          )}
 
-        {caixaAberto && (
-          <Tabs defaultActiveKey="pedidos" id="tabela-abas" className="mt-3">
-            <Tab eventKey="pedidos" title="Pedidos">
-              <PedidosTab pedidos={pedidos} handlePedidoFormaPagamento={handlePedidoFormaPagamento} />
-            </Tab>
-          
-          </Tabs>
-        )}
-        <LoadingModal show={loading} />
-      </div>
-    </Card>
+          {!caixaAberto && horaFechamento && (
+            <div className="alert alert-info mt-3">
+              Caixa fechado em {horaFechamento} com saldo de R${saldo.toFixed(2)}
+            </div>
+          )}
 
-
-
-
-    <Modal show={showModalVenda} size="lg" onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title> Nova Venda </Modal.Title>
-      </Modal.Header>
-        <Vendas  />
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Fechar
-        </Button>
-      </Modal.Footer>
-    </Modal>
-
-   
-
+          {caixaAberto && (
+            <div className="mt-3">
+              <ul>
+                <li>
+                  <PedidosTab pedidos={pedidos} handlePedidoFormaPagamento={handlePedidoFormaPagamento} />
+                </li>
+              </ul>
+            </div>
+          )}
+          <LoadingModal show={loading} />
+        </div>
+      </Card>
+      <ModalComponent
+        show={showModalVenda}
+        onHide={handleClose}
+        title="Nova Venda"
+        hideButtons={true}
+      >
+        <Vendas />
+        
+      </ModalComponent>
     </>
   );
 };

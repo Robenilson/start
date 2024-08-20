@@ -1,9 +1,9 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
 
 const SelectableTable = ({ data, saleType, handleItemClick }) => {
   return (
-    <Table striped bordered hover>
+    <div  className="table-container">
+    <table className="user-table">
       <thead>
         <tr>
           <th>#</th>
@@ -22,7 +22,8 @@ const SelectableTable = ({ data, saleType, handleItemClick }) => {
           </tr>
         ))}
       </tbody>
-    </Table>
+    </table>
+    </div>
   );
 };
 

@@ -1,10 +1,9 @@
 import React from 'react';
-import { Table, Button } from 'react-bootstrap';
 
 const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
   return (
-    <div>
-      <Table striped bordered hover>
+    <div  className="table-container" >
+      <table className="user-table">
         <thead>
           <tr>
             <th>Cliente</th>
@@ -14,18 +13,18 @@ const PedidosTab = ({ pedidos, handlePedidoFormaPagamento }) => {
         </thead>
         <tbody>
           {pedidos.map((pedido, index) => (
-            <tr key={pedido.id}>
+            <tr className="user-table" key={pedido.id}>
               <td>{pedido.clientName}</td>
               <td>{pedido.payments === null ? 'Aguardando Pagamento' : 'Pago'}</td>
               <td>
-                <Button variant="primary" onClick={() => handlePedidoFormaPagamento(index)}>
+                <button className="action-btn edit-btn" onClick={() => handlePedidoFormaPagamento(index)}>
                   Ver Detalhes
-                </Button>
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
-      </Table>
+      </table>
     </div>
   );
 };

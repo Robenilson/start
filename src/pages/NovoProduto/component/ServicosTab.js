@@ -1,12 +1,9 @@
 import React from 'react';
-import { Table, Button } from 'react-bootstrap';
-
-
 
 const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
-  
   return (
-    <Table striped bordered hover className="mt-3">
+    <div className="table-container">
+    <table className="user-table">
       <thead>
         <tr>
           <th>#</th>
@@ -26,13 +23,22 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
             <td>R${servico.valor.toFixed(2)}</td>
             <td>{servico.horaMinima} minutos</td>
             <td>
-              <Button variant="warning" onClick={() => handleEditServico(servico)} className="me-2">Editar</Button>
-              <Button variant="danger" onClick={() => handleDeleteServico(servico)}>Excluir</Button>
+              <button 
+                className="custom-button warning me-2" 
+                onClick={() => handleEditServico(servico)}>
+                Editar
+              </button>
+              <button 
+                className="custom-button danger" 
+                onClick={() => handleDeleteServico(servico)}>
+                Excluir
+              </button>
             </td>
           </tr>
         ))}
       </tbody>
-    </Table>
+    </table>
+    </div>
   );
 };
 

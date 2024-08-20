@@ -28,7 +28,7 @@ const Permision = (props) => {
         <OptionNav key="creditos" url={urls.credito} name="Acompanhar de Serviços" />,
         <OptionNav key="venda" url="/venda" name="Vendas" />,
         <OptionNav key="newProduto" url={urls.newProdutoPage} name="Estoque" />,
-        <OptionNav key="roleManeger" url={urls.roleManager} name="Role" />
+        <OptionNav key="roleManeger" url={urls.roleManager} name="Permissões" />
       ];
   }
 

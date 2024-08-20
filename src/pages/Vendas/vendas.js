@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Form } from 'react-bootstrap';
-import   Card  from './../../components/Card';
+import Card from '../../components/Card';
+import ModalComponent from '../../components/ModalComponet';
 import { fetchService } from '../../services/functions/RequestService';
 import { fetchProduct } from '../../services/functions/RequestProduct';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
 import { NewSale } from '../../services/functions/RequestSales';
-import UserValidationForm from './componente/UserValidationForm';
-import SaleTypeSelection from './componente/SaleTypeSelection';
-import ConfirmationModal from './componente/ConfirmationModal';
-import ConfirmationDetails from './componente/ConfirmationDetails';
-import SuccessAlert from './componente/SuccessAlert';
+import SelectableTable from './componente/SelectableTable';
 
 const Vendas = () => {
   const [cliente, setCliente] = useState(null);
@@ -194,6 +190,7 @@ const Vendas = () => {
 
     if (selectedItem) {
       const updatedTotal = selectedItem.valor ? selectedItem.valor * newQuantity : 0;
+     
       setConfirmationData((prevConfirmationData) => ({
         ...prevConfirmationData,
         quantity: newQuantity,
@@ -217,42 +214,112 @@ const Vendas = () => {
     }
   };
 
-  
-
   return (
     <Card>
-      <div className="form-group row text-center m-0 mb-1">
-        <Form>
-          <UserValidationForm
-            cpf={cpf}
-            setCpf={setCpf}
-            nomeUsuario={nomeUsuario}
-            handleValidateUser={handleValidateUser}
-          />
-          <SaleTypeSelection handleButtonClick={handleButtonClick} />
-        </Form>
+      <div className="user-manager-container">
+      {showSuccess && (<div className="alert alert-success mt-3"> Venda realizada com sucesso!</div>)}     
 
-        <ConfirmationModal
-          showModal={showModal}
-          setShowModal={setShowModal}
-          saleType={saleType}
-          produtos={produtos}
-          services={services}
-          handleItemClick={handleItemClick}
-        />
+        <form>
+
+          <div className="form-group">
+            <center>
+            <label>Cpf do Cliente</label>
+            <input
+              type="text"
+              value={cpf || ''}
+              onChange={(e) => setCpf(e.target.value)}
+              placeholder="Cpf do Cliente"
+              disabled={!!nomeUsuario}
+              className="form-control"
+            />
+            <button  type='button' onClick={handleValidateUser} disabled={!!nomeUsuario} className="btn primary-btn">
+              Validar Usuário
+            </button>
+            </center>
+          </div>
+          {nomeUsuario && (
+            <div className="form-group mt-3">
+              <label>Nome do Cliente</label>
+              <input
+                type="text"
+                value={nomeUsuario}
+                readOnly
+                className="form-control"
+              />
+            </div>
+          )}
+           <center>
+          <div className="form-group mt-3">
+            <label>Tipo de Venda</label>
+            <div>
+             
+              <button type='button' onClick={() => handleButtonClick('produto')} className="btn primary-btn">
+                Produto
+              </button>
+              <button type='button' onClick={() => handleButtonClick('serviço')} className="btn primary-btn">
+                Serviço
+              </button>
+
+              
+              
+            </div>
+          </div>
+          </center>
+        </form>
+        <ModalComponent
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          title={`Selecione um ${saleType}`}
+          save={() => handleItemClick(selectedItem)}
+        >
+          <SelectableTable
+            data={saleType === 'produto' ? produtos : services}
+            saleType={saleType}
+            handleItemClick={handleItemClick}
+          />
+        </ModalComponent>
 
         {confirmationData && (
-          <ConfirmationDetails
-            confirmationData={confirmationData}
-            quantity={quantity}
-            handleQuantityChange={handleQuantityChange}
-            handleConfirm={handleConfirm}
-            handleCancel={handleCancel}
-            saleType={saleType}
-          />
+          <center>
+          <div className="detalhes">
+            <h4>Confirmação de Venda</h4>
+            <p>
+              <strong>Tipo de Venda:</strong> {confirmationData.saleType}
+            </p>
+            <p>
+              <strong>Item:</strong> {confirmationData.item.nome}
+            </p>
+            <p>
+              <strong>Preço Unitário:</strong> R${confirmationData.item.valor?.toFixed(2)}
+            </p>
+
+            <div className="form-group">
+              <label>
+                {saleType === 'produto' ? 'Quantidade' : 'Horas de Uso'}
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={quantity}
+                onChange={handleQuantityChange}
+                className="form-control"
+              />
+            </div>
+            <p>
+              <strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}
+            </p>
+            <button onClick={handleConfirm} className="btn btn-success me-2">
+              Confirmar Venda
+            </button>
+            <button onClick={handleCancel} className="btn btn-danger">
+              Cancelar
+            </button>
+            
+          </div>
+          </center>
         )}
 
-        <SuccessAlert showSuccess={showSuccess} />
+
       </div>
     </Card>
   );

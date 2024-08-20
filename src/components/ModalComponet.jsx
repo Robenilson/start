@@ -14,12 +14,8 @@ const ModalComponent = ({ show, save,onHide, title, hideButtons, children }) => 
         <div className="modal-body">
           {children}
         </div>
-        {!hideButtons && (
-          <div className="modal-footer">
-            <button className="btn btn-secondary" onClick={onHide}>Cancelar</button>
-            <button className="btn btn-primary"onClick={save}  >Confirmar</button>
-          </div>
-        )}
+       
+       
       </div>
     </div>
   );

@@ -43,7 +43,8 @@ const Login = () => {
 
   return (
     <Card>
-      <div className="card-header">Login</div>
+      <div className="  user-manager-container">
+      <div className="titles">Login</div>
       <div className="card-body">
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -77,7 +78,9 @@ const Login = () => {
         </form>
         <LoadingModal show={loading} />
       </div>
+      </div>
     </Card>
+    
   );
 };
 

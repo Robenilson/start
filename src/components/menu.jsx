@@ -4,18 +4,15 @@ import { Outlet } from 'react-router-dom';
 import OptionNav from './optionNav';
 import Card from '../components/Card';
 import { urls } from "../services/functions/config/urls";
-import './css/Menu.css'; // Importando a folha de estilo CSS
-
 function Menu() {
   return (
     <>
       <Card>
-        <div className="menu-container">
+        <div className=" menu-container">
           <nav className="menu-nav">
             <div>
               <OptionNav url={urls.userDados} name="Home" />
-            </div>
-           
+            </div>          
             <div id="basic-navbar-nav" className="menu-nav-content">
               <div className="menu-nav-links">
                 <Permision userType="tu" />
@@ -30,5 +27,4 @@ function Menu() {
     </>
   );
 }
-
 export default Menu;
