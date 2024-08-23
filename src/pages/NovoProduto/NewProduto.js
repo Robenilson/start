@@ -31,7 +31,7 @@ const NewCadastro = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
-  const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
+  const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '',validadeProduto: '' });
   const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:'' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
@@ -46,6 +46,8 @@ const NewCadastro = () => {
     { name: 'valorProduto', label: 'Valor', type: 'number', placeholder: 'R$0,00', step: '0.01' },
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
     { name: 'descricaoProduto', label: 'Descrição', type: 'text', placeholder: 'Descrição do Produto' },
+    { name: 'validadeProduto', label: 'Validade Produto', type: 'date', placeholder: 'Data de validade do  Produto' },
+
   ];
 
 

@@ -63,18 +63,21 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
       ))}
 
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+       
+
+        <button type="button" className="btn secondary-btn"  onClick={handleClose}>
           Fechar
-        </Button>
+          </button>
 
         {isEditMode ? (
-          <Button type="button" onClick={handleUpdate} disabled={!isFormValid}>
+         
+          <button type="button" className="btn primary-btn"  onClick={handleUpdate} disabled={!isFormValid}>
             Confirmar Edição
-          </Button>
+          </button>
         ) : (
-          <Button type="button" onClick={handleSave} disabled={!isFormValid}>
+          <button type="button"  className="btn primary-btn" onClick={handleSave} disabled={!isFormValid}>
             Salvar
-          </Button>
+          </button>
         )}
       </Modal.Footer>
     </Form>

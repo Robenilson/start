@@ -42,6 +42,12 @@ export const endPoints = {
     ControllService:backHost +"/api/ControllService",
 
   
+    
+     //Notification
+    urlNotification:backHost +"/api/Notification/stream",
+
+
+   
 
 
 

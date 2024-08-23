@@ -182,7 +182,8 @@ const Caixa = () => {
               <div >
                 <label className='titles'>Valor Inicial</label>
                 <input
-                  type="text"
+                  type="number"
+                  className="form-control my-2 mb-4"
                   value={valorInicial}
                   onChange={(e) => setValorInicial(e.target.value)}
                   placeholder="Valor Inicial"
