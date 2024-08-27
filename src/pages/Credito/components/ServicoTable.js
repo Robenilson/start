@@ -20,12 +20,16 @@ const ServicoTable = ({ servicos, handlePararServico, formatTime }) => (
           <td>{servico.nomeServico}</td>
           <td>{formatTime(servico.tempoAlugado)}</td>
           <td>
+         
             <button
-              className="custom-button danger"
+             className="action-btn delete-btn"
               onClick={() => handlePararServico(index)}
             >
               Parar
             </button>
+
+
+
           </td>
         </tr>
       ))}

@@ -66,13 +66,17 @@ const AcompanhaServico = () => {
 
   const handlePararServico = (index) => {
     const servicoParaParar = servicos[index];
-    console.log(servicoParaParar.productId, parseInt(formatTimeToMinutes(formatTime(servicoParaParar.tempoAlugado))));
     ControllServiceStop(servicoParaParar.productId, parseInt(formatTimeToMinutes(formatTime(servicoParaParar.tempoAlugado))));
     const novosServicos = servicos.filter((_, i) => i !== index);
     setServicos(novosServicos);
     // Atualizar o localStorage após parar o serviço
     localStorage.setItem('servicos', JSON.stringify(novosServicos));
   };
+
+
+
+
+
 
   function formatTimeToMinutes(timeStr) {
     const [hours, minutes, seconds] = timeStr.split(':').map(Number);
