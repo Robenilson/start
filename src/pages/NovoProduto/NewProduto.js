@@ -31,7 +31,7 @@ const NewCadastro = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [servicos, setServicos] = useState([]);
-  const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '',validadeProduto: '' });
+  const [produtoValues, setProdutoValues] = useState({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '',validadeProduto: '',dueDate:'' });
   const [servicoValues, setServicoValues] = useState({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:'' });
   const [searchTermProduto, setSearchTermProduto] = useState('');
   const [searchTermServico, setSearchTermServico] = useState('');
@@ -46,8 +46,7 @@ const NewCadastro = () => {
     { name: 'valorProduto', label: 'Valor', type: 'number', placeholder: 'R$0,00', step: '0.01' },
     { name: 'quantidade', label: 'Quantidade', type: 'number', placeholder: 'Quantidade' },
     { name: 'descricaoProduto', label: 'Descrição', type: 'text', placeholder: 'Descrição do Produto' },
-    { name: 'validadeProduto', label: 'Validade Produto', type: 'date', placeholder: 'Data de validade do  Produto' },
-
+    { name: 'dueDate', label: 'Data Validade', type: 'date', placeholder: 'Data' },
   ];
 
 
@@ -120,12 +119,14 @@ const NewCadastro = () => {
   };
 
   const handleCadastroProduto = async () => {
-    const data = {
+    const data = {    
       name: produtoValues.nomeProduto,
+      description: produtoValues.descricaoProduto,
       price: parseFloat(produtoValues.valorProduto),
       quantity: parseInt(produtoValues.quantidade),
-      description: produtoValues.descricaoProduto,
+      dueDate:produtoValues.dueDate,
     };
+
 
     await newProduct(data);
     await updateTabelProduct();
@@ -145,6 +146,7 @@ const NewCadastro = () => {
       description: servicoValues.descricaoServico,
       isComputer: Boolean(servicoValues.computador), // Conversão para booleano
     };
+
    
     await newService(data);
     await updateTabelServicos();
@@ -224,8 +226,14 @@ const NewCadastro = () => {
       name: produtoValues.nomeProduto,
       description: produtoValues.descricaoProduto,
       price: parseFloat(produtoValues.valorProduto),
-      quantity: parseInt(produtoValues.quantidade)    
+      quantity: parseInt(produtoValues.quantidade)   
+         
     };
+
+
+
+
+
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();

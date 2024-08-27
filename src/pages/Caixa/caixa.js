@@ -175,7 +175,7 @@ const Caixa = () => {
           <ModalComponent
             show={showModalAbrirCaixa}
             onHide={handleCloseAbrirCaixa}
-            save={handleConfirmarAbrirCaixa}
+            hideButtons='true'
             title="Abrir Caixa"
           >
             <form>
@@ -190,15 +190,18 @@ const Caixa = () => {
                 />
               </div>
             </form>
+            <div className="btn danger-btn" onClick={handleConfirmarAbrirCaixa}>salvar</div>
+             <div className="btn secondary-btn" onClick={handleCloseAbrirCaixa}>Cancelar</div>
           </ModalComponent>
 
           <ModalComponent
             show={showModalFecharCaixa}
             onHide={handleCloseFecharCaixa}
-            save={handleConfirmarFecharCaixa}
             title="Fechar Caixa"
           >
             <p>Você está prestes a fechar o caixa. Deseja continuar?</p>
+            <div className="btn danger-btn" onClick={handleConfirmarFecharCaixa}>salvar</div>
+             <div className="btn secondary-btn" onClick={handleCloseFecharCaixa}>Cancelar</div>
           </ModalComponent>
 
           <ModalComponent
@@ -216,6 +219,7 @@ const Caixa = () => {
                 cancel={handlCancelOrder}
               />
             )}
+            
           </ModalComponent>
 
           {showSuccess && (
@@ -264,7 +268,7 @@ const Caixa = () => {
         show={showModalVenda}
         onHide={handleClose}
         title="Nova Venda"
-        hideButtons={true}
+        hideButtons={false}
       >
         <Vendas />
         

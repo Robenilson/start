@@ -24,12 +24,12 @@ const ServicosTab = ({ servicos, handleEditServico, handleDeleteServico }) => {
             <td>{servico.horaMinima} minutos</td>
             <td>
               <button 
-                className="custom-button warning me-2" 
+                className="custom-button warning action-btn edit-btn"
                 onClick={() => handleEditServico(servico)}>
                 Editar
               </button>
               <button 
-                className="custom-button danger" 
+                className="custom-button danger action-btn delete-btn"
                 onClick={() => handleDeleteServico(servico)}>
                 Excluir
               </button>

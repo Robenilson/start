@@ -4,7 +4,7 @@ import ModalComponent from '../../components/ModalComponet'; // Corrigido o nome
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
 
-import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser } from '../../services/functions/RequestPeople';
+import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser, createUpdatedDataObjectUser } from '../../services/functions/RequestPeople';
 import LoadingModal from '../../components/LoadingModal';
 
 const UserManager = () => {
@@ -101,28 +101,9 @@ const UserManager = () => {
   const handleCloseModal = () => setShowModal(false);
 
   const handleEditUser = async () => {
-    const dataObject = {
-      id: userValues.id.toString() ?? 0,
-      nome: userValues.nome.toString() ?? '',
-      sobrenome: userValues.sobrenome.toString() ?? '',
-      dtNascimento: userValues.dataNascimento.toString() ?? '',
-      email: userValues.email.toString() ?? '',
-      cpf: userValues.cpf.toString() ?? '',
-      phone: userValues.telefone.toString() ?? '',
-      userType: parseInt(getRoleName(userValues.role)) ?? parseInt(0),
-      address: {
-        id: parseInt(0),
-        zipCode: userValues.endereco.cep.toString() ?? '',
-        cityName: userValues.endereco.cidade.toString() ?? '',
-        state: userValues.endereco.estado.toString() ?? '',
-        road: userValues.endereco.bairro.toString() ?? '',
-        number: parseInt(userValues.endereco.numero) || 0,
-      },
-      roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
-      password: userValues.password.toString() ?? ''
-    };
+    const dataObject = await createUpdatedDataObjectUser(userValues);
     handleCloseModal();
-    setLoading(true);
+    setLoading(true);  
     await editUser(dataObject);
     await updateUsers();
     setLoading(false);
@@ -201,31 +182,9 @@ const UserManager = () => {
 
   const updateUsers = async () => {
     setLoading(true);
-    try {
-      const data = await FetchUser();
-
-      if (data && Array.isArray(data)) {
-        const users = data.map((user) => {
-          return {
-            id: user.id,
-            nome: user.nome,
-            sobrenome: user.sobrenome,
-            email: user.email,
-            dataNascimento: user.dtNascimento,
-            cpf: user.cpf,
-            telefone: user.phone,
-            role: user.userType,
-            passwordHash: user.passwordHash
-          };
-        });
-
-        setPessoas(users);
-      } else {
-        console.error('Dados recebidos não são válidos:', data);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-    }
+    const data = await FetchUser()
+    
+    setPessoas(data);
     setLoading(false);
   };
 
@@ -278,7 +237,7 @@ const UserManager = () => {
             handleInputChange={handleInputChange}
             handleClose={handleCloseModal}
             save={handleAddUser}
-            edit={handleEditUserData}
+            edit={handleEditUser}
             isEditMode={isEditMode}
           />
         </ModalComponent>
@@ -309,6 +268,7 @@ const UserManager = () => {
           <div className="alert success">
             Operação realizada com sucesso!
           </div>
+          <div className="btn secondary-btn" onClick={handleCloseSuccessModal}>Sair</div>
         </ModalComponent>
 
         <ModalComponent show={showDeleteModal} hideButtons='true' onHide={handleCloseDeleteModal} title="Confirmar Exclusão">

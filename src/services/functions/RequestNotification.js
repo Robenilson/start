@@ -9,7 +9,6 @@ export function FetchNotification(onMessageCallback, onErrorCallback) {
     eventSource.onmessage = function(event) {
       try {
         const notification = event.data; // Atribuição correta, sem await
-
         lastNotification = notification; // Armazena a última notificação recebida
         onMessageCallback(notification); // Chama o callback com a notificação
       } catch (error) {

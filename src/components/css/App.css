@@ -369,6 +369,7 @@ line-height: 1;
 background-color: #1e1e1e; /* Fundo escuro */
 color: red;
 font-family: Arial, Helvetica, sans-serif;
+font-size: small;
 position: absolute;
 top: 30px;
 right: 0;
@@ -376,14 +377,14 @@ right: 0;
 border: 1px solid #ccc;
 border-radius: 3px;
 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-width: 200px;
+width: 400px;
 z-index: 1000;
 }
 
 .notification-dropdown ul {
 list-style-type: none;
 padding: 10px;
-margin: 0;
+margin: 50;
 }
 
 .notification-dropdown li {
