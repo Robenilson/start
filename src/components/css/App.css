@@ -1,7 +1,8 @@
+.detalhes{ 
+  color: red;
+}
  
 
-
-/* Estilo geral do modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -15,23 +16,19 @@
   z-index: 10000;
 }
 
-
-.detalhes{ 
-  color: red;
-}
-
 /* Estilo do conteúdo do modal */
 .modal-content {
   background-color: #1e1e1e; /* Fundo escuro */
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  width: 80%;
-  max-width: 600px;
+  width: 80%; /* Ajuste a largura para ser mais responsiva */
+  max-width: 1000px; /* Limite máximo para telas grandes */
+  max-height: 80vh; /* Limite máximo de altura para garantir que não ultrapasse a tela */
+  overflow-y: auto; /* Permite rolagem caso o conteúdo ultrapasse a altura máxima */
   transition: background-color 0.3s, box-shadow 0.3s;
   color: #ff0000; /* Fonte vermelha */
 }
-
 /* Efeito de hover para o conteúdo do modal */
 .modal-content:hover {
   background-color: #2d2d2d;
