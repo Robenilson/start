@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Form, Button, Modal } from 'react-bootstrap';
 
 const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpdate, handleClose }) => {
   const [isEditMode, setIsEditMode] = useState(mode === 'editar');
@@ -21,13 +20,13 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
   };
 
   return (
-    <Form>
+    <form className="generic-form">
       {fields.map((field, index) => (
-        <Form.Group key={index}>
-          <Form.Label>{field.label}</Form.Label>
+        <div className="form-group" key={index}>
+          <label className="form-label">{field.label}</label>
           {field.type === 'select' ? (
-            <Form.Control
-              as="select"
+            <select
+              className="form-control"
               value={values[field.name]}
               onChange={(e) => handleInputChange(field.name, e.target.value)}
             >
@@ -36,21 +35,26 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
                   {option.label}
                 </option>
               ))}
-            </Form.Control>
+            </select>
           ) : field.type === 'checkbox' ? (
             field.options.map((option, idx) => (
-              <Form.Check 
-                key={idx}
-                type="checkbox"
-                label={option.label}
-                value={option.value}
-                checked={values[field.name] === option.value}
-                onChange={(e) => handleInputChange(field.name, e.target.value)}
-                name={field.name} 
-              />
+              <div className="form-check" key={idx}>
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value={option.value}
+                  checked={values[field.name] === option.value}
+                  onChange={(e) => handleInputChange(field.name, e.target.value)}
+                  name={field.name}
+                />
+                <label className="form-check-label">
+                  {option.label}
+                </label>
+              </div>
             ))
           ) : (
-            <Form.Control
+            <input
+              className="form-control"
               type={field.type}
               value={values[field.name]}
               onChange={(e) => handleInputChange(field.name, e.target.value)}
@@ -59,28 +63,25 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
               inputMode={field.type === 'number' ? 'decimal' : undefined}
             />
           )}
-        </Form.Group>
+        </div>
       ))}
 
-      <Modal.Footer>
-       
-
-        <button type="button" className="btn secondary-btn"  onClick={handleClose}>
+      <div className="modal-footer">
+        <button type="button" className="btn secondary-btn" onClick={handleClose}>
           Fechar
-          </button>
+        </button>
 
         {isEditMode ? (
-         
-          <button type="button" className="btn primary-btn"  onClick={handleUpdate} disabled={!isFormValid}>
+          <button type="button" className="btn primary-btn" onClick={handleUpdate} disabled={!isFormValid}>
             Confirmar Edição
           </button>
         ) : (
-          <button type="button"  className="btn primary-btn" onClick={handleSave} disabled={!isFormValid}>
+          <button type="button" className="btn primary-btn" onClick={handleSave} disabled={!isFormValid}>
             Salvar
           </button>
         )}
-      </Modal.Footer>
-    </Form>
+      </div>
+    </form>
   );
 };
 

@@ -1,21 +1,29 @@
 import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
 
-const ConfirmationModal = ({ show, onHide, onConfirm, title, body }) => (
-  <Modal show={show} onHide={onHide}>
-    <Modal.Header closeButton>
-      <Modal.Title>{title}</Modal.Title>
-    </Modal.Header>
-    <Modal.Body>{body}</Modal.Body>
-    <Modal.Footer>
-      <Button variant="secondary" onClick={onHide}>
-        Cancelar
-      </Button>
-      <Button variant="danger" onClick={onConfirm}>
-        Excluir
-      </Button>
-    </Modal.Footer>
-  </Modal>
-);
+const ConfirmationModal = ({ show, onHide, onConfirm, title, body }) => {
+  if (!show) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onHide}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h5>{title}</h5>
+          <button className="close-button" onClick={onHide}>×</button>
+        </div>
+        <div className="modal-body">
+          <p>{body}</p>
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={onHide}>
+            Cancelar
+          </button>
+          <button className="btn btn-danger" onClick={onConfirm}>
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default ConfirmationModal;

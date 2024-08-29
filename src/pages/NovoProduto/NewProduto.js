@@ -144,9 +144,12 @@ const NewCadastro = () => {
       quantityHours: parseInt(tempoEmMinutos),
       quantityEquipament: parseInt(servicoValues.quantidade),
       description: servicoValues.descricaoServico,
-      isComputer: Boolean(servicoValues.computador), // Conversão para booleano
+      isComputer: servicoValues.computador=== "true", // Conversão para booleano
     };
 
+    console.log(data)
+    
+    
    
     await newService(data);
     await updateTabelServicos();
