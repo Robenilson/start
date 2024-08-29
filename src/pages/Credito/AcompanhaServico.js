@@ -31,11 +31,15 @@ const AcompanhaServico = () => {
         // Supondo que 'data' seja uma lista de serviços
         const serviçosAtualizados = data.map((item) => ({
           nomeServico: item.serviceName,
-          tempoAlugado: item.totalTime * 3600, // Convertendo tempo para segundos
+          tempoAlugado:  Math.round(item.totalTime * 60 * 100) / 100, // Convertendo tempo para segundos
           orderId: item.orderId,
           productId: item.id,
           is_Active: item.is_Active,
         }));
+
+
+
+
         setUsuario({ ...user, servicos: serviçosAtualizados });
       })
       .catch((error) => {
@@ -65,12 +69,12 @@ const AcompanhaServico = () => {
   };
 
   const handlePararServico = (index) => {
-    const servicoParaParar = servicos[index];
-    ControllServiceStop(servicoParaParar.productId, parseInt(formatTimeToMinutes(formatTime(servicoParaParar.tempoAlugado))));
+    const servicoParaParar = servicos[index];      
+    ControllServiceStop(servicoParaParar.productId,Math.floor(servicoParaParar.tempoAlugado  / 60));
     const novosServicos = servicos.filter((_, i) => i !== index);
-    setServicos(novosServicos);
-    // Atualizar o localStorage após parar o serviço
-    localStorage.setItem('servicos', JSON.stringify(novosServicos));
+   setServicos(novosServicos);
+   // Atualizar o localStorage após parar o serviço
+   localStorage.setItem('servicos', JSON.stringify(novosServicos));
   };
 
 
@@ -78,11 +82,7 @@ const AcompanhaServico = () => {
 
 
 
-  function formatTimeToMinutes(timeStr) {
-    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes + Math.floor(seconds / 60);
-    return totalMinutes;
-  }
+
 
   useEffect(() => {
     const intervalId = setInterval(() => {

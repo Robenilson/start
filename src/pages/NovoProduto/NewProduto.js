@@ -147,9 +147,6 @@ const NewCadastro = () => {
       isComputer: servicoValues.computador=== "true", // Conversão para booleano
     };
 
-    console.log(data)
-    
-    
    
     await newService(data);
     await updateTabelServicos();
@@ -215,6 +212,8 @@ const NewCadastro = () => {
       quantityEquipament: servicoValues.quantidade,
       description: servicoValues.descricaoServico,
     };
+
+   
 
     await editService(data);
     await updateTabelServicos();

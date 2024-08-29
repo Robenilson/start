@@ -26,10 +26,11 @@ export async function ControllServiceGet(id) {
 
 
 
-export async function ControllServiceStop(id) {
+export async function ControllServiceStop(id, data) {
+  console.log( `${endPoints.ControllService}/stop/${id}?timeLeft=${data}`)
     var config = serviceRetornarConfig(
       "put",
-      `${endPoints.ControllService}/stop/${id}`,
+      `${endPoints.ControllService}/stop/${id}?timeLeft=${data}`,
       true
     );
   
