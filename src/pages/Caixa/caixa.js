@@ -207,7 +207,7 @@ const Caixa = () => {
           <ModalComponent
             show={showModalConfirmacaoVenda}
             onHide={handleCloseConfirmacaoVenda}
-            title="Confirmar Pagamento"
+            title=""
             save={handleConfirmarPagamento}
             hideButtons={false}
           >

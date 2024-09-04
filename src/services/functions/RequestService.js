@@ -18,6 +18,14 @@ export async function newService(data) {
   }
 }
 
+
+const formatTime = (horaMinima) => {
+  if (horaMinima === 60) {
+    return '1 hora';
+  }
+  return `${horaMinima} minutos`;
+};
+
 // Faz um get na tabela Serviços
 export async function fetchService() {
   const config = serviceRetornarConfig("get", endPoints.urlServiceAll, true);
@@ -29,7 +37,7 @@ export async function fetchService() {
         id: service.id,
         nome: service.name,
         valor: parseFloat(service.price),
-        horaMinima: service.quantityHours || 'N/A',
+        horaMinima:formatTime(service.quantityHours ) || 'N/A',
         descricao: service.description,
       }));
       return service;

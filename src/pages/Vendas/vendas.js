@@ -1,16 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import { fetchService } from '../../services/functions/RequestService';
 import { fetchProduct } from '../../services/functions/RequestProduct';
-import { FetchUserCPF } from '../../services/functions/RequestPeople';
 import { NewSale } from '../../services/functions/RequestSales';
 import SelectableTable from './componente/SelectableTable';
+import ConfirmationModal from './componente/componentModalVenda'; 
+import CustomerInfoForm from './componente/CustomerInfoForm'; 
+import { FetchUserCPF } from '../../services/functions/RequestPeople';
 
 const Vendas = () => {
-  const [cliente, setCliente] = useState(null);
   const [cpf, setCpf] = useState('');
   const [nomeUsuario, setNomeUsuario] = useState('');
+  const [cliente, setCliente] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [saleType, setSaleType] = useState('');
   const [selectedItem, setSelectedItem] = useState(null);
@@ -62,12 +65,33 @@ const Vendas = () => {
   const handleButtonClick = (type) => {
     setSaleType(type);
     setShowModal(true);
-    setQuantity(0);
+    setQuantity(1);
+
+    // Limpar os campos de CPF e cliente ao mudar o tipo de venda
+    setCpf('');
+    setNomeUsuario('');
+    setCliente(null);
+  };
+
+  const handleValidateUser = async () => {
+    try {
+      const user = await FetchUserCPF(cpf);
+
+      if (user) {
+        setCliente(user);
+        setNomeUsuario(user.nome);
+      } else {
+        alert('Usuário não cadastrado');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
+    }
   };
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
     setShowModal(false);
+
     setConfirmationData({
       saleType,
       item,
@@ -77,10 +101,11 @@ const Vendas = () => {
   };
 
   useEffect(() => {
-    if (selectedItem && confirmationData) {
+    if (selectedItem) {
       const updatedTotal = selectedItem.valor ? selectedItem.valor * quantity : 0;
       setConfirmationData((prevConfirmationData) => ({
         ...prevConfirmationData,
+        quantity: quantity,
         total: updatedTotal,
       }));
     }
@@ -91,31 +116,49 @@ const Vendas = () => {
       console.error('Nenhum item selecionado.');
       return;
     }
-
+  
+    // Definindo o tipo de produto
     const productType = saleType === 'produto' ? 1 : 2;
-
+  
+    // Configuração específica para serviços
+    const clientId = saleType === 'produto' ? 0 : parseInt(cliente?.id || 0);
+    const itemQuantity = saleType === 'produto' ? quantity : 1;  // Renomeando a variável para evitar conflito
+    const totalValue = saleType === 'produto'
+      ? parseInt(confirmationData.total)
+      : parseFloat(confirmationData.item.valor?.toFixed(2));
+  
+    // Validação do ID do cliente para serviços
+    if (saleType === 'serviço' && clientId === 0) {
+      console.error('ID do cliente é obrigatório para serviços.');
+      return;
+    }
+  
+  
+  
     const newProduct = {
       productId: selectedItem.id,
-      quantity: quantity,
+      quantity: saleType === 'serviço' 
+        ? parseInt(selectedItem.horaMinima.replace(/\D/g, ''), 10)  // Remove todos os caracteres não numéricos e converte para número
+        : itemQuantity,
       orderId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
       productType: productType,
       name: selectedItem.nome
     };
-
     const newData = {
       ...formData,
       produtos: [...formData.produtos, newProduct],
-      clientId: parseInt(cliente.id),
+      clientId: clientId,
       employeerId: parseInt(user.EmployeerId),
-      precoTotal: parseInt(confirmationData.total),
+      precoTotal: totalValue,
       payments: [
         {
           ...formData.payments[0],
-          value: parseInt(confirmationData.total),
+          value: totalValue,
         }
       ]
     };
 
+    console.log(newData)
     const validData = {
       id: newData.id,
       dtSale: newData.dtSale,
@@ -139,9 +182,9 @@ const Vendas = () => {
         orderId: String(payment.orderId)
       }))
     };
-
+  
     setFormData(validData);
-
+  
     try {
       await NewSale(validData);
       setShowSuccess(true);
@@ -150,14 +193,12 @@ const Vendas = () => {
       console.error('Erro ao criar nova venda:', error);
     }
   };
-
+  
   const handleCancel = () => {
     clearState();
   };
 
   const clearState = () => {
-    setCpf('');
-    setNomeUsuario('');
     setSelectedItem(null);
     setSaleType('');
     setConfirmationData(null);
@@ -199,76 +240,42 @@ const Vendas = () => {
     }
   };
 
-  const handleValidateUser = async () => {
-    try {
-      const user = await FetchUserCPF(cpf);
-
-      if (user) {
-        setCliente(user);
-        setNomeUsuario(user.nome);
-      } else {
-        alert('Usuário não cadastrado');
-      }
-    } catch (error) {
-      console.error('Erro ao buscar usuário:', error);
-    }
-  };
-
   return (
     <Card>
       <div className="user-manager-container">
-      {showSuccess && (<div className="alert alert-success mt-3"> Venda realizada com sucesso!</div>)}     
+        {showSuccess && (<div className="alert alert-success mt-3"> Venda realizada com sucesso!</div>)}
 
         <form>
-
-          <div className="form-group">
-            <center>
-            <label>Cpf do Cliente</label>
-            <input
-              type="text"
-              value={cpf || ''}
-              onChange={(e) => setCpf(e.target.value)}
-              placeholder="Cpf do Cliente"
-              disabled={!!nomeUsuario}
-              className="form-control"
-            />
-            <button  type='button' onClick={handleValidateUser} disabled={!!nomeUsuario} className="btn primary-btn">
-              Validar Usuário
-            </button>
-            </center>
-          </div>
-          {nomeUsuario && (
+          <center>
             <div className="form-group mt-3">
-              <label>Nome do Cliente</label>
-              <input
-                type="text"
-                value={nomeUsuario}
-                readOnly
-                className="form-control"
-              />
+              <label>Tipo de Venda</label>
+              <div>
+                <button type='button' onClick={() => handleButtonClick('produto')} className="btn primary-btn">
+                  Produto
+                </button>
+                <button type='button' onClick={() => handleButtonClick('serviço')} className="btn primary-btn">
+                  Serviço
+                </button>
+              </div>
             </div>
-          )}
-           <center>
-          <div className="form-group mt-3">
-            <label>Tipo de Venda</label>
-            <div>
-             
-              <button type='button' onClick={() => handleButtonClick('produto')} className="btn primary-btn">
-                Produto
-              </button>
-              <button type='button' onClick={() => handleButtonClick('serviço')} className="btn primary-btn">
-                Serviço
-              </button>
-
-              
-              
-            </div>
-          </div>
           </center>
         </form>
+
+        {/* Renderizar CustomerInfoForm se o saleType for 'serviço' */}
+        {saleType === 'serviço' && (
+          <CustomerInfoForm
+            cpf={cpf}
+            setCpf={setCpf}
+            nomeUsuario={nomeUsuario}
+            handleValidateUser={handleValidateUser}
+          />
+        )}
+
         <ModalComponent
           show={showModal}
-          onHide={() => setShowModal(false)}
+          onHide={() => {
+            setShowModal(false);
+          }}
           title={`Selecione um ${saleType}`}
           save={() => handleItemClick(selectedItem)}
         >
@@ -279,47 +286,14 @@ const Vendas = () => {
           />
         </ModalComponent>
 
-        {confirmationData && (
-          <center>
-          <div className="detalhes">
-            <h4>Confirmação de Venda</h4>
-            <p>
-              <strong>Tipo de Venda:</strong> {confirmationData.saleType}
-            </p>
-            <p>
-              <strong>Item:</strong> {confirmationData.item.nome}
-            </p>
-            <p>
-              <strong>Preço Unitário:</strong> R${confirmationData.item.valor?.toFixed(2)}
-            </p>
-
-            <div className="form-group">
-              <label>
-                {saleType === 'produto' ? 'Quantidade' : 'Horas de Uso'}
-              </label>
-              <input
-                type="number"
-                min={0}
-                value={quantity}
-                onChange={handleQuantityChange}
-                className="form-control"
-              />
-            </div>
-            <p>
-              <strong>Valor Total:</strong> R${confirmationData.total.toFixed(2)}
-            </p>
-            <button onClick={handleConfirm} className="btn btn-success me-2">
-              Confirmar Venda
-            </button>
-            <button onClick={handleCancel} className="btn btn-danger">
-              Cancelar
-            </button>
-            
-          </div>
-          </center>
-        )}
-
-
+        <ConfirmationModal
+          confirmationData={confirmationData}
+          quantity={quantity}
+          saleType={confirmationData?.saleType || saleType} 
+          handleQuantityChange={handleQuantityChange}
+          handleConfirm={handleConfirm}
+          handleCancel={handleCancel}
+        />
       </div>
     </Card>
   );

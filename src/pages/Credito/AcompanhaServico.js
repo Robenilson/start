@@ -19,6 +19,25 @@ const AcompanhaServico = () => {
   const [usuario, setUsuario] = useState(null);
   const [selectedServico, setSelectedServico] = useState(null);
 
+  useEffect(() => {
+    // Ao carregar a página, calcular o tempo restante
+    setServicos((prevServicos) => {
+      const updatedServicos = prevServicos.map((servico) => {
+        if (servico.ativo) {
+          const now = Date.now();
+          const elapsedTime = Math.floor((now - servico.startTime) / 1000); // Tempo decorrido em segundos
+          const newTime = servico.tempoAlugado - elapsedTime;
+          return {
+            ...servico,
+            tempoAlugado: newTime > 0 ? newTime : 0,
+          };
+        }
+        return servico;
+      });
+      return updatedServicos;
+    });
+  }, []);
+
   const handlePesquisarCPF = async () => {
     setLoading(true);
     const user = await FetchUserCPF(cpf);
@@ -28,7 +47,6 @@ const AcompanhaServico = () => {
     if (user) {
       const service = ControllServiceGet(user.id);
       service.then((data) => {
-        // Supondo que 'data' seja uma lista de serviços
         const serviçosAtualizados = data.map((item) => ({
           nomeServico: item.serviceName,
           tempoAlugado:  Math.round(item.totalTime * 60 * 100) / 100, // Convertendo tempo para segundos
@@ -36,10 +54,6 @@ const AcompanhaServico = () => {
           productId: item.id,
           is_Active: item.is_Active,
         }));
-
-
-
-
         setUsuario({ ...user, servicos: serviçosAtualizados });
       })
       .catch((error) => {
@@ -51,6 +65,7 @@ const AcompanhaServico = () => {
 
   const handleIniciarServico = () => {
     if (selectedServico) {
+      const now = Date.now(); // Armazena o tempo de início
       const novoServico = {
         nomeUsuario: usuario.nome,
         cpf: usuario.cpf,
@@ -58,6 +73,7 @@ const AcompanhaServico = () => {
         nomeServico: selectedServico.nomeServico,
         tempoAlugado: selectedServico.tempoAlugado,
         ativo: true,
+        startTime: now, // Hora de início
       };
       const novosServicos = [...servicos, novoServico];
       setServicos(novosServicos);
@@ -70,28 +86,28 @@ const AcompanhaServico = () => {
 
   const handlePararServico = (index) => {
     const servicoParaParar = servicos[index];      
-    ControllServiceStop(servicoParaParar.productId,Math.floor(servicoParaParar.tempoAlugado  / 60));
+    ControllServiceStop(servicoParaParar.productId,Math.floor(servicoParaParar.tempoAlugado / 60));
     const novosServicos = servicos.filter((_, i) => i !== index);
-   setServicos(novosServicos);
-   // Atualizar o localStorage após parar o serviço
-   localStorage.setItem('servicos', JSON.stringify(novosServicos));
+    setServicos(novosServicos);
+    // Atualizar o localStorage após parar o serviço
+    localStorage.setItem('servicos', JSON.stringify(novosServicos));
   };
-
-
-
-
-
-
-
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setServicos((prevServicos) => {
-        const updatedServicos = prevServicos.map((servico) =>
-          servico.ativo && servico.tempoAlugado > 0
-            ? { ...servico, tempoAlugado: servico.tempoAlugado - 1 }
-            : servico
-        );
+        const updatedServicos = prevServicos.map((servico) => {
+          if (servico.ativo && servico.tempoAlugado > 0) {
+            const now = Date.now();
+            const elapsedTime = Math.floor((now - servico.startTime) / 1000); // Tempo decorrido em segundos
+            const newTime = servico.tempoAlugado - elapsedTime;
+            return {
+              ...servico,
+              tempoAlugado: newTime > 0 ? newTime : 0,
+            };
+          }
+          return servico;
+        });
         // Salvar os serviços atualizados no localStorage
         localStorage.setItem('servicos', JSON.stringify(updatedServicos));
         return updatedServicos;

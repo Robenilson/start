@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Modal, Spinner } from 'react-bootstrap';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import GenericForm from './component/GenericForm';
