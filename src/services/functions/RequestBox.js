@@ -222,44 +222,7 @@ export async function FetchBoxUserId(id) {
 
 
 
-  //Converte para Inserir no banco
-  export async function createDataObjectBox(userValues) {
-    try {
-      const  data = {
-        "dtSale": "2024-06-25T13:59:49.314Z",
-        "produtos": [
-          {
-            "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "quantity": 0,
-            "orderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            "productType": 1
-          }
-        ],
-        "clientId": 0,
-        "employeerId": 0,
-        "precoTotal": 0,
-        "desconto": 0,
-        "credito": 0,
-        "saleStatus": 0,
-        "payments": [
-          {
-            "id": 0,
-            "value": 0,
-            "paymentMethodId": 0,
-            "paymentMethod": {
-              "id": 0,
-              "nome": "string"
-            }
-          }
-        ]
-      }
-      return data;
-    } catch (error) {
-      console.error('Erro ao converter dados:', error);
-      throw error;
-    }
-  }
-
+  
 
 
 

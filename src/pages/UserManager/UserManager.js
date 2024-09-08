@@ -3,7 +3,6 @@ import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet'; // Corrigido o nome do import
 import UserForm from './componente/UserForm';
 import UserTable from './componente/UserTable';
-
 import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser, createUpdatedDataObjectUser } from '../../services/functions/RequestPeople';
 import LoadingModal from '../../components/LoadingModal';
 
