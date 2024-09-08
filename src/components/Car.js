@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
-const Cart = ({ cartItems, onCancelItem }) => {
+
+
+const Cart = ({ cartItems, onEditItem, onCancelItem }) => {
   const [showCart, setShowCart] = useState(false);
 
   const toggleCart = () => setShowCart(!showCart); // Função para abrir/fechar carrinho
@@ -29,7 +31,12 @@ const Cart = ({ cartItems, onCancelItem }) => {
                 
                 {/* Botões para Editar e Cancelar */}
                 <div className="item-actions">
-                
+                  <button
+                    className="action-btn edit-btn"
+                    onClick={() => onEditItem(item.id)}
+                  >
+                    Editar
+                  </button>
                   <button
                     className="action-btn delete-btn"
                     onClick={() => onCancelItem(item.id)}
