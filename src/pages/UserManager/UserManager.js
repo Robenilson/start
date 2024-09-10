@@ -240,8 +240,9 @@ const UserManager = () => {
             isEditMode={isEditMode}
           />
         </ModalComponent>
+        <center>
 
-        <div className="form-group">
+        <div className="form-group input-pequeno">
           <input
             type="text"
             placeholder="Pesquisar por nome ou sobrenome"
@@ -250,6 +251,7 @@ const UserManager = () => {
             className="form-control"
           />
         </div>
+        </center>
 
         {loading ? <LoadingModal /> : (
           <UserTable

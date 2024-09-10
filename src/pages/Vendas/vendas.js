@@ -7,6 +7,23 @@ import DataTable from './componente/genericTabel'; // Importa o novo componente 
 const Vendas = () => {
   const [combinedData, setCombinedData] = useState([]);
   const [filterText, setFilterText] = useState(''); // Estado para armazenar o texto digitado
+  const [itemDataToOrder, setItemDataToOrder] = useState([]); // Estado para os itens adicionados ao pedido
+
+  // Função para adicionar item ao pedido
+  const addItemToOrder = (item) => {
+    setItemDataToOrder(prevItems => [...prevItems, item]); // Adiciona o novo item ao array de itens
+    setCombinedData(prevItems => prevItems.filter(i => i !== item)); // Remove o item filtrando
+  };
+
+  // Função para remover item do pedido
+  const removeItemFromOrder = (item) => {
+    setItemDataToOrder(prevItems => prevItems.filter(i => i !== item)); // Remove o item filtrando
+  };
+
+  // Função para limpar o filtro
+  const removeInput = () => {
+    setFilterText(''); // Limpa o texto do filtro
+  };
 
   useEffect(() => {
     fetchData();
@@ -32,18 +49,38 @@ const Vendas = () => {
 
   return (
     <Card>
-      <h2>Dados Combinados de Serviço e Produto</h2>
+      <center>
+        <div className="user-manager-container">
+          <div className="card-header">Montar Pedido</div>
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Digite para filtrar..."
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              className="form-control input-pequeno "
+            />
+            {/* Use o evento onClick para o botão */}
+            <button className="btn primary-btn" onClick={removeInput}>
+              Limpar filtro
+            </button>
+            <button className="btn primary-btn" >
+            Inserir código de barra
+            </button>
+          </div>
 
-      {/* Input para o usuário digitar e filtrar os dados */}
-      <input
-        type="text"
-        placeholder="Digite para filtrar..."
-        value={filterText}
-        onChange={(e) => setFilterText(e.target.value)} // Atualiza o estado do filtro conforme o usuário digita
-      />
+          {/* Exibe a tabela com base nos dados filtrados */}
+          {filterText && <DataTable data={filteredData} button={addItemToOrder} acao="COMPRAR" />}
 
-      {/* Exibe a tabela com base nos dados filtrados */}
-      {filterText && <DataTable data={filteredData} />}
+          {/* Exibe os itens adicionados ao pedido */}
+          <div className="card-header">Pedido</div>
+          <DataTable
+            data={itemDataToOrder}
+            button={removeItemFromOrder} // Passa a função de remoção ao botão da tabela
+            acao="REMOVER" // Aqui você pode mudar o texto do botão para "REMOVER"
+          />
+        </div>
+      </center>
     </Card>
   );
 };

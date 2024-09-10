@@ -155,21 +155,26 @@ const Caixa = () => {
   return (
     <>
       <Card>
-        
         <div className="user-manager-container">
-
           <center>
-       
-          <button onClick={handleNWeVendas} className="btn primary-btn">
-            Nova Venda
-          </button>
-          <button onClick={handleAbrirCaixa} className="btn primary-btn">
-            Abrir Caixa
-          </button>
-          <button className="btn primary-btn" onClick={handleFecharCaixa}>
-            Fechar Caixa
-          </button>
-
+            {/* Condicional: exibe "Nova Venda" e "Fechar Caixa" apenas se o caixa estiver aberto */}
+            {caixaAberto && (
+              <>
+                <button onClick={handleNWeVendas} className="btn primary-btn">
+                  Nova Venda
+                </button>
+                <button className="btn primary-btn" onClick={handleFecharCaixa}>
+                  Fechar Caixa
+                </button>
+              </>
+            )}
+            
+            {/* Condicional: exibe "Abrir Caixa" apenas se o caixa estiver fechado */}
+            {!caixaAberto && (
+              <button onClick={handleAbrirCaixa} className="btn primary-btn">
+                Abrir Caixa
+              </button>
+            )}
           </center>
 
           <ModalComponent
@@ -179,7 +184,7 @@ const Caixa = () => {
             title="Abrir Caixa"
           >
             <form>
-              <div >
+              <div>
                 <label className='titles'>Valor Inicial</label>
                 <input
                   type="number"
@@ -190,8 +195,8 @@ const Caixa = () => {
                 />
               </div>
             </form>
-            <div className="btn danger-btn" onClick={handleConfirmarAbrirCaixa}>salvar</div>
-             <div className="btn secondary-btn" onClick={handleCloseAbrirCaixa}>Cancelar</div>
+            <div className="btn danger-btn" onClick={handleConfirmarAbrirCaixa}>Salvar</div>
+            <div className="btn secondary-btn" onClick={handleCloseAbrirCaixa}>Cancelar</div>
           </ModalComponent>
 
           <ModalComponent
@@ -200,8 +205,8 @@ const Caixa = () => {
             title="Fechar Caixa"
           >
             <p>Você está prestes a fechar o caixa. Deseja continuar?</p>
-            <div className="btn danger-btn" onClick={handleConfirmarFecharCaixa}>salvar</div>
-             <div className="btn secondary-btn" onClick={handleCloseFecharCaixa}>Cancelar</div>
+            <div className="btn danger-btn" onClick={handleConfirmarFecharCaixa}>Salvar</div>
+            <div className="btn secondary-btn" onClick={handleCloseFecharCaixa}>Cancelar</div>
           </ModalComponent>
 
           <ModalComponent
@@ -219,7 +224,6 @@ const Caixa = () => {
                 cancel={handlCancelOrder}
               />
             )}
-            
           </ModalComponent>
 
           {showSuccess && (
@@ -264,6 +268,7 @@ const Caixa = () => {
           <LoadingModal show={loading} />
         </div>
       </Card>
+      
       <ModalComponent
         show={showModalVenda}
         onHide={handleClose}
@@ -271,7 +276,6 @@ const Caixa = () => {
         hideButtons={false}
       >
         <Vendas />
-        
       </ModalComponent>
     </>
   );

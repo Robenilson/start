@@ -310,10 +310,13 @@ border-collapse: collapse;
 }
 
 .user-table th,
-.user-table td {
+.user-table td  {
 padding: 10px;
 border: 1px solid #333;
 text-align: left;
+}
+.input-pequeno {
+  width: 1000px; /* Ajuste o valor conforme necessário */
 }
 
 /* Cor verde neon para o texto das células */
@@ -326,6 +329,11 @@ color: #39ff14; /* Verde neon */
 background-color: #333;
 color: #00eaff;
 }
+.user-table input {
+  background-color: #333;
+  color: #00eaff;
+  }
+  
 
 /* Estilo para linhas pares da tabela */
 .user-table tr:nth-child(even) {
