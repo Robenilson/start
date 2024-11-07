@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
+import GenericTabel from '../../components/GenericTabel';
+
 import GenericForm from './component/GenericForm';
 import {
   newService,
@@ -245,7 +247,8 @@ const NewCadastro = () => {
 
   return (
     <Card>
-      <div className="  user-manager-container">
+      <div className="user-manager-container">
+      <div className="card-header">Gestão de Estoque</div>
       <center>
         <button variant="primary" className="btn primary-btn" onClick={handleShowProduto}>Cadastrar Produto</button>
          <button variant="primary" className="btn primary-btn" onClick={handleShowServico}>Cadastrar Serviço</button>

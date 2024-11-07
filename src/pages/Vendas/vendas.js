@@ -1,86 +1,154 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
-import { fetchService } from '../../services/functions/RequestService';
+import { createSaleOrder } from '../../services/functions/RequestSales';
 import { fetchProduct } from '../../services/functions/RequestProduct';
-import DataTable from './componente/genericTabel'; // Importa o novo componente de tabela
+import Tabela from '../../components/GenericTabel';
+import BarcodeScanner from '../../components/BarcodeScanner';
+import OrderItemManager from './OrderItemManager';
 
-const Vendas = () => {
+const Vendas = ({ userRole }) => {
   const [combinedData, setCombinedData] = useState([]);
-  const [filterText, setFilterText] = useState(''); // Estado para armazenar o texto digitado
-  const [itemDataToOrder, setItemDataToOrder] = useState([]); // Estado para os itens adicionados ao pedido
+  const [filterText, setFilterText] = useState('');
+  const [itemDataToOrder, setItemDataToOrder] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [scanning, setScanning] = useState(false);
+  const [showQuantityModal, setShowQuantityModal] = useState(false);
+  const [showOrderListModal, setShowOrderListModal] = useState(false);
+  const [totalValue, setTotalValue] = useState(0);
 
-  // Função para adicionar item ao pedido
-  const addItemToOrder = (item) => {
-    setItemDataToOrder(prevItems => [...prevItems, item]); // Adiciona o novo item ao array de itens
-    setCombinedData(prevItems => prevItems.filter(i => i !== item)); // Remove o item filtrando
-  };
-
-  // Função para remover item do pedido
-  const removeItemFromOrder = (item) => {
-    setItemDataToOrder(prevItems => prevItems.filter(i => i !== item)); // Remove o item filtrando
-  };
-
-  // Função para limpar o filtro
-  const removeInput = () => {
-    setFilterText(''); // Limpa o texto do filtro
+  const fetchData = async () => {
+    try {
+      const productResponse = await fetchProduct();
+      setCombinedData(productResponse);
+    } catch (error) {
+      console.error("Erro ao buscar dados", error);
+    }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const productResponse = await fetchProduct();
-      const serviceResponse = await fetchService();
+  if (userRole !== 'admin') {
+    return <center><div>Acesso negado</div></center>;
+  }
 
-      // Combina os dados de produto e serviço em um único array
-      const combined = [...(productResponse || []), ...(serviceResponse || [])];
-      setCombinedData(combined);
-    } catch (error) {
-      console.error("Erro ao buscar dados", error);
-    }
+  const addItemToOrder = (product, quantity, calculatedTotal) => {
+    const itemWithQuantity = { ...product, quantity, valorTotal: calculatedTotal };
+    setItemDataToOrder((prevItems) => [...prevItems, itemWithQuantity]);
+    setCombinedData((prevItems) => prevItems.filter((i) => i !== product));
+    setTotalValue((prevTotal) => prevTotal + calculatedTotal);
+    setShowQuantityModal(false);
   };
 
-  // Função para filtrar o array baseado no texto digitado
+  const removeItemFromOrder = (item) => {
+    setItemDataToOrder((prevItems) => prevItems.filter((i) => i !== item));
+    setTotalValue((prevTotal) => prevTotal - item.valorTotal);
+  };
+
+  const clearOrder = () => {
+    setItemDataToOrder([]);
+    setTotalValue(0);
+  };
+
+  const confirmOrder = () => {
+    const paymenty = {
+      id: 1,
+      value: "0",
+      paymentMethod: "0",
+      orderId: "0",
+      paymentType: "0"
+    };
+
+    console.log(createSaleOrder('1', '22', itemDataToOrder, '0', paymenty));
+    clearOrder();
+    setShowOrderListModal(false);
+  };
+
   const filteredData = combinedData.filter((item) =>
     JSON.stringify(item).toLowerCase().includes(filterText.toLowerCase())
   );
 
   return (
     <Card>
-      <center>
-        <div className="user-manager-container">
-          <div className="card-header">Montar Pedido</div>
-          <div className="form-group">
+      <div className="user-manager-container">
+        <div className="card-header">Gestão de Vendas</div>
+        <center>
+          <div className="form-group input-pequeno respon">
             <input
               type="text"
               placeholder="Digite para filtrar..."
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="form-control input-pequeno "
+              className="form-control"
             />
-            {/* Use o evento onClick para o botão */}
-            <button className="btn primary-btn" onClick={removeInput}>
-              Limpar filtro
-            </button>
-            <button className="btn primary-btn" >
-            Inserir código de barra
-            </button>
           </div>
 
-          {/* Exibe a tabela com base nos dados filtrados */}
-          {filterText && <DataTable data={filteredData} button={addItemToOrder} acao="COMPRAR" />}
+          <button
+            className="btn primary-btn"
+            onClick={() => setScanning((prev) => !prev)}
+          >
+            {scanning ? 'Parar Scanner' : 'Iniciar Scanner'}
+          </button>
 
-          {/* Exibe os itens adicionados ao pedido */}
-          <div className="card-header">Pedido</div>
-          <DataTable
-            data={itemDataToOrder}
-            button={removeItemFromOrder} // Passa a função de remoção ao botão da tabela
-            acao="REMOVER" // Aqui você pode mudar o texto do botão para "REMOVER"
+          {scanning && (
+            <BarcodeScanner 
+              active={scanning}  
+              onDetected={(code) => {
+                setScanning(false);
+              }}
+            />
+          )}
+
+          <button className="btn btn-info" onClick={() => setShowOrderListModal(true)}>
+            Exibir Lista de Compras
+          </button>
+
+          <OrderItemManager
+            showModal={showQuantityModal}
+            onClose={() => setShowQuantityModal(false)}
+            selectedProduct={selectedProduct}
+            itemDataToOrder={itemDataToOrder}
+            onAddItem={addItemToOrder}
+            onRemoveItem={removeItemFromOrder}
+            totalValue={totalValue}
+            onClearOrder={clearOrder}
+            onConfirmOrder={confirmOrder}
           />
-        </div>
-      </center>
+
+          <OrderItemManager
+            showModal={showOrderListModal}
+            onClose={() => setShowOrderListModal(false)}
+            itemDataToOrder={itemDataToOrder}
+            totalValue={totalValue}
+            onRemoveItem={removeItemFromOrder}
+            onClearOrder={clearOrder}
+            onConfirmOrder={confirmOrder}
+          />
+
+          {filterText && (
+            <Tabela
+              columns={[
+                { key: 'nome', label: 'Nome' },
+                { key: 'descricao', label: 'Descrição' },
+                { key: 'valor', label: 'Preço', render: (item) => `R$ ${item.valor.toFixed(2)}` }
+              ]}
+              data={filteredData}
+              actions={[
+                {
+                  label: 'COMPRAR',
+                  className: 'btn btn-primary btn-sm',
+                  onClick: (product) => {
+                    setSelectedProduct(product);
+                    setShowQuantityModal(true);
+                  }
+                }
+              ]}
+              keyField="id"
+            />
+          )}
+        </center>
+      </div>
     </Card>
   );
 };

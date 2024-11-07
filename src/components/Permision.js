@@ -25,10 +25,9 @@ const Permision = (props) => {
     default:
       message = [
         <OptionNav key="caixa" url={urls.caixaPage} name="Caixa" />,
-        <OptionNav key="creditos" url={urls.credito} name="Acompanhar de Serviços" />,
+        <OptionNav key="creditos" url={urls.credito} name="Acompanhar Serviços" />,
         <OptionNav key="venda" url="/venda" name="Vendas" />,
         <OptionNav key="newProduto" url={urls.newProdutoPage} name="Estoque" />,
-        <OptionNav key="roleManeger" url={urls.roleManager} name="Permissões" />
       ];
   }
 

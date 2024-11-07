@@ -4,14 +4,14 @@ import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import { fetchRoles, newRole, updateRole, deleteRole } from '../../services/functions/RequestRoleService';
 
-const RoleManager = () => {
+const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
   const [roles, setRoles] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [roleName, setRoleName] = useState('');
   const [roleDescription, setRoleDescription] = useState('');
   const [editingRole, setEditingRole] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-
+  
   useEffect(() => {
     getAllRoles();
   }, []);
@@ -97,37 +97,40 @@ const RoleManager = () => {
     }
   };
 
+  // Condicional para verificar se o usuário é admin
+
+
   return (
     <Card>
       <div className="user-manager-container">
         <div className="">Gerenciamento de Roles</div>
         <div className="card-body">
-        <center>
-          <button type='button' className="btn primary-btn" onClick={handleShowModal}>Adicionar Role</button>
+          <center>
+            <button type='button' className="btn primary-btn" onClick={handleShowModal}>Adicionar Role</button>
           </center>
-          <div  className="table-container" >
+          <div className="table-container">
             <table className="user-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nome da Role</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {roles.map((role, index) => (
-                <tr key={role.id}>
-                  <td>{index + 1}</td>
-                  <td>{role.name}</td>
-                  <td>
-                    <button type='button' className="action-btn edit-btn"  onClick={() => handleEditRole(role)}>Editar</button>
-                    {' '}
-                    <button type='button' className="action-btn delete-btn" onClick={() => handleDeleteRole(role.id)}>Excluir</button>
-                  </td>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nome da Role</th>
+                  <th>Ações</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {roles.map((role, index) => (
+                  <tr key={role.id}>
+                    <td>{index + 1}</td>
+                    <td>{role.name}</td>
+                    <td>
+                      <button type='button' className="action-btn edit-btn" onClick={() => handleEditRole(role)}>Editar</button>
+                      {' '}
+                      <button type='button' className="action-btn delete-btn" onClick={() => handleDeleteRole(role.id)}>Excluir</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
           <ModalComponent

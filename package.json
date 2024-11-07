@@ -11,7 +11,9 @@
     "idb": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+    "quagga": "^0.12.1",
     "react": "^18.3.1",
+    "react-barcode-reader": "^0.0.2",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1",
@@ -22,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "proxy": "http://localhost:44363"
   },
   "eslintConfig": {
     "extends": [

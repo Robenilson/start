@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ModalComponent from '../../components/ModalComponet';
-import PedidosTab from './componentesCaixa/PedidosTab';
+import Tabela from '../../components/GenericTabel'; // Novo componente Tabela
 import Card from '../../components/Card';
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 import LoadingModal from '../../components/LoadingModal';
@@ -152,28 +152,38 @@ const Caixa = () => {
     setShowPedidoSuccess(false);
   };
 
+  // Configuração das colunas e ações para o componente Tabela
+  const columns = [
+    { key: 'clientName', label: 'Cliente' },
+    {
+      key: 'payments',
+      label: 'Status',
+      render: (item) => (item.payments === null ? 'Aguardando Pagamento' : 'Pago'),
+    },
+  ];
+
+  const actions = [
+    {
+      label: 'Ver Detalhes',
+      className: 'edit-btn',
+      onClick: (pedido) => handlePedidoFormaPagamento(pedidos.indexOf(pedido)),
+    },
+  ];
+
   return (
     <>
       <Card>
         <div className="user-manager-container">
+          <div className="card-header">Gestão de Caixa</div>
           <center>
-            {/* Condicional: exibe "Nova Venda" e "Fechar Caixa" apenas se o caixa estiver aberto */}
             {caixaAberto && (
               <>
-                <button onClick={handleNWeVendas} className="btn primary-btn">
-                  Nova Venda
-                </button>
-                <button className="btn primary-btn" onClick={handleFecharCaixa}>
-                  Fechar Caixa
-                </button>
+                <button onClick={handleNWeVendas} className="btn primary-btn">Nova Venda</button>
+                <button className="btn primary-btn" onClick={handleFecharCaixa}>Fechar Caixa</button>
               </>
             )}
-            
-            {/* Condicional: exibe "Abrir Caixa" apenas se o caixa estiver fechado */}
             {!caixaAberto && (
-              <button onClick={handleAbrirCaixa} className="btn primary-btn">
-                Abrir Caixa
-              </button>
+              <button onClick={handleAbrirCaixa} className="btn primary-btn">Abrir Caixa</button>
             )}
           </center>
 
@@ -238,10 +248,6 @@ const Caixa = () => {
             </div>
           )}
 
-          <div className="mt-3">
-            <h5>Saldo: R${saldo.toFixed(2)}</h5>
-          </div>
-
           {dataAbertura && (
             <div className="mt-3">
               <div className="alert alert-info">
@@ -252,29 +258,21 @@ const Caixa = () => {
 
           {!caixaAberto && horaFechamento && (
             <div className="alert alert-info mt-3">
-              Caixa fechado em {horaFechamento} com saldo de R${saldo.toFixed(2)}
+              Caixa fechado em {horaFechamento}
             </div>
           )}
 
           {caixaAberto && (
             <div className="mt-3">
-              <ul>
-                <li>
-                  <PedidosTab pedidos={pedidos} handlePedidoFormaPagamento={handlePedidoFormaPagamento} />
-                </li>
-              </ul>
+              <Tabela columns={columns} data={pedidos} actions={actions} keyField="id" />
             </div>
           )}
+
           <LoadingModal show={loading} />
         </div>
       </Card>
-      
-      <ModalComponent
-        show={showModalVenda}
-        onHide={handleClose}
-        title="Nova Venda"
-        hideButtons={false}
-      >
+
+      <ModalComponent show={showModalVenda} onHide={handleClose}>
         <Vendas />
       </ModalComponent>
     </>

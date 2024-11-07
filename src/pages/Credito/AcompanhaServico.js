@@ -5,13 +5,12 @@ import LoadingModal from '../../components/LoadingModal';
 import { ControllServiceStop, ControllServiceGet } from '../../services/functions/RequestControllService';
 
 import ModalPesquisarCPF from './components/ModalPesquisarCPF';
-import ServicoTable from './components/ServicoTable';
+import Tabela from '../../components/GenericTabel'; // Substituído ServicoTable por Tabela
 
 const AcompanhaServico = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [servicos, setServicos] = useState(() => {
-    // Restaurar o estado dos serviços a partir do localStorage
     const savedServicos = localStorage.getItem('servicos');
     return savedServicos ? JSON.parse(savedServicos) : [];
   });
@@ -20,12 +19,11 @@ const AcompanhaServico = () => {
   const [selectedServico, setSelectedServico] = useState(null);
 
   useEffect(() => {
-    // Ao carregar a página, calcular o tempo restante
     setServicos((prevServicos) => {
       const updatedServicos = prevServicos.map((servico) => {
         if (servico.ativo) {
           const now = Date.now();
-          const elapsedTime = Math.floor((now - servico.startTime) / 1000); // Tempo decorrido em segundos
+          const elapsedTime = Math.floor((now - servico.startTime) / 1000); 
           const newTime = servico.tempoAlugado - elapsedTime;
           return {
             ...servico,
@@ -49,7 +47,7 @@ const AcompanhaServico = () => {
       service.then((data) => {
         const serviçosAtualizados = data.map((item) => ({
           nomeServico: item.serviceName,
-          tempoAlugado:  Math.round(item.totalTime * 60 * 100) / 100, // Convertendo tempo para segundos
+          tempoAlugado:  Math.round(item.totalTime * 60 * 100) / 100, 
           orderId: item.orderId,
           productId: item.id,
           is_Active: item.is_Active,
@@ -65,7 +63,7 @@ const AcompanhaServico = () => {
 
   const handleIniciarServico = () => {
     if (selectedServico) {
-      const now = Date.now(); // Armazena o tempo de início
+      const now = Date.now();
       const novoServico = {
         nomeUsuario: usuario.nome,
         cpf: usuario.cpf,
@@ -73,23 +71,20 @@ const AcompanhaServico = () => {
         nomeServico: selectedServico.nomeServico,
         tempoAlugado: selectedServico.tempoAlugado,
         ativo: true,
-        startTime: now, // Hora de início
+        startTime: now,
       };
       const novosServicos = [...servicos, novoServico];
       setServicos(novosServicos);
       setShowModal(false);
       setSelectedServico(null);
-      // Salvar os serviços no localStorage
       localStorage.setItem('servicos', JSON.stringify(novosServicos));
     }
   };
 
-  const handlePararServico = (index) => {
-    const servicoParaParar = servicos[index];      
-    ControllServiceStop(servicoParaParar.productId,Math.floor(servicoParaParar.tempoAlugado / 60));
-    const novosServicos = servicos.filter((_, i) => i !== index);
+  const handlePararServico = (servico) => {
+    ControllServiceStop(servico.productId, Math.floor(servico.tempoAlugado / 60));
+    const novosServicos = servicos.filter(s => s.productId !== servico.productId);
     setServicos(novosServicos);
-    // Atualizar o localStorage após parar o serviço
     localStorage.setItem('servicos', JSON.stringify(novosServicos));
   };
 
@@ -99,7 +94,7 @@ const AcompanhaServico = () => {
         const updatedServicos = prevServicos.map((servico) => {
           if (servico.ativo && servico.tempoAlugado > 0) {
             const now = Date.now();
-            const elapsedTime = Math.floor((now - servico.startTime) / 1000); // Tempo decorrido em segundos
+            const elapsedTime = Math.floor((now - servico.startTime) / 1000); 
             const newTime = servico.tempoAlugado - elapsedTime;
             return {
               ...servico,
@@ -108,7 +103,6 @@ const AcompanhaServico = () => {
           }
           return servico;
         });
-        // Salvar os serviços atualizados no localStorage
         localStorage.setItem('servicos', JSON.stringify(updatedServicos));
         return updatedServicos;
       });
@@ -123,11 +117,28 @@ const AcompanhaServico = () => {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  // Configuração das colunas para o componente Tabela
+  const columns = [
+    { key: 'nomeUsuario', label: 'Nome' },
+    { key: 'cpf', label: 'CPF' },
+    { key: 'nomeServico', label: 'Serviço' },
+    { key: 'tempoAlugado', label: 'Tempo Alugado', render: (item) => formatTime(item.tempoAlugado) },
+  ];
+
+  // Definição das ações para o componente Tabela
+  const actions = [
+    {
+      label: 'Parar',
+      className: 'delete-btn',
+      onClick: handlePararServico,
+    },
+  ];
+
   return (
     <Card>
       <div className="user-manager-container">
         <LoadingModal show={loading} />
-        <div className="card-header">Acompanhar de Serviços</div>
+        <div className="card-header">Gestão de Serviços</div>
         <div className="card-body">
           <center>
             <button className="btn primary-btn" onClick={() => setShowModal(true)}>
@@ -146,10 +157,11 @@ const AcompanhaServico = () => {
             setSelectedServico={setSelectedServico}
             handleIniciarServico={handleIniciarServico}
           />
-          <ServicoTable
-            servicos={servicos}
-            handlePararServico={handlePararServico}
-            formatTime={formatTime}
+          <Tabela
+            columns={columns}
+            data={servicos}
+            actions={actions}
+            keyField="productId"
           />
         </div>
       </div>

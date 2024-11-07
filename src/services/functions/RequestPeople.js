@@ -3,19 +3,24 @@ import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
 import { endPoints } from "./config/endpoints";
 
 
+
+
+
+
+
 //Faz um get na tabela Produtos 
 export async function FetchUser() {
   const config = serviceRetornarConfig(
     "get",
-    endPoints.urlListAllUser,
+    endPoints.URL_GET_ListAllUser,
     true
-  );
+  ); 
   try {
     const response = await axios(config);
     const users = response.data;
     const updatedUsers = users.map(user => UpdateDataObjectUser(user));
-    const resolvedUsers = await Promise.all(updatedUsers);
-    return resolvedUsers;  
+    return updatedUsers;
+
   } catch (error) {
     return serviceRetornarErro(error);
   }
@@ -50,7 +55,7 @@ export async function FetchUser() {
 export async function FetchUserCPF(data) {
   var config = serviceRetornarConfig(
     "get",
-    `${endPoints.urlUserCPF}${data}`,
+    `${endPoints.URL_GET_UserCPF}${data}`,
     true
   );
 
@@ -66,7 +71,7 @@ export async function FetchUserCPF(data) {
 export async function FetchUserByID(data) {
   var config = serviceRetornarConfig(
     "get",
-    `${endPoints.urlUserByid}/${data}`,
+    `${endPoints.URL_GET_PRODUCT_BYID}/${data}`,
     true
   );
 
@@ -86,7 +91,7 @@ export async function FetchUserByID(data) {
 export async function deleteUserByID(data) {
   var config = serviceRetornarConfig(
     "delete",
-    `${endPoints.urlUserByid}/${data}`,
+    `${endPoints.URL_DELETE_UserByid}/${data}`,
     true
   );
 
@@ -159,7 +164,7 @@ const getRoleName2 = (userType) => {
 export async function NewUser(data) {
     var config = serviceRetornarConfig(
       "post",
-      endPoints.urlAddNewUser,
+      endPoints.URL_POST_AddNewUser,
       data,
       true
     );
@@ -227,7 +232,7 @@ export async function NewUser(data) {
    
     var config = serviceRetornarConfig(
       "put",
-      `${endPoints.urlUserByid}`,
+      `${endPoints.URL_PUT_AddNewUser}`,
       data,
       true
     );
@@ -240,3 +245,6 @@ export async function NewUser(data) {
     }
   }
  
+
+
+

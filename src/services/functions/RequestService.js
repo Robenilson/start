@@ -28,6 +28,7 @@ const formatTime = (horaMinima) => {
 
 // Faz um get na tabela Serviços
 export async function fetchService() {
+
   const config = serviceRetornarConfig("get", endPoints.urlServiceAll, true);
 
   try {

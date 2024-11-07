@@ -5,6 +5,8 @@ import OptionNav from './optionNav';
 import Card from '../components/Card';
 import { urls } from "../services/functions/config/urls";
 import NotificationBell from './NotificationBell'; // Componente de notificação
+import BarcodeScannerComponent from './BarcodeScanner';
+
 function Menu() {
   return (
     <>
@@ -17,7 +19,9 @@ function Menu() {
             <div id="basic-navbar-nav" className="menu-nav-content">
               <div className="menu-nav-links">
                 <Permision userType="tu" />
-                <NotificationBell /> {/* Componente de notificação */}
+               {/*<NotificationBell />  */  } 
+                
+
               </div>
             </div>
           </nav>

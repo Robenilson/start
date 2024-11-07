@@ -7,7 +7,4 @@ export const urls = {
     userDados:"/dadosUser",
     credito:"/credito",
     roleManager:"/roleManager"
-  
-  
-    
   };

@@ -24,7 +24,7 @@ const App = () => {
           <Route path={urls.credito} element={<Credito />} />
           <Route path={urls.userDados} element={<Userdados />} />
           <Route path={urls.caixaPage}    element={<Caixa />} />
-          <Route path={urls.vendasPage}    element={<Vendas />} />
+          <Route path={urls.vendasPage}    element={<Vendas  userRole='admin'/>} />
           <Route path={urls.newProdutoPage}    element={<NewProduto />} /> 
           <Route path={urls.roleManager}    element={<RoleManager />} />   
         </Route>

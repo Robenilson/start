@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tabs, Tab, Form } from 'react-bootstrap';
-import ProdutosTab from './ProdutosTab';
-import ServicosTab from './ServicosTab';
+import Tabela from '../../../components/GenericTabel';
 
 const CadastroTabs = ({
   produtos,
@@ -13,10 +12,11 @@ const CadastroTabs = ({
   handleEditProduto,
   handleDeleteProduto,
   handleEditServico,
-  handleDeleteServico
+  handleDeleteServico,
 }) => (
-  <Tabs defaultActiveKey="produtos" id="tabela-abas" className="mt-3">
-    <Tab eventKey="produtos" title="Produtos">
+  <Tabs  defaultActiveKey="produtos" id="tabela-abas" className="mt-3 ">
+    {/* Aba Produtos */}
+    <Tab  eventKey="produtos" title="Produtos">
       <Form.Control
         type="text"
         placeholder="Buscar Produtos"
@@ -24,12 +24,26 @@ const CadastroTabs = ({
         onChange={(e) => setSearchTermProduto(e.target.value)}
         className="mb-3"
       />
-      <ProdutosTab
-        produtos={produtos.filter(produto => produto.nome && produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase()))}
-        handleEditProduto={handleEditProduto}
-        handleDeleteProduto={handleDeleteProduto}
+      <Tabela
+        columns={[
+
+          { key: 'nome', label: 'Nome' },
+          { key: 'descricao', label: 'Descrição' },
+          { key: 'valor', label: 'Valor', render: (item) => `R$${item.valor.toFixed(2)}` },
+          { key: 'quantidade', label: 'Quantidade' },
+        ]}
+        data={produtos.filter((produto) =>
+          produto.nome && produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase())
+        )}
+        actions={[
+          { label: 'Editar', className: 'edit-btn warning', onClick: handleEditProduto },
+          { label: 'Excluir', className: 'delete-btn danger', onClick: handleDeleteProduto },
+        ]}
+        keyField="id"
       />
     </Tab>
+
+    {/* Aba Serviços */}
     <Tab eventKey="servicos" title="Serviços">
       <Form.Control
         type="text"
@@ -38,10 +52,21 @@ const CadastroTabs = ({
         onChange={(e) => setSearchTermServico(e.target.value)}
         className="mb-3"
       />
-      <ServicosTab
-        servicos={servicos.filter(servico => servico.nome && servico.nome.toLowerCase().includes(searchTermServico.toLowerCase()))}
-        handleEditServico={handleEditServico}
-        handleDeleteServico={handleDeleteServico}
+      <Tabela
+        columns={[
+          { key: 'nome', label: 'Nome' },
+          { key: 'descricao', label: 'Descrição' },
+          { key: 'valor', label: 'Valor', render: (item) => `R$${item.valor.toFixed(2)}` },
+          { key: 'horaMinima', label: 'Hora Mínima', render: (item) => `${item.horaMinima} minutos` },
+        ]}
+        data={servicos.filter((servico) =>
+          servico.nome && servico.nome.toLowerCase().includes(searchTermServico.toLowerCase())
+        )}
+        actions={[
+          { label: 'Editar', className: 'edit-btn warning', onClick: handleEditServico },
+          { label: 'Excluir', className: 'delete-btn danger', onClick: handleDeleteServico },
+        ]}
+        keyField="id"
       />
     </Tab>
   </Tabs>

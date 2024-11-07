@@ -19,7 +19,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError('');       
 
     try {
       const vRetorno = await loginUser(email, password); // Call renamed function

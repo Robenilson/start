@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet'; // Corrigido o nome do import
 import UserForm from './componente/UserForm';
-import UserTable from './componente/UserTable';
+import Tabela from '../../components/GenericTabel'; // Substituição de UserTable por Tabela
 import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser, createUpdatedDataObjectUser } from '../../services/functions/RequestPeople';
 import LoadingModal from '../../components/LoadingModal';
 
@@ -38,22 +38,28 @@ const UserManager = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [showCreditosModal, setShowCreditosModal] = useState(false);
 
-  const columns = ['Nome', 'Sobrenome', 'Email', 'CPF', 'Telefone', 'Role'];
+  // Configuração de colunas para o componente Tabela
+  const columns = [
+    { key: 'nome', label: 'Nome' },
+    { key: 'sobrenome', label: 'Sobrenome' },
+    { key: 'email', label: 'Email' },
+    { key: 'cpf', label: 'CPF' },
+    { key: 'telefone', label: 'Telefone' },
+    { key: 'role', label: 'Role' }
+  ];
 
-  const getRoleName = (userType) => {
-    switch (userType) {
-      case 'Cliente':
-        return 1;
-      case 'Admin':
-        return 2;
-      case 'Vendedor':
-        return 3;
-      case 'Caixa':
-        return 4;
-      default:
-        return userType;
-    }
-  };
+  const actions = [
+    {
+      label: 'Editar',
+      className: 'edit-btn',
+      onClick: (user) => handleEditUserData(user),
+    },
+    {
+      label: 'Excluir',
+      className: 'delete-btn',
+      onClick: (user) => handleShowDeleteModal(user),
+    },
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -181,28 +187,24 @@ const UserManager = () => {
 
   const updateUsers = async () => {
     setLoading(true);
-    const data = await FetchUser()
+    const users= Array.isArray( await FetchUser()) ? FetchUser() : [] ;
+
     
-    setPessoas(data);
+
+
+  //  setPessoas();
     setLoading(false);
   };
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
-  const filteredUsers = pessoas.filter((user) => {
-    return (
-      user.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.sobrenome.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
+  const filteredUsers = pessoas.filter((user) =>
+    user.nome.toLowerCase().includes(searchTerm.toLowerCase()) || user.sobrenome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
-
-  const getCurrentItems = () => currentItems;
 
   const renderPagination = () => {
     const pageNumbers = [];
@@ -222,66 +224,41 @@ const UserManager = () => {
 
   return (
     <Card>
-
       <div className="user-manager-container">
-       <center>
-        <button type='button' className="btn primary-btn" onClick={handleShowModal}>
-          Cadastrar Pessoa
-        </button>
-        </center>
-
-        <ModalComponent show={showModal} onHide={handleCloseModal} hideButtons='true' title={isEditMode ? "Editar Pessoa" : "Cadastrar Pessoa"}>
-          <UserForm
-            userValues={userValues}
-            handleInputChange={handleInputChange}
-            handleClose={handleCloseModal}
-            save={handleAddUser}
-            edit={handleEditUser}
-            isEditMode={isEditMode}
-          />
-        </ModalComponent>
         <center>
-
-        <div className="form-group input-pequeno">
-          <input
-            type="text"
-            placeholder="Pesquisar por nome ou sobrenome"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="form-control"
-          />
-        </div>
+          <button type="button" className="btn primary-btn" onClick={handleShowModal}>
+            Cadastrar Pessoa
+          </button>
         </center>
 
-        {loading ? <LoadingModal /> : (
-          <UserTable
-            columns={columns}
-            data={getCurrentItems()}
-            onEdit={handleEditUserData}
-            onDelete={handleShowDeleteModal}
-            creditos={handleCreditos}
-          />
-        )}
+        <ModalComponent show={showModal} onHide={handleCloseModal} hideButtons="true" title={isEditMode ? "Editar Pessoa" : "Cadastrar Pessoa"}>
+          <UserForm userValues={userValues} handleInputChange={handleInputChange} handleClose={handleCloseModal} save={handleAddUser} edit={handleEditUser} isEditMode={isEditMode} />
+        </ModalComponent>
+
+        <center>
+          <div className="form-group input-pequeno respon">
+            <input className="form-control" type="text" placeholder="Pesquisar por nome ou sobrenome" value={searchTerm} onChange={handleSearchChange} />
+          </div>
+        </center>
+
+        <Tabela columns={columns} data={currentItems} actions={actions} />
 
         {renderPagination()}
-
-        <ModalComponent show={showSuccessModal} hideButtons='true' onHide={handleCloseSuccessModal} title="Sucesso">
-          <div className="alert success">
-            Operação realizada com sucesso!
-          </div>
-          <div className="btn secondary-btn" onClick={handleCloseSuccessModal}>Sair</div>
-        </ModalComponent>
-
-        <ModalComponent show={showDeleteModal} hideButtons='true' onHide={handleCloseDeleteModal} title="Confirmar Exclusão">
-          <p>Tem certeza que deseja excluir este usuário?</p>
-          <div className="btn danger-btn" onClick={handleDeleteUser}>Excluir</div>
-          <div className="btn secondary-btn" onClick={handleCloseDeleteModal}>Cancelar</div>
-        </ModalComponent>
-
-        <ModalComponent show={showCreditosModal} onHide={handleCloseCreditosModal} title="Créditos">
-          <p>Detalhes dos créditos...</p>
-        </ModalComponent>
       </div>
+      <ModalComponent show={showDeleteModal} onHide={handleCloseDeleteModal} hideButtons="true" title="Excluir Usuário">
+        <div className="modal-delete">
+          <p>Tem certeza que deseja excluir este usuário?</p>
+          <div className="delete-modal-buttons">
+            <button type="button" className="btn secondary-btn" onClick={handleCloseDeleteModal}>
+              Cancelar
+            </button>
+            <button type="button" className="btn delete-btn" onClick={handleDeleteUser}>
+              Excluir
+            </button>
+          </div>
+        </div>
+      </ModalComponent>
+      <LoadingModal show={loading} />
     </Card>
   );
 };
