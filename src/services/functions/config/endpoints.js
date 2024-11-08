@@ -1,7 +1,7 @@
 var backHost =
   process.env.REACT_APP_BACKEND_HOST != null
     ? process.env.REACT_APP_BACKEND_HOST
-    : "https://authenticationapi-production-9b49.up.railway.app";
+    : "http://localhost:8005";
 
 const  URL_PRODUCT = "/api/SalesProduct";
 const  URL_CASHIER_ORDER ="/api/CashierOrder";

@@ -16,6 +16,7 @@ export async function loginUser(email, password) { // Renomear a função
     
     try {
 
+      console.log((await axios(config)).data)
 
       return (await axios(config)).data;
     } catch (error) {
