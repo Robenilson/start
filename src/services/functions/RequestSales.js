@@ -23,8 +23,8 @@ export async function NewSale(data) {
         id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Gerador de UUID único
         dtSale: new Date().toISOString(),
         produtos: [],
-        clientId: clientId,
-        employeerId: employeerId,
+        clientId: parseInt(clientId),
+        employeerId: parseInt(employeerId),
         precoTotal: 0,
         desconto: discount || 0,
         credito: 0,
@@ -36,9 +36,9 @@ export async function NewSale(data) {
     products.forEach(product => {
         if (product) { // Verifica se o produto existe
             saleOrder.produtos.push({
-                productId: product.id,
-                quantity: product.quantidade,
-                orderId: saleOrder.id,
+                productId: parseInt(product.id),
+                quantity: parseInt(product.quantidade),
+                orderId:parseInt(saleOrder.id),
                 productType: product.productType || "defaultType", // Defina um valor padrão para tipo de produto
                 name: product.nome,
                 valor: parseFloat(product.valorTotal)  // Calcula o valor unitário

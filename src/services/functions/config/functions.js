@@ -2,23 +2,21 @@
 
 
 export function serviceRetornarConfig(method, url, data) {
-    const user = localStorage.getItem('user');
-    const token = user ? JSON.parse(user).token : null;
-    if (!token) {
-        console.error('Token não encontrado');
-    }
+   
   
       return {
         method: method,
         url: url,
-        headers: {
-             'Content-Type': 'application/json',
-             'Authorization': `Bearer ${token}`
-         },
+        headers: {},
         timeout: 180000,
         data: data,
     };
 }
+
+export const TenetId = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return `?TenantId=${user.TenantId}`;
+  };
 
 
 

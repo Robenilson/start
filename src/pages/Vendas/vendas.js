@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
 import { createSaleOrder } from '../../services/functions/RequestSales';
 import { fetchProduct } from '../../services/functions/RequestProduct';
+import { fetchService } from '../../services/functions/RequestService';
+import { BarCod } from '../../services/functions/RequestBarCod';
 import Tabela from '../../components/GenericTabel';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import OrderItemManager from './OrderItemManager';
@@ -18,8 +20,17 @@ const Vendas = ({ userRole }) => {
 
   const fetchData = async () => {
     try {
+
       const productResponse = await fetchProduct();
-      setCombinedData(productResponse);
+      const serviceResponse= await fetchService()
+    // Combina as respostas em um único array
+    const combinedArray = [
+      ...(Array.isArray(productResponse) ? productResponse : []),
+      ...(Array.isArray(serviceResponse) ? serviceResponse : [])
+    ];
+    
+    setCombinedData(combinedArray);
+
     } catch (error) {
       console.error("Erro ao buscar dados", error);
     }
@@ -94,7 +105,8 @@ const Vendas = ({ userRole }) => {
           {scanning && (
             <BarcodeScanner 
               active={scanning}  
-              onDetected={(code) => {
+               onDetected= {(code) => {
+                console.log( BarCod(code))
                 setScanning(false);
               }}
             />

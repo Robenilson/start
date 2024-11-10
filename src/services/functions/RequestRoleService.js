@@ -9,7 +9,7 @@ import { endPoints } from "./config/endpoints";
 export async function DeleteProduct(data) {
   var config = serviceRetornarConfig(
     "delete",
-    `${endPoints.urlDeletProduct}/deleteProduct?id=${data.id}` ,
+    `${endPoints.URL_DELETE_PRODUCT}/deleteProduct?id=${data.id}` ,
     true
   );
   try {

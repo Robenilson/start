@@ -1,12 +1,12 @@
 import axios from "axios";
-import { serviceRetornarConfig, serviceRetornarErro } from "./config/functions";
+import { serviceRetornarConfig, serviceRetornarErro,TenetId } from "./config/functions";
 import { endPoints } from "./config/endpoints";
 
 // Adiciona um novo serviço
 export async function newService(data) {
   const config = serviceRetornarConfig(
     "post",
-    endPoints.urlAddNewService,
+    endPoints.urlAddNewService+TenetId(),
     data,
     true
   );
@@ -29,7 +29,7 @@ const formatTime = (horaMinima) => {
 // Faz um get na tabela Serviços
 export async function fetchService() {
 
-  const config = serviceRetornarConfig("get", endPoints.urlServiceAll, true);
+  const config = serviceRetornarConfig("get", endPoints.URL_GET_SERVICE_ALL_SERVICES+TenetId(), true);
 
   try {
     const response = await axios(config);
@@ -74,7 +74,7 @@ export async function createDataServicoEdit(servicoValues) {
 export async function editService(data) {
   const config = serviceRetornarConfig(
     "put",
-    `${endPoints.urlDeletProduct}/editService`,
+    `${endPoints.URL_DELETE_SERVICE}/editService${TenetId()}`,
     data,
     true
   );

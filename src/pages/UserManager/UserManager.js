@@ -189,7 +189,8 @@ const UserManager = () => {
     setLoading(true);
     const users= Array.isArray( await FetchUser()) ? FetchUser() : [] ;
 
-    
+    const user = localStorage.getItem('user');
+    console.log(user)
 
 
   //  setPessoas();
