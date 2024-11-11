@@ -2,15 +2,17 @@ import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro,TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
 
-
-
+const listAll_URL = endPoints.URL_GET_PRODUCT_ALL_PRODUCT+TenetId();
+const addNew_URL  = endPoints.URL_POST_NEW_PRODUCT+TenetId();
+const edit_Url    =`${ endPoints.URL_PUT_SERVICE}${TenetId()}`;
+const delete_Url  =`${endPoints.URL_DELETE_PRODUCT}${TenetId()}`
 
 
 //Faz um get na tabela Produtos 
   export async function fetchProduct() {
     var config = serviceRetornarConfig(
     "get",
-    endPoints.URL_GET_PRODUCT_ALL_PRODUCT+TenetId(),
+    listAll_URL,
     true
     );
     
@@ -36,28 +38,11 @@ import { endPoints } from "./config/endpoints";
 
 
   
-//Adiciona um novo Produto
-/*
-export async function newProduct(data) {
-    var config = serviceRetornarConfig(
-      "post",
-      endPoints.urlAddNewProduct,
-      data,
-      true
-    );
-  
-    try {
-      return (await axios(config)).data;
-    } catch (error) {
-      return serviceRetornarErro(error);
-    }
-  }
-*/
 
 export async function newProduct(data) {
   var config = serviceRetornarConfig(
     "POST",
-    endPoints.URL_POST_NEW_PRODUCT+TenetId(),
+    addNew_URL,
     data,
     true
   );
@@ -73,7 +58,7 @@ export async function newProduct(data) {
 export async function DeleteProduct(data) {
   var config = serviceRetornarConfig(
     "delete",
-    endPoints.URL_DELETE_PRODUCT,
+    delete_Url,
     data,
     true
   );
@@ -103,7 +88,7 @@ export async function createDataProductEdit(produtoValues) {
 export async function editProduct(data) {
   const config = serviceRetornarConfig(
     "put",
-    endPoints.URL_PUT_SERVICE,
+    edit_Url,
     data,
     true
   );

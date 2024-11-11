@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import Quagga from 'quagga';
+import  Quagga from'quagga';
+
 
 const BarcodeScanner = ({ onDetected, active }) => {
   const videoRef = useRef(null);
@@ -63,3 +64,6 @@ const BarcodeScanner = ({ onDetected, active }) => {
 };
 
 export default BarcodeScanner;
+
+
+

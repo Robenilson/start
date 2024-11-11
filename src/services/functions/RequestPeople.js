@@ -1,6 +1,15 @@
 import axios from "axios";
-import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
+import { serviceRetornarConfig , serviceRetornarErro, TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
+
+
+const listAll_URL =endPoints.URL_GET_ListAllUser+TenetId();
+const addNew_URL  =   endPoints.URL_POST_AddNewUser+TenetId();
+const edit_Url    =     `${endPoints.URL_PUT_AddNewUser}${TenetId()}`;
+const selectCPF_Url =  (data) =>`${endPoints.URL_GET_UserCPF}${data}`+TenetId();
+const select_UserByID = (data) =>  `${endPoints.URL_GET_PRODUCT_BYID}/${data}`+TenetId();
+const delete_ByID  =    (data) =>  `${endPoints.URL_DELETE_UserByid}/${data}`
+
 
 
 
@@ -12,7 +21,7 @@ import { endPoints } from "./config/endpoints";
 export async function FetchUser() {
   const config = serviceRetornarConfig(
     "get",
-    endPoints.URL_GET_ListAllUser,
+    listAll_URL,
     true
   ); 
   try {
@@ -55,10 +64,9 @@ export async function FetchUser() {
 export async function FetchUserCPF(data) {
   var config = serviceRetornarConfig(
     "get",
-    `${endPoints.URL_GET_UserCPF}${data}`,
+    selectCPF_Url(data),
     true
   );
-
   try {
     const response= await axios(config);
     return response.data;
@@ -70,14 +78,12 @@ export async function FetchUserCPF(data) {
 //Faz  uma pesquisa por id na  tabela usuario 
 export async function FetchUserByID(data) {
   var config = serviceRetornarConfig(
-    "get",
-    `${endPoints.URL_GET_PRODUCT_BYID}/${data}`,
+   "get",
+    select_UserByID(data),
     true
   );
-
   try {
     const response= await axios(config);
-    
     return response.data;
   } catch (error) {
     return serviceRetornarErro(error);
@@ -91,13 +97,11 @@ export async function FetchUserByID(data) {
 export async function deleteUserByID(data) {
   var config = serviceRetornarConfig(
     "delete",
-    `${endPoints.URL_DELETE_UserByid}/${data}`,
+    delete_ByID(data),
     true
   );
-
   try {
-    const response= await axios(config);
-    
+    const response= await axios(config);  
     return response.data;
   } catch (error) {
     return serviceRetornarErro(error);
@@ -164,7 +168,7 @@ const getRoleName2 = (userType) => {
 export async function NewUser(data) {
     var config = serviceRetornarConfig(
       "post",
-      endPoints.URL_POST_AddNewUser,
+      addNew_URL,
       data,
       true
     );
@@ -229,14 +233,12 @@ export async function NewUser(data) {
 
 
   export async function editUser(data) {
-   
     var config = serviceRetornarConfig(
       "put",
-      `${endPoints.URL_PUT_AddNewUser}`,
+      edit_Url,
       data,
       true
-    );
-  
+    );  
     try {
       const response= await axios(config);
       return response.data;

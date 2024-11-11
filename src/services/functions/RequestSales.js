@@ -1,12 +1,15 @@
 import axios from "axios";
-import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
+import { serviceRetornarConfig , serviceRetornarErro,TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
+
+
+const addNew = endPoints.urlNewSale+TenetId();
 
 //Adiciona um nova Venda
 export async function NewSale(data) {
     var config = serviceRetornarConfig(
       "post",
-      endPoints.urlNewSale,
+      addNew,
       data,
       true
     );

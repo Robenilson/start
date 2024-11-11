@@ -1,14 +1,24 @@
 import axios from "axios";
-import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
+import { serviceRetornarConfig , serviceRetornarErro, TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
 import   { FetchUserByID} from"./RequestPeople";
+
+const getOpenBoxUrl = (employeerId) => `${endPoints.urlOpenBox}/open?employeerId=${employeerId+TenetId()}`;
+const getFecharCaixaUrl = (useid) => `${endPoints.fecharCaixa}/${useid+TenetId()}`;
+const getBoxUrl = () => endPoints.urlGetBox+TenetId();
+const getBoxUrlWithDate = (data) => `${endPoints.urlGetBox}/${data+TenetId()}`;
+const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data+TenetId()}`;
+const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data+TenetId()}`;
+const getCompleteBoxUrl = (data) => `${endPoints.urlPutBox}/${data.id}/complete${TenetId()}`;
+const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel${TenetId()}`;
+
 
 
 //Abrir o caixa
 export async function OpenBox(initialBalance,employeerId) {
     var config = serviceRetornarConfig(
       "post",
-      `${endPoints.urlOpenBox}/open?employeerId=${employeerId}`,
+      getOpenBoxUrl(employeerId),
       initialBalance,
       true
     );
@@ -25,10 +35,9 @@ export async function OpenBox(initialBalance,employeerId) {
 export async function CloseBox(useid) {
   var config = serviceRetornarConfig(
     "put",
-    `${endPoints.fecharCaixa}/${useid}`,
+    getFecharCaixaUrl(useid),
     true
   );
-
   try {
     return (await axios(config)).data;
   } catch (error) {
@@ -46,7 +55,6 @@ export async function Name(clientId) {
     const response = FetchUserByID(clientId).then(
       data=>{
         return data;
-
       }
     )
   
@@ -77,10 +85,9 @@ const getRole = (roleNumber) => {
   export async function FetchBox() {
     var config = serviceRetornarConfig(
       "get",
-      endPoints.urlGetBox,
+      getBoxUrl(),
       true
     );
-  
     try {
       const response= await axios(config);
       return response.data;
@@ -93,8 +100,6 @@ const getRole = (roleNumber) => {
 //Lista pedidos do caixa por id do cliente
 export async function FetchBoxUserId(id) {
  const pedidos= await FetchBox();
- 
-
  return pedidos
 }
 
@@ -107,7 +112,7 @@ export async function FetchBoxUserId(id) {
   export async function FetchBoxById(data) {
     var config = serviceRetornarConfig(
       "get",
-      `${endPoints.urlGetBox}/${data}`,
+      getBoxUrlWithDate(data),
       true
     );
   
@@ -123,7 +128,7 @@ export async function FetchBoxUserId(id) {
     export async function GetByIdProdutos(data) {
       var config = serviceRetornarConfig(
         "get",
-        `${endPoints.urlGetByIdProdutos}${data}`,
+        getProdutoByIdUrl(data),
         true
       );
     
@@ -140,7 +145,7 @@ export async function FetchBoxUserId(id) {
   export async function GetByIdServicos(data) {
     var config = serviceRetornarConfig(
       "get",
-      `${endPoints.urlGetByIdServicos}${data}`,
+      getServicoByIdUrl(data),
       true
     );
   
@@ -199,38 +204,6 @@ export async function FetchBoxUserId(id) {
       throw error;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-
-
-  
- 
   export async function ViewDataObjectBox(data) {
     try {
       let value = [];
@@ -268,28 +241,12 @@ export async function FetchBoxUserId(id) {
       throw error;
     }
   }
-  
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //Put  Box
 export async function PutCompletBox(data) {
   var config = serviceRetornarConfig(
     "put",
-    `${endPoints.urlPutBox}/${data.id}/complete`,
+    getCompleteBoxUrl(data),
     data,
     true
   );
@@ -305,7 +262,7 @@ export async function PutCompletBox(data) {
 export async function PutCanceltBox(data) {
   var config = serviceRetornarConfig(
     "put",
-    `${endPoints.urlPutBox}/${data}/cancel`,
+    getCancelBoxUrl(data),
     data,
     true
   );

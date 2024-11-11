@@ -106,7 +106,6 @@ const Vendas = ({ userRole }) => {
             <BarcodeScanner 
               active={scanning}  
                onDetected= {(code) => {
-                console.log( BarCod(code))
                 setScanning(false);
               }}
             />

@@ -2,11 +2,17 @@ import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro} from "./config/functions";
 import { endPoints } from "./config/endpoints";
 //*//
- 
+
+const getControllServiceUrl = (id) => `${endPoints.ControllService}/${id}`;
+const getStopServiceUrl = (id, data) => `${endPoints.ControllService}/stop/${id}?timeLeft=${data}`;
+
+
+
+
 export async function ControllServiceGet(id) {
   var config = serviceRetornarConfig(
     "get",
-    `${endPoints.ControllService}/${id}`,
+    getControllServiceUrl(id),
     true
   );
 
@@ -18,22 +24,12 @@ export async function ControllServiceGet(id) {
 }
 
 
-
-
-
-
-
-
-
-
 export async function ControllServiceStop(id, data) {
-  console.log( `${endPoints.ControllService}/stop/${id}?timeLeft=${data}`)
     var config = serviceRetornarConfig(
       "put",
-      `${endPoints.ControllService}/stop/${id}?timeLeft=${data}`,
+      getStopServiceUrl(id,data),
       true
     );
-  
     try {
       return (await axios(config)).data;
     } catch (error) {
