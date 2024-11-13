@@ -11,7 +11,7 @@ const addNew = endPoints.urlNewSale+TenetId();
 export async function NewSale(data) {
     var config = serviceRetornarConfig(
       "post",
-      "https://pos-bff-production.up.railway.app/api/SalesOrder?tenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834",
+      "http://localhost:8005/api/SalesOrder"+TenetId(),
       data,
       true
     );
@@ -22,6 +22,8 @@ export async function NewSale(data) {
       return serviceRetornarErro(error);
     }
   }
+
+
   export async function createSaleOrder(clientId, employeerId, products, discount, payment) {
     // Configurações iniciais do pedido
     const saleOrder = {

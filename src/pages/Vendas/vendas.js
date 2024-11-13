@@ -40,9 +40,7 @@ const Vendas = ({ userRole }) => {
     fetchData();
   }, []);
 
-  if (userRole !== 'admin') {
-    return <center><div>Acesso negado</div></center>;
-  }
+
 
   const addItemToOrder = (product, quantity, calculatedTotal) => {
     const itemWithQuantity = { ...product, quantity, valorTotal: calculatedTotal };

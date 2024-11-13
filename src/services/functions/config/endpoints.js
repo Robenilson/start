@@ -6,7 +6,7 @@ var backHost =
     var backHost2 =
     process.env.REACT_APP_BACKEND_HOST != null
       ? process.env.REACT_APP_BACKEND_HOST
-      : "https://pos-bff-production.up.railway.app";
+      : "http://localhost:8005";
 
 
 
