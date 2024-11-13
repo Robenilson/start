@@ -1,11 +1,14 @@
 import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro,TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
+const user = JSON.parse(localStorage.getItem('user'));
+
 
 const listAll_URL = endPoints.URL_GET_PRODUCT_ALL_PRODUCT+TenetId();
 const addNew_URL  = endPoints.URL_POST_NEW_PRODUCT+TenetId();
-const edit_Url    =`${ endPoints.URL_PUT_SERVICE}${TenetId()}`;
+const edit_Url    =`${ endPoints.URL_PUT_PRODUCT}${TenetId()}`;
 const delete_Url  =`${endPoints.URL_DELETE_PRODUCT}${TenetId()}`
+const deleteProductUrl = (id) => `${endPoints.URL_DELETE_PRODUCT}?id=${id}&TenantId=${user.TenantId}`;
 
 
 //Faz um get na tabela Produtos 
@@ -26,7 +29,7 @@ const delete_Url  =`${endPoints.URL_DELETE_PRODUCT}${TenetId()}`
           quantidade: product.quantity || 0,
           descricao: product.description,
         }));
-   //      return product;
+        return removeSingleQuotesFromList(product);
       } else {
        console.error("Dados recebidos não são válidos:", response.data);
       }
@@ -36,7 +39,40 @@ const delete_Url  =`${endPoints.URL_DELETE_PRODUCT}${TenetId()}`
     
   }
 
+  function removeSingleQuotesFromList(objList) {
+    return objList.map(obj => {
+      const newObj = {};
+  
+      for (const [key, value] of Object.entries(obj)) {
+        if (typeof value === 'string') {
+          newObj[key] = value.replace(/'/g, ""); // Remove aspas simples
+        } else {
+          newObj[key] = value;
+        }
+      }
+  
+      return newObj;
+    });
+  }
 
+  export function createProductObject(productValues) {
+    try {
+      const data = {
+        id:  "3fa85f64-5717-4562-b3fc-2c963f66afa6",           // ID do produto, ou string vazia se indefinido
+        name: productValues.name?.toString() || '',       // Nome do produto
+        description: productValues.description?.toString() || '', // Descrição do produto
+        price: parseFloat(productValues.price) || 0,      // Preço, convertido para número, padrão 0
+        quantity: parseInt(productValues.quantity) || 0,  // Quantidade, convertida para número, padrão 0
+        dueDate: productValues.dueDate || new Date().toISOString(), // Data de vencimento ou data atual
+        barCode: productValues.barCode?.toString() || 'uuuuuu'  // Código de barras
+      };
+      
+      return data;
+    } catch (error) {
+      console.error('Erro ao montar objeto do produto:', error);
+      throw error;
+    }
+  }
   
 
 export async function newProduct(data) {
@@ -47,6 +83,7 @@ export async function newProduct(data) {
     true
   );
   try {
+    console.log(data)
     return await axios(config);
   } catch (error) {
     return serviceRetornarErro(error);
@@ -55,14 +92,14 @@ export async function newProduct(data) {
 
 
 //Apagar um novo Produto
-export async function DeleteProduct(data) {
+export async function DeleteProduct(id) {
   var config = serviceRetornarConfig(
-    "delete",
-    delete_Url,
-    data,
+    "DELETE",
+    deleteProductUrl(id),
     true
   );
   try {
+    console.log( deleteProductUrl(id))
     return (await axios(config)).data;
   } catch (error) {
     return serviceRetornarErro(error);
@@ -87,15 +124,20 @@ export async function createDataProductEdit(produtoValues) {
 
 export async function editProduct(data) {
   const config = serviceRetornarConfig(
-    "put",
-    edit_Url,
-    data,
-    true
+    "PUT",           
+    "https://pos-bff-production.up.railway.app/api/SalesProduct/editProduct?TenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834", // URL da API
+    data, // Dados do produto que será editado
+    true // Se você precisa passar tokens ou cabeçalhos adicionais
   );
+
   try {
     const response = await axios(config);
-    return response.data;
+
+    
+    return axios.put("https://pos-bff-production.up.railway.app/api/SalesProduct/editProduct?TenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834",data);
+
   } catch (error) {
+    console.error('Erro ao editar o produto:', error);
     return serviceRetornarErro(error);
   }
 }

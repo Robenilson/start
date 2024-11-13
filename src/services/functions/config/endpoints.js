@@ -6,7 +6,7 @@ var backHost =
     var backHost2 =
     process.env.REACT_APP_BACKEND_HOST != null
       ? process.env.REACT_APP_BACKEND_HOST
-      : "http://localhost:8005";
+      : "https://pos-bff-production.up.railway.app";
 
 
 
@@ -14,7 +14,7 @@ var backHost =
 const  URL_PRODUCT = "/api/SalesProduct";
 const  URL_CASHIER_ORDER ="/api/CashierOrder";
 const  URL_CONTROLL_SERVICE ="/api/ControllService";
-const  URL_USER ="/api/User";
+const  URL_USER ="/api/CompanyEmployeer";
 
 export const endPoints = {
 

@@ -17,7 +17,6 @@ const delete_ByID  =    (data) =>  `${endPoints.URL_DELETE_UserByid}/${data}`
 
 
 
-//Faz um get na tabela Produtos 
 export async function FetchUser() {
   const config = serviceRetornarConfig(
     "get",
@@ -27,9 +26,11 @@ export async function FetchUser() {
   try {
     const response = await axios(config);
     const users = response.data;
-    const updatedUsers = users.map(user => UpdateDataObjectUser(user));
-    return updatedUsers;
 
+    // Usa Promise.all para resolver todas as Promises retornadas por UpdateDataObjectUser
+    const updatedUsers = await Promise.all(users.map(user => UpdateDataObjectUser(user)));
+
+    return updatedUsers; // Retorna a lista de objetos já resolvida
   } catch (error) {
     return serviceRetornarErro(error);
   }
@@ -37,7 +38,7 @@ export async function FetchUser() {
 
   export async function UpdateDataObjectUser(user) {
     try {
-      const data = {
+      const  data = {
         id: user.id || 0,  // Se id não for fornecido, define como 0
         nome: user.nome?.toString() ?? '',
         sobrenome: user.sobrenome?.toString() ?? '',
@@ -50,7 +51,7 @@ export async function FetchUser() {
         roleIds: [ "3fa85f64-5717-4562-b3fc-2c963f66afa6"],  // Mantendo este valor como está
       };
   
-      return data;
+      return  data;
     } catch (error) {
       console.error('Erro ao converter dados:', error);
       throw error;
@@ -201,27 +202,41 @@ export async function NewUser(data) {
   export async function createDataObjectUser(userValues) {
     try {
       const data = {
-
-        id: 0,  // Adiciona o campo 'id' conforme a especificação
-        nome: userValues.nome?.toString() ?? '',
-        sobrenome: userValues.sobrenome?.toString() ?? '',
-        dtNascimento: userValues.dataNascimento?.toString() ?? '',
-        email: userValues.email?.toString() ?? '',
-        cpf: userValues.cpf?.toString() ?? '',
-        phone: userValues.telefone?.toString() ?? '',
-        userType: parseInt(userValues.role) || 1 ,  // Define o 'userType' conforme especificado
-        address: {
-          id: 0,  // Adiciona o campo 'id' conforme a especificação
-          zipCode: userValues.endereco.cep?.toString() ?? '',
-          cityName: userValues.endereco.cidade?.toString() ?? '',
-          state: userValues.endereco.estado?.toString() ?? '',
-          road: userValues.endereco.bairro?.toString() ?? '',
-          number: userValues.endereco.numero ? parseInt(userValues.endereco.numero) : parseInt(0),
-        },
-        roleIds: [ "3fa85f64-5717-4562-b3fc-2c963f66afa6"],
-        password: userValues.password?.toString() ?? '',
-      };
+        id: userValues.id?.toString() || '', // ID dinâmico do usuário
+        nome: userValues.nome?.toString() || '',
+        sobrenome: userValues.sobrenome?.toString() || '',
+        email: userValues.email?.toString() || '',
+        cpf: userValues.cpf?.toString() || '',
+        phone: userValues.telefone?.toString() || '',
+        userType: parseInt(userValues.role) || 1, // Valor padrão como 1 se role for indefinido
+        passwordHash: userValues.password?.toString() || '',
+        roleIds: userValues.roleIds || [], // Array de IDs de roles vindo de userValues
+        storeId: userValues.storeId?.toString() || '', // ID da loja do usuário
   
+        store: {
+          id: userValues.store?.id?.toString() || '',
+          name: userValues.store?.name?.toString() || '',
+          companyId: userValues.store?.companyId?.toString() || '',
+          
+          company: {
+            id: userValues.store?.company?.id?.toString() || '',
+            name: userValues.store?.company?.name?.toString() || '',
+            cnpj: userValues.store?.company?.cnpj?.toString() || '',
+            tenantId: userValues.store?.company?.tenantId?.toString() || '',
+            createdAt: userValues.store?.company?.createdAt || new Date().toISOString(),
+            updatedAt: userValues.store?.company?.updatedAt || new Date().toISOString(),
+            stores: userValues.store?.company?.stores || []
+          },
+          
+          createdAt: userValues.store?.createdAt || new Date().toISOString(),
+          updatedAt: userValues.store?.updatedAt || new Date().toISOString()
+        },
+  
+        createdAt: userValues.createdAt || new Date().toISOString(),
+        updatedAt: userValues.updatedAt || new Date().toISOString(),
+        inative: userValues.inative ?? false // Define como false se inative não estiver definido
+      };
+      
       return data;
     } catch (error) {
       console.error('Erro ao converter dados:', error);

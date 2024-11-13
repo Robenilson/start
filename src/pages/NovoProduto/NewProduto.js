@@ -14,7 +14,8 @@ import {
   newProduct,
   fetchProduct,
   DeleteProduct,
-  editProduct
+  editProduct,
+  createProductObject
 } from '../../services/functions/RequestProduct';
 
 import ConfirmationModal from './component/ConfirmationModal';
@@ -64,6 +65,7 @@ const NewCadastro = () => {
     setLoading(true);
     try {
       const data = await fetchProduct();
+      console.log(data)
       setProdutos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error updating products:', error);
@@ -128,8 +130,8 @@ const NewCadastro = () => {
       dueDate:produtoValues.dueDate,
     };
 
-
-    await newProduct(data);
+    const newdata= createProductObject(data);
+    await newProduct(newdata);
     await updateTabelProduct();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
@@ -174,7 +176,7 @@ const NewCadastro = () => {
   };
 
   const confirmDeleteProdutoHandler = async () => {
-    await DeleteProduct(confirmDeleteProduto.produto);
+    await DeleteProduct(confirmDeleteProduto.produto.id);
     await updateTabelProduct();
     setConfirmDeleteProduto({ show: false, produto: null });
   };
@@ -240,7 +242,10 @@ const NewCadastro = () => {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
-    await editProduct(data);
+    const newData = createProductObject(data)
+    //console.log(newData)
+    const a =await editProduct(newData);
+    console.log("a"+a)
     await updateTabelProduct();
     
   };
