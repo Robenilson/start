@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tabs, Tab, Form, Alert, Modal, Pagination } from 'react-bootstrap';
 import Card from '../../components/Card';
-import ModalComponent from '../../components/ModalComponet';
+import ModalComponent from '../../components/ModalComponet'; // Corrigido o nome do import
 import UserForm from './componente/UserForm';
-import UserTable from './componente/UserTable';
-import '../../App.css';
-import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser } from '../../services/functions/RequestPeople';
+import Tabela from '../../components/GenericTabel'; // Substituição de UserTable por Tabela
+import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser, createUpdatedDataObjectUser } from '../../services/functions/RequestPeople';
+import LoadingModal from '../../components/LoadingModal';
 
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [pessoas, setPessoas] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [userValues, setUserValues] = useState({
     id: '',
     nome: '',
@@ -20,9 +20,7 @@ const UserManager = () => {
     dataNascimento: '',
     cpf: '',
     telefone: '',
-    usertype: '',
     endereco: {
-      id: 0,
       cep: '',
       cidade: '',
       estado: '',
@@ -38,23 +36,30 @@ const UserManager = () => {
   const [itemsPerPage] = useState(15);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showCreditosModal, setShowCreditosModal] = useState(false);
 
-  const columns = ['#', 'Nome', 'Sobrenome', 'Email', 'Data de Nascimento', 'CPF', 'Telefone', 'Role'];
+  // Configuração de colunas para o componente Tabela
+  const columns = [
+    { key: 'nome', label: 'Nome' },
+    { key: 'sobrenome', label: 'Sobrenome' },
+    { key: 'email', label: 'Email' },
+    { key: 'cpf', label: 'CPF' },
+    { key: 'telefone', label: 'Telefone' },
+    { key: 'role', label: 'Role' }
+  ];
 
-  const getRoleName = (userType) => {
-    switch (userType) {
-      case 'Cliente':
-        return 1;
-      case 'Admin':
-        return 2;
-      case 'Vendedor':
-        return 3;
-      case 'Caixa':
-        return 4;
-      default:
-        return userType;
-    }
-  };
+  const actions = [
+    {
+      label: 'Editar',
+      className: 'edit-btn',
+      onClick: (user) => handleEditUserData(user),
+    },
+    {
+      label: 'Excluir',
+      className: 'delete-btn',
+      onClick: (user) => handleShowDeleteModal(user),
+    },
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -99,45 +104,30 @@ const UserManager = () => {
   };
 
   const handleCloseModal = () => setShowModal(false);
-  const handleEdtUser = async () => {
-      const dataObject = {
-        id: userValues.id.toString() ?? 0,
-        nome: userValues.nome.toString() ?? '',
-        sobrenome: userValues.sobrenome.toString() ?? '',
-        dtNascimento: userValues.dataNascimento.toString() ?? '',
-        email: userValues.email.toString() ?? '',
-        cpf: userValues.cpf.toString() ?? '',
-        phone: userValues.telefone.toString() ?? '',
-        userType: parseInt(getRoleName(userValues.role)) ?? parseInt(0),
-        address: {
-          id: parseInt(0),
-          zipCode: userValues.endereco.cep.toString() ?? '',
-          cityName: userValues.endereco.cidade.toString() ?? '',
-          state: userValues.endereco.estado.toString() ?? '',
-          road: userValues.endereco.bairro.toString() ?? '',
-          number: parseInt(userValues.endereco.numero) || 0,
-        },
-        roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
-        password: userValues.password.toString() ?? ''
-      };
 
-      await editUser(dataObject);
-    
-    await updateUsers();
+  const handleEditUser = async () => {
+    const dataObject = await createUpdatedDataObjectUser(userValues);
     handleCloseModal();
+    setLoading(true);  
+    await editUser(dataObject);
+    await updateUsers();
+    setLoading(false);
   };
 
   const handleAddUser = async () => {
     handleCloseModal();
+    setLoading(true);
     const newDataUser = await createDataObjectUser(userValues);
+    console.log(newDataUser)
     await NewUser(newDataUser);
     await updateUsers();
     setShowSuccessModal(true);
+    setLoading(false);
   };
 
   const handleCloseSuccessModal = () => setShowSuccessModal(false);
 
-  const handleEditUser = async (userData) => {
+  const handleEditUserData = async (userData) => {
     setUserValues({
       id: userData.id ?? '',
       nome: userData.nome ?? '',
@@ -147,7 +137,6 @@ const UserManager = () => {
       cpf: userData.cpf ?? '',
       telefone: userData.telefone ?? '',
       endereco: {
-        id: 0,
         cep: userData.endereco?.cep ?? '',
         cidade: userData.endereco?.cidade ?? '',
         estado: userData.endereco?.estado ?? '',
@@ -163,6 +152,7 @@ const UserManager = () => {
 
   const handleDeleteUser = async () => {
     setShowDeleteModal(false);
+    setLoading(true);
     if (userToDelete) {
       await deleteUserByID(userToDelete.id);
       await updateUsers();
@@ -171,6 +161,7 @@ const UserManager = () => {
     } else {
       console.error('Objeto de usuário inválido:', userToDelete);
     }
+    setLoading(false);
   };
 
   const handleShowDeleteModal = (user) => {
@@ -183,165 +174,94 @@ const UserManager = () => {
     setShowDeleteModal(false);
   };
 
+  const handleCreditos = () => {
+    setShowCreditosModal(true);
+  };
+
+  const handleCloseCreditosModal = () => {
+    setShowCreditosModal(false);
+  };
+
   useEffect(() => {
     updateUsers();
   }, []);
 
   const updateUsers = async () => {
-    try {
-      const data = await FetchUser();
-      if (data && Array.isArray(data)) {
-        const users = data.map((user) => {
-          let roleName = '';
-          switch (user.userType) {
-            case 1:
-              roleName = 'Cliente';
-              break;
-            case 2:
-              roleName = 'Admin';
-              break;
-            case 3:
-              roleName = 'Vendedor';
-              break;
-            case 4:
-              roleName = 'Caixa';
-              break;
-            default:
-              roleName = 'Unknown';
-          }
-
-          return {
-            id: user.id,
-            nome: user.nome,
-            sobrenome: user.sobrenome,
-            email: user.email,
-            dataNascimento: user.dtNascimento,
-            cpf: user.cpf,
-            telefone: user.phone,
-            role: roleName,
-            passwordHash: user.passwordHash
-          };
-        });
-
-        setPessoas(users);
-      } else {
-        console.error('Dados recebidos não são válidos:', data);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-    }
+    setLoading(true);
+    const result = await FetchUser();
+  
+    const users = Array.isArray(result) ? result : []; // Garante que users seja um array, mesmo que FetchUser retorne algo inesperado
+  
+    console.log(users); // Log para verificar o conteúdo de users
+  
+    // Passa o array de usuários para o estado `pessoas`
+    setPessoas(users);
+  
+    setLoading(false);
   };
+  const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const filteredUsers = pessoas.filter((user) =>
+    user.nome.toLowerCase().includes(searchTerm.toLowerCase()) || user.sobrenome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const getCurrentItems = () => {
-    const filteredPessoas = pessoas.filter((pessoa) =>
-      pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return filteredPessoas.slice(indexOfFirstItem, indexOfLastItem);
-  };
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
 
   const renderPagination = () => {
     const pageNumbers = [];
-    const totalItems = pessoas.filter((pessoa) =>
-      pessoa.nome.toLowerCase().includes(searchTerm.toLowerCase())
-    ).length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <Pagination.Item key={i} active={i === currentPage} onClick={() => paginate(i)}>
-          {i}
-        </Pagination.Item>
-      );
+    for (let i = 1; i <= Math.ceil(filteredUsers.length / itemsPerPage); i++) {
+      pageNumbers.push(i);
     }
-
-    return <Pagination>{pageNumbers}</Pagination>;
+    return (
+      <div className="pagination">
+        {pageNumbers.map((number) => (
+          <div key={number} className={`page-item ${number === currentPage ? 'active' : ''}`} onClick={() => setCurrentPage(number)}>
+            {number}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
     <Card>
-      <div className="card-header">Gerenciamento de Usuários</div>
-      <div className="card-body">
-        <Button variant="primary" onClick={handleShowModal}>
-          Cadastrar Pessoa
-        </Button>
-        <ModalComponent show={showModal} onHide={handleCloseModal} title={isEditMode ? "Editar Pessoa" : "Cadastrar Pessoa"} hideButtons="true">
-          <UserForm
-            userValues={userValues}
-            handleInputChange={handleInputChange}
-            handleClose={handleCloseModal}
-            save={handleAddUser}
-            edit={handleEdtUser}
-            isEditMode={isEditMode}
-          />
+      <div className="user-manager-container">
+        <center>
+          <button type="button" className="btn primary-btn" onClick={handleShowModal}>
+            Cadastrar Pessoa
+          </button>
+        </center>
+
+        <ModalComponent show={showModal} onHide={handleCloseModal} hideButtons="true" title={isEditMode ? "Editar Pessoa" : "Cadastrar Pessoa"}>
+          <UserForm userValues={userValues} handleInputChange={handleInputChange} handleClose={handleCloseModal} save={handleAddUser} edit={handleEditUser} isEditMode={isEditMode} />
         </ModalComponent>
 
-        <Form.Group controlId="formSearch">
-          <Form.Control
-            type="text"
-            placeholder="Buscar pessoa por nome"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-        </Form.Group>
+        <center>
+          <div className="form-group input-pequeno respon">
+            <input className="form-control" type="text" placeholder="Pesquisar por nome ou sobrenome" value={searchTerm} onChange={handleSearchChange} />
+          </div>
+        </center>
 
-        {showSuccessMessage && (
-          <Alert variant="success" onClose={() => setShowSuccessMessage(false)} dismissible>
-            Usuário excluído com sucesso!
-          </Alert>
-        )}
+        <Tabela columns={columns} data={currentItems} actions={actions} />
 
-        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirmação de Exclusão</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Tem certeza de que deseja excluir o usuário {userToDelete && `${userToDelete.nome} ${userToDelete.sobrenome}`}?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseDeleteModal}>
-              Cancelar
-            </Button>
-            <Button variant="danger" onClick={handleDeleteUser}>
-              Excluir
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal show={showSuccessModal} onHide={handleCloseSuccessModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Sucesso</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Usuário cadastrado com sucesso!
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={handleCloseSuccessModal}>
-              Fechar
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Tabs defaultActiveKey="clientes" id="user-tabs" className="mt-3">
-          <Tab eventKey="clientes" title="Clientes">
-            <UserTable
-              users={getCurrentItems()}
-              columns={columns}
-              onEdit={handleEditUser}
-              onDelete={handleShowDeleteModal}
-            />
-            {renderPagination()}
-          </Tab>
-        </Tabs>
+        {renderPagination()}
       </div>
+      <ModalComponent show={showDeleteModal} onHide={handleCloseDeleteModal} hideButtons="true" title="Excluir Usuário">
+        <div className="modal-delete">
+          <p>Tem certeza que deseja excluir este usuário?</p>
+          <div className="delete-modal-buttons">
+            <button type="button" className="btn secondary-btn" onClick={handleCloseDeleteModal}>
+              Cancelar
+            </button>
+            <button type="button" className="btn delete-btn" onClick={handleDeleteUser}>
+              Excluir
+            </button>
+          </div>
+        </div>
+      </ModalComponent>
+      <LoadingModal show={loading} />
     </Card>
   );
 };

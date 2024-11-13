@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Row, Col, Button } from 'react-bootstrap';
 
 const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEditMode }) => {
   const [isFormValid, setIsFormValid] = useState(false);
@@ -13,186 +12,220 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
     setIsFormValid(checkFormValidity());
   }, [userValues]);
 
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (`0${date.getMonth() + 1}`).slice(-2);
+    const day = (`0${date.getDate()}`).slice(-2);
+    return `${year}-${month}-${day}`;
+  };
+
   return (
-    <Form>
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formNome">
-          <Form.Label>Nome</Form.Label>
-          <Form.Control
+    <form>
+      <div className="form-row mb-3">
+        <div className="form-group col">
+          <label htmlFor="formNome">Nome</label>
+          <input
             type="text"
+            id="formNome"
             name="nome"
             value={userValues.nome || ''}
             onChange={handleInputChange}
             required
+            className="form-control"
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group as={Col} controlId="formSobrenome">
-          <Form.Label>Sobrenome</Form.Label>
-          <Form.Control
+        <div className="form-group col">
+          <label htmlFor="formSobrenome">Sobrenome</label>
+          <input
             type="text"
+            id="formSobrenome"
             name="sobrenome"
             value={userValues.sobrenome || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
-      </Row>
+        </div>
+      </div>
 
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formEmail">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
+      <div className="form-row mb-3">
+        <div className="form-group col">
+          <label htmlFor="formEmail">Email</label>
+          <input
             type="email"
+            id="formEmail"
             name="email"
             value={userValues.email || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group as={Col} controlId="formDataNascimento">
-          <Form.Label>Data de Nascimento</Form.Label>
-          <Form.Control
+        <div className="form-group col">
+          <label htmlFor="formDataNascimento">Data de Nascimento</label>
+          <input
             type="date"
+            id="formDataNascimento"
             name="dataNascimento"
-            value={userValues.dataNascimento || ''}
+            value={formatDate(userValues.dataNascimento)}
             onChange={handleInputChange}
             required
+            className="form-control"
           />
-        </Form.Group>
-      </Row>
+        </div>
+      </div>
 
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formCpf">
-          <Form.Label>CPF</Form.Label>
-          <Form.Control
+      <div className="form-row mb-3">
+        <div className="form-group col">
+          <label htmlFor="formCpf">CPF</label>
+          <input
             type="text"
+            id="formCpf"
             name="cpf"
             value={userValues.cpf || ''}
             onChange={handleInputChange}
             required
+            className="form-control"
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group as={Col} controlId="formTelefone">
-          <Form.Label>Telefone</Form.Label>
-          <Form.Control
+        <div className="form-group col">
+          <label htmlFor="formTelefone">Telefone</label>
+          <input
             type="text"
+            id="formTelefone"
             name="telefone"
             value={userValues.telefone || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
-      </Row>
+        </div>
+      </div>
 
-      <Row className="mb-3">
-        <Form.Group controlId="formPassword">
-          <Form.Label>Senha</Form.Label>
-          <Form.Control
+      <div className="form-row mb-3">
+        <div className="form-group">
+          <label htmlFor="formPassword">Senha</label>
+          <input
             type="password"
+            id="formPassword"
             name="password"
             value={userValues.password || ''}
             onChange={handleInputChange}
             placeholder="Digite a senha"
+            className="form-control"
           />
-        </Form.Group>
-      </Row>
+        </div>
+      </div>
 
       <h5>Endereço</h5>
 
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formCep">
-          <Form.Label>CEP</Form.Label>
-          <Form.Control
+      <div className="form-row mb-3">
+        <div className="form-group col">
+          <label htmlFor="formCep">CEP</label>
+          <input
             type="text"
+            id="formCep"
             name="endereco.cep"
             value={userValues.endereco?.cep || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group as={Col} controlId="formCidade">
-          <Form.Label>Cidade</Form.Label>
-          <Form.Control
+        <div className="form-group col">
+          <label htmlFor="formCidade">Cidade</label>
+          <input
             type="text"
+            id="formCidade"
             name="endereco.cidade"
             value={userValues.endereco?.cidade || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
-      </Row>
+        </div>
+      </div>
 
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formEstado">
-          <Form.Label>Estado</Form.Label>
-          <Form.Control
+      <div className="form-row mb-3">
+        <div className="form-group col">
+          <label htmlFor="formEstado">Estado</label>
+          <input
             type="text"
+            id="formEstado"
             name="endereco.estado"
             value={userValues.endereco?.estado || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
+        </div>
 
-        <Form.Group as={Col} controlId="formBairro">
-          <Form.Label>Bairro</Form.Label>
-          <Form.Control
+        <div className="form-group col">
+          <label htmlFor="formBairro">Bairro</label>
+          <input
             type="text"
+            id="formBairro"
             name="endereco.bairro"
             value={userValues.endereco?.bairro || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
-      </Row>
+        </div>
+      </div>
 
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formNumero">
-          <Form.Label>Número</Form.Label>
-          <Form.Control
+      <div className="form-row mb-3">
+        <div className="form-group col">
+          <label htmlFor="formNumero">Número</label>
+          <input
             type="text"
+            id="formNumero"
             name="endereco.numero"
             value={userValues.endereco?.numero || ''}
             onChange={handleInputChange}
+            className="form-control"
           />
-        </Form.Group>
-      </Row>
+        </div>
+      </div>
 
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formRole">
-          <Form.Label>Tipo de Usuário</Form.Label>
-          <Form.Control
-            as="select"
+      <div className="form-row mb-3">
+        <div className="form-group col">
+          <label htmlFor="formRole">Tipo de Usuário</label>
+          <select
+            id="formRole"
             name="role"
-            value={userValues.role || "1"} // Define "Cliente" como a opção padrão
+            value={userValues.role || "1"}
             onChange={handleInputChange}
             required
+            className="form-control"
           >
             <option value="1">Cliente</option>
             <option value="2">Admin</option>
             <option value="3">Vendedor</option>
             <option value="4">Caixa</option>
-          </Form.Control>
-        </Form.Group>
-      </Row>
+          </select>
+        </div>
+      </div>
 
-      <Row className="mt-4">
-        <Col>
-          <Button variant="secondary" onClick={handleClose}>
+      <div className="form-row mt-4">
+        <div className="col">
+          <button type="button" onClick={handleClose} className="btn btn-secondary">
             Fechar
-          </Button>
-        </Col>
-        <Col className="text-end">
+          </button>
+        </div>
+        <div className="col text-end">
           {!isEditMode && (
-            <Button variant="primary" onClick={save} disabled={!isFormValid}>
+            <button type="button" onClick={save} disabled={!isFormValid} className="btn btn-primary">
               Cadastrar
-            </Button>
+            </button>
           )}
           {isEditMode && (
-            <Button variant="success" onClick={edit} disabled={!isFormValid}>
+            <button type="button" onClick={edit} disabled={!isFormValid} className="btn btn-success">
               Editar
-            </Button>
+            </button>
           )}
-        </Col>
-      </Row>
-    </Form>
+        </div>
+      </div>
+    </form>
   );
 };
 

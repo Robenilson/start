@@ -5,6 +5,8 @@ import { loginUser } from "../../services/functions/RequestLogin";
 import { useNavigate } from 'react-router-dom';
 import { urls } from "../../services/functions/config/urls";
 import { jwtDecode } from 'jwt-decode'; // Atualização na importação
+import LoadingModal from '../../components/LoadingModal';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -17,7 +19,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError('');       
 
     try {
       const vRetorno = await loginUser(email, password); // Call renamed function
@@ -41,7 +43,8 @@ const Login = () => {
 
   return (
     <Card>
-      <div className="card-header">Login</div>
+      <div className="  user-manager-container">
+      <div className="titles">Login</div>
       <div className="card-body">
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleSubmit}>
@@ -73,8 +76,11 @@ const Login = () => {
             </button>
           </div>
         </form>
+        <LoadingModal show={loading} />
+      </div>
       </div>
     </Card>
+    
   );
 };
 

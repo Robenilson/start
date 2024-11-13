@@ -1,9 +1,8 @@
 import React from 'react';
-import { Table } from 'react-bootstrap';
 
 const ServicosUtilizadosTab = ({ servicosUtilizados }) => {
   return (
-    <Table striped bordered hover className="mt-3">
+    <table className="tabela-servicos mt-3">
       <thead>
         <tr>
           <th>Nome do Serviço</th>
@@ -22,7 +21,7 @@ const ServicosUtilizadosTab = ({ servicosUtilizados }) => {
           </tr>
         ))}
       </tbody>
-    </Table>
+    </table>
   );
 };
 

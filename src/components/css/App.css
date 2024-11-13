@@ -1,0 +1,695 @@
+/* Containers gerais */
+.user-manager-container,
+.modal-content,
+.creditos-modal,
+.menu-container,
+.menu-modal-body,
+.grid-item {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.user-manager-container:hover,
+.modal-content:hover,
+.creditos-modal:hover,
+.menu-container:hover,
+.menu-modal-body:hover,
+.grid-item:hover {
+  background-color: #2d2d2d;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+
+
+
+
+
+
+
+.detalhes{ 
+  color: red;
+}
+
+
+ 
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Sobreposição escura */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+/* Estilo do conteúdo do modal */
+.modal-content {
+  background-color: #1e1e1e; /* Fundo escuro */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  width: 80%; /* Ajuste a largura para ser mais responsiva */
+  max-width: 1000px; /* Limite máximo para telas grandes */
+  max-height: 80vh; /* Limite máximo de altura para garantir que não ultrapasse a tela */
+  overflow-y: auto; /* Permite rolagem caso o conteúdo ultrapasse a altura máxima */
+  transition: background-color 0.3s, box-shadow 0.3s;
+  color: #ff0000; /* Fonte vermelha */
+}
+/* Efeito de hover para o conteúdo do modal */
+.modal-content:hover {
+  background-color: #2d2d2d;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+body {
+  background-color: #121212; /* Fundo escuro para toda a página */
+  color: #ffffff; /* Texto principal em branco */
+  font-family: Arial, sans-serif;
+}
+
+.detalhes-pedido {
+  background-color: #1e1e1e; /* Fundo do modal em um tom mais claro de preto */
+  border-radius: 8px; /* Bordas arredondadas */
+  padding: 15px; /* Diminui o padding interno do modal */
+  width: 100%;
+  max-width: 400px; /* Reduz a largura máxima do modal */
+  margin: 0 auto;
+  color: #00ff00; /* Cor principal do texto em verde */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Sombra sutil para dar destaque */
+  border: none; /* Remove a borda */
+}
+
+.detalhes-pedido h5 {
+  color: #ff0000; /* Título em vermelho */
+  margin-bottom: 10px; /* Diminui o espaço inferior */
+}
+
+.detalhes-pedido p {
+  margin: 8px 0; /* Reduz o espaçamento entre parágrafos */
+  color: #00ff00; /* Texto em verde */
+}
+
+.detalhes-pedido .form-group {
+  margin-bottom: 12px; /* Reduz o espaçamento entre os grupos de formulário */
+}
+
+.detalhes-pedido label {
+  display: block;
+  margin-bottom: 5px;
+  color: #00ff00; /* Cor do label em verde */
+}
+
+.detalhes-pedido select,
+.detalhes-pedido input {
+  width: 100%;
+  padding: 8px; /* Reduz o padding dos inputs */
+  margin-bottom: 8px; /* Reduz o espaço inferior dos inputs */
+  border: 1px solid #00ff00; /* Borda em verde */
+  border-radius: 4px;
+  background-color: #121212; /* Fundo dos inputs escuro */
+  color: #00ff00; /* Texto dos inputs em verde */
+}
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px; /* Reduz o espaçamento acima dos botões */
+}
+
+.actions .btn {
+  padding: 8px 16px; /* Reduz o padding dos botões */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  color: #ffffff; /* Texto dos botões em branco */
+}
+
+.actions .btn.cancel {
+  background-color: #ff0000; /* Fundo do botão de cancelamento em vermelho */
+}
+
+.actions .btn.confirm {
+  background-color: #00ff00; /* Fundo do botão de confirmação em verde */
+}
+
+.actions .btn:hover {
+  opacity: 0.8; /* Efeito hover para os botões */
+}
+
+/* Estilo da cabeçalho do modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h5  {
+  margin: 0;
+  color: #ff0000; /* Fonte vermelha */
+}
+
+/* Botão de fechar */
+.close-button {
+  background: none;
+  border: none;
+  color: #ff0000; /* Fonte vermelha */
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+
+.titles{
+  color:  #39ff14; /* Vermelho mais claro no hover */
+
+}
+
+
+.close-button:hover {
+  color: #ff4d4d; /* Vermelho mais claro no hover */
+}
+
+/* Estilo dos botões dentro do modal */
+.modal-footer .btn {
+  padding: 10px 20px ;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 20px;
+  transition: background 0.3s, transform 0.3s;
+
+}
+
+.modal-footer .btn-secondary {
+  background: #757575;
+}
+
+.modal-footer .btn-secondary:hover {
+  background: #616161;
+  transform: scale(1.05);
+}
+
+.modal-footer .btn-primary {
+  background: #00eaff;
+}
+
+.modal-footer .btn-primary:hover {
+  background: #00b2e6;
+  transform: scale(1.05);
+}
+
+.modal-footer .btn-danger {
+  background: #e53935;
+}
+
+.modal-footer .btn-danger:hover {
+  background: #c62828;
+  transform: scale(1.05);
+}
+
+/* Estilo Geral para o Container Principal */
+.user-manager-container {
+background-color: #1e1e1e; /* Fundo escuro */
+padding: 20px;
+border-radius: 12px;
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.user-manager-container:hover {
+background-color: #2d2d2d; /* Escurecimento no hover */
+box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Botão Principal */
+.btn {
+font-family: Arial, Helvetica, sans-serif;
+color: #1e1e1e;
+padding: 10px 20px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 1rem;
+transition: background-color 0.3s, transform 0.3s;
+}
+
+
+
+/* Botão de Cadastrar Pessoa */
+.primary-btn {
+background-color: #39ff14; /* Azul neon */
+margin-top: 10px;
+margin-right: 15px;
+margin-left: 25px;
+margin-bottom: 15px;  
+}
+
+.secondary-btn {
+background-color: #07c5d6; /* Azul neon */
+margin-top: 10px;
+margin-right: 15px;
+margin-left: 25px;
+margin-bottom: 15px;  
+}
+
+.primary-btn:hover {
+background-color: #ff4081; /* Cor de destaque */
+transform: scale(1.05); /* Efeito de escala ao passar o mouse */
+}
+
+.secondary-btn:hover {
+background-color: #ff4081; /* Cor de destaque */
+transform: scale(1.05); /* Efeito de escala ao passar o mouse */
+}
+
+
+/* Botões dentro do Modal */
+.modal-btn {
+background-color: #333; /* Cinza escuro */
+color: #fff;
+padding: 10px 15px;
+border-radius: 8px;
+cursor: pointer;
+font-size: 1rem;
+transition: background-color 0.3s, transform 0.3s;
+}
+
+.modal-btn:hover {
+background-color: #555; /* Cinza mais claro no hover */
+transform: scale(1.05);
+}
+
+/* Botão de Exclusão */
+.danger-btn {
+background-color: #ff4081; /* Cor de destaque */
+}
+
+.danger-btn:hover {
+background-color: #e7008a; /* Cor mais escura no hover */
+}
+
+/* Botão Secundário */
+.secondary-btn {
+background-color: #555; /* Cinza escuro */
+}
+
+.secondary-btn:hover {
+background-color: #777; /* Cinza mais claro no hover */
+}
+
+/* Formulário de Pesquisa */
+.form-group {
+margin-bottom: 20px;
+color: #39ff14;
+}
+
+.form-control {
+width: 100%;
+padding: 10px;
+border: 1px solid #333;
+border-radius: 8px;
+background-color: #2e2e2e;
+border-color: #45a04f;
+color:#45a049;
+transition: background-color 0.3s, border-color 0.3s;
+font-family: Arial, Helvetica, sans-serif;
+}
+
+.form-control::placeholder {
+color:#45a049;
+}
+
+.form-control:focus {
+background-color: #3e3e3e;
+color:#45a049;
+}
+/* Contêiner responsivo para tabelas */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* Ajustes na tabela */
+.user-table {
+  width: 100%;
+  min-width: 600px; /* Garante uma largura mínima */
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.user-table th,
+.user-table td {
+  padding: 8px; /* Reduz o padding para ganhar mais espaço */
+  border: 1px solid #333;
+  text-align: left;
+  color: #39ff14;
+  max-width: 200px; /* Define uma largura máxima para as células */
+  overflow: hidden; /* Esconde o conteúdo que ultrapassar a largura da célula */
+  text-overflow: ellipsis; /* Exibe '...' para texto que não cabe */
+  white-space: nowrap; /* Impede que o texto quebre para a linha seguinte */
+}
+
+.user-table th {
+  background-color: #333;
+  color: #00eaff;
+}
+
+.user-table input,
+.user-table button {
+  background-color: #333;
+  color: #00eaff;
+  font-size: 14px; /* Reduz um pouco o tamanho do texto */
+}
+
+/* Linhas pares */
+.user-table tr:nth-child(even) {
+  background-color: #2e2e2e;
+}
+
+/* Hover nas linhas */
+.user-table tr:hover {
+  background-color: #3e3e3e;
+}
+
+/* Ajuste específico para botões em telas pequenas */
+@media (max-width: 768px) {
+  .user-table th, .user-table td {
+    font-size: 12px; /* Reduz o tamanho da fonte em telas menores */
+    padding: 6px; /* Reduz o padding em telas menores */
+    max-width: 100px; /* Reduz a largura máxima das células em telas menores */
+  }
+
+  .user-table td button {
+    font-size: 12px;
+    padding: 4px 8px; /* Botão mais compacto */
+  }
+}
+
+.table-responsive {
+  overflow-x: auto; /* Habilita a rolagem horizontal */
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+
+/* Botões de Ação */
+.action-btn {
+background-color: #00eaff;
+color: #fff;
+padding: 5px 10px;
+border: none;
+border-radius: 8px;
+cursor: pointer;
+font-size: 0.9rem;
+transition: background-color 0.3s, transform 0.3s;
+margin: 2px;
+}
+
+.action-btn:hover {
+background-color: #00bfff; /* Azul mais claro no hover */
+transform: scale(1.05);
+}
+
+/* Botão de Editar */
+.edit-btn {
+background-color: #4caf50; /* Verde */
+}
+
+.edit-btn:hover {
+background-color: #45a049; /* Verde mais escuro no hover */
+}
+
+/* Botão de Excluir */
+.delete-btn {
+background-color: #ff4081; /* Cor de destaque */
+}
+
+.delete-btn:hover {
+background-color: #e7008a; /* Cor mais escura no hover */
+}
+
+/* Botão de Créditos */
+.credit-btn {
+background-color: #f0ad4e; /* Laranja */
+}
+
+.credit-btn:hover {
+background-color: #ec971f; /* Laranja mais escuro no hover */
+}
+
+/* Paginação */
+.pagination {
+display: flex;
+justify-content: center;
+margin-top: 20px;
+}
+
+.page-item {
+padding: 10px 15px;
+border: 1px solid #333;
+margin: 0 5px;
+cursor: pointer;
+transition: background-color 0.3s, color 0.3s;
+}
+
+.page-item.active {
+background-color: #00eaff;
+color: #fff;
+}
+
+.page-item:hover {
+background-color: #555;
+}
+
+/* Mensagem de Sucesso */
+.alert.success {
+background-color: #e7008a;
+color: #fff;
+padding: 15px;
+border-radius: 8px;
+text-align: center;
+}
+
+
+.notification-icon {
+position: relative;
+cursor: pointer;
+margin-left: 15px;
+}
+.notification-icon:hover {
+color: #ff4081; /* Cor de destaque */
+transform: scale(1.1); /* Efeito de escala ao passar o mouse */
+}
+
+.notification-count {
+position: absolute;
+top: -5px;
+right: -10px;
+background-color: red;
+color: white;
+border-radius: 50%;
+padding: 2px 6px;
+font-size: 12px;
+font-weight: bold;
+line-height: 1;
+}
+
+.notification-dropdown {
+background-color: #1e1e1e; /* Fundo escuro */
+color: red;
+font-family: Arial, Helvetica, sans-serif;
+font-size: small;
+position: absolute;
+top: 30px;
+right: 0;
+
+border: 1px solid #ccc;
+border-radius: 3px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+width: 400px;
+z-index: 1000;
+}
+
+.notification-dropdown ul {
+list-style-type: none;
+padding: 10px;
+margin: 50;
+}
+
+.notification-dropdown li {
+padding: 8px;
+border-bottom: 1px solid #ddd;
+}
+
+.notification-dropdown li:last-child {
+border-bottom: none;
+}
+
+
+
+.card-header{
+color: #39ff14; /* Verde neon */
+}
+/* Modal de Créditos */
+.creditos-modal {
+background-color: #1e1e1e;
+color: #fff;
+padding: 20px;
+border-radius: 12px;
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.creditos-modal p {
+margin: 0;
+}
+
+
+/* Estilo Geral para o Fundo da Página */
+body {
+background-color: #2d2d2d; /* Escurecimento no fundo */
+box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4); /* Sombra ao redor */
+margin: 0;
+font-family: Arial, sans-serif; /* Fonte padrão */
+font-size: 20px;
+}
+
+/* Estilo geral para o Menu */
+.menu-container {
+  background-color: #1e1e1e; /* Fundo escuro */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.menu-container:hover {
+  background-color: #2d2d2d; /* Escurecimento no hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Barra de navegação */
+.menu-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333; /* Cinza escuro com tom tecnológico */
+  padding: 12px 24px;
+  border-radius: 10px;
+  color: #00eaff; /* Azul neon */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.menu-nav:hover {
+  background-color: #444; /* Escurecimento no hover */
+}
+
+/* Estilo para o botão de toggle */
+.menu-toggle-btn {
+  background: none;
+  border: none;
+  color: #00eaff;
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.menu-toggle-btn:hover {
+  color: #ff4081; /* Cor de destaque */
+  transform: scale(1.1); /* Efeito de escala ao passar o mouse */
+}
+
+/* Container para o conteúdo da navegação e links */
+.menu-nav-content {
+  display: flex;
+  align-items: center;
+}
+
+/* Links de navegação */
+.menu-nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.menu-nav-links a {
+  color: #00eaff;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 600;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.menu-nav-links a:hover {
+  color: #ff4081; /* Cor de destaque */
+  text-shadow: 0 0 5px rgba(255, 64, 129, 0.8); /* Sombra de texto */
+}
+
+/* Estilo para o corpo da Modal */
+.menu-modal-body {
+  background-color: #2e2e2e; /* Fundo escuro */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.menu-modal-body:hover {
+  background-color: #3e3e3e; /* Escurecimento no hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) {
+  .menu-nav {
+    flex-direction: column; /* Alinha itens verticalmente */
+    align-items: flex-start; /* Alinha à esquerda */
+  }
+
+  .menu-nav-content {
+    width: 100%; /* Faz o conteúdo ocupar 100% da largura */
+    flex-direction: column; /* Empilha os itens verticalmente */
+  }
+
+  .menu-nav-links {
+    flex-direction: column; /* Alinha links verticalmente */
+    width: 100%; /* Faz a lista de links ocupar 100% da largura */
+  }
+
+  .menu-nav-links a {
+    margin: 10px 0; /* Margem vertical entre links */
+  }
+
+  .menu-toggle-btn {
+    margin-bottom: 10px; /* Espaçamento inferior para o botão de toggle */
+  }
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.grid-item {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #1e1e1e;
+}
+
+.grid-item:hover {
+  background-color: #2d2d2d;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}

@@ -3,7 +3,7 @@ import { NavLink } from 'react-bootstrap';
 
 const OptionNav = ({ url, name }) => {
   return (
-    <NavLink href={url}>{name}</NavLink>
+    <NavLink className='body' href={url}>{name}</NavLink>
   );
 };
 

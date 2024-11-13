@@ -1,66 +1,80 @@
 var backHost =
   process.env.REACT_APP_BACKEND_HOST != null
     ? process.env.REACT_APP_BACKEND_HOST
-    : "http://localhost:44363";
+    : "https://authenticationapi-production-9b49.up.railway.app";
 
+    var backHost2 =
+    process.env.REACT_APP_BACKEND_HOST != null
+      ? process.env.REACT_APP_BACKEND_HOST
+      : "http://localhost:8005";
+
+
+
+
+const  URL_PRODUCT = "/api/SalesProduct";
+const  URL_CASHIER_ORDER ="/api/CashierOrder";
+const  URL_CONTROLL_SERVICE ="/api/ControllService";
+const  URL_USER ="/api/CompanyEmployeer";
 
 export const endPoints = {
 
-    //url User
-    urlAddNewUser: backHost +"/api/User",
-    urlListAllUser:backHost + "/api/User ",
-    urlUserCPF:backHost + "/api/User/getByCPF?cpf=",
-    urlUserByid:backHost +  "/api/User",
+  // URL User
+  URL_GET_ListAllUser: backHost2  + URL_USER,
+  URL_POST_AddNewUser: backHost2 + URL_USER,
+  URL_PUT_AddNewUser:  backHost2  + URL_USER,
+  URL_GET_UserCPF:     backHost2  + URL_USER+"getByCPF?cpf=",
+  URL_GET_UserByid:    backHost2  + URL_USER,
+  URL_DELETE_UserByid: backHost2  + URL_USER,
 
+  // URL Product
+  URL_POST_NEW_PRODUCT:         backHost2 + URL_PRODUCT+ "/product",
+  URL_PUT_PRODUCT:              backHost2 + URL_PRODUCT + "/editProduct",
+  URL_DELETE_PRODUCT:           backHost2 + URL_PRODUCT + "/deleteProduct",
+  URL_GET_PRODUCT_BYCODEBAR:    backHost2 + URL_PRODUCT + "/GetProductByCodeBar",  
+  URL_GET_PRODUCT_BYID:         backHost2 + URL_PRODUCT + "/GetProductById",
+  URL_GET_PRODUCT_ALL_PRODUCT:  backHost2 + URL_PRODUCT + "/AllProducts",
+ 
+  // URL SERVICE
+  URL_PUT_SERVICE:              backHost2 + URL_PRODUCT + "/editService",
+  URL_DELETE_SERVICE:           backHost2 + URL_PRODUCT + "/deleteService",
+  URL_GET_SERVICE_BYID:         backHost2 + URL_PRODUCT + "/GetServiceById",
+  URL_GET_SERVICE_ALL_SERVICES: backHost2 + URL_PRODUCT + "/AllServices",
 
-    
-   
-    //Url Product
-    urlProductAll:backHost+"/api/SalesProduct/Allproducts",
-    urlAddNewProduct:backHost+"/api/SalesProduct/product",
-    urlDeletProduct:backHost+"/api/SalesProduct",
-    urlGetByIdProdutos:backHost+"/api/SalesProduct/GetProductById?id=",
-    urlGetByIdServicos:backHost+"/api/SalesProduct/GetServiceById?id=",
-
-
-
-
-    //Url service
-    urlServiceAll: backHost +"/api/SalesProduct/AllServices",
-    urlAddNewService:backHost+"/api/SalesProduct/service",
-
-    //Url SalesOrder
-    urlNewSale:backHost +"/api/SalesOrder",
-    urlGetBox:backHost  +"/api/SalesOrder",
-    urlPutBox:backHost + "/api/SalesOrder",
-    
-    
-    //Url Cashier Order
-    urlOpenBox:backHost + "/api/CashierOrder",
-    urlCloseBox:backHost +"/api/CashierOrder/close",
-
-
-
+  //URL_CONTROLL_SERVICE
+  URL_GET_URL_SERVICE:         backHost2 + URL_CONTROLL_SERVICE,
+  URL_POST_URL_NEW_SERVICE:    backHost2 + URL_CONTROLL_SERVICE,
+  URL_PUT_URL_STOP:            backHost2 + URL_CONTROLL_SERVICE +"/stop/",
+  URL_GET_URL_STREAM_TIMERS:   backHost2 + URL_CONTROLL_SERVICE +"/streamTimers/",
+  URL_GET_URL_CURRENT_TIMERS:  backHost2 + URL_CONTROLL_SERVICE +"/currentTimers/",
   
+  // URL Cashier Order
+  URL_POST_OPENBOX:  backHost2 + URL_CASHIER_ORDER +"/open",
+  URL_PUT_CLOSEBOX:  backHost2 + URL_CASHIER_ORDER +"/close",
+  URL_GET_BOX:       backHost2 + URL_CASHIER_ORDER +"/getCashier",
 
 
 
-    ///Role
-    urlRole:backHost +"/api/Role",
+  // URL Service
+  urlServiceAll:    backHost2 + "/api/SalesProduct/AllServices",
+  urlAddNewService: backHost2 + "/api/SalesProduct/service",
+
+  // URL SalesOrder
+  urlNewSale: backHost2 + "/api/SalesOrder",
+  urlGetBox:  backHost2 + "/api/SalesOrder",
+  urlPutBox:  backHost2 + "/api/SalesOrder",
 
 
-   
 
+  // URL Notification
+  urlNotification: backHost2 + "/api/Notification/stream",
 
+  // Role
+  urlRole: backHost + "/api/Role",
 
-   
-//?    
-
-
-    usuarioLogin: backHost + "/login",
-    novoPedido: backHost + "/api/SalesOrder",
-    cancelarPedido: backHost + "api/SalesOrder/",
-    abriCaixa: backHost + "/api/open?",
-    fecharCaixa: backHost + "/api/CashierOrder/close"
-
+  // Misc
+  usuarioLogin: backHost + "/login",
+  novoPedido: backHost + "/api/SalesOrder",
+  cancelarPedido: backHost + "/api/SalesOrder/",
+  abriCaixa: backHost + "/api/open?",
+  fecharCaixa: backHost + "/api/CashierOrder/close"
 };

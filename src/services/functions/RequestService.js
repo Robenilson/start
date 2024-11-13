@@ -1,12 +1,21 @@
 import axios from "axios";
-import { serviceRetornarConfig, serviceRetornarErro } from "./config/functions";
+import { serviceRetornarConfig, serviceRetornarErro,TenetId } from "./config/functions";
 import { endPoints } from "./config/endpoints";
+
+const listAll =           endPoints.URL_GET_SERVICE_ALL_SERVICES+TenetId();
+const addNew=             endPoints.urlAddNewService+TenetId();
+const editServiceUrl =    `${endPoints.URL_DELETE_SERVICE}/editService${TenetId()}`;
+const deletServiceUrl=    (id) => `${endPoints.URL_DELETE_SERVICE}/deleteService?id=${id+TenetId()}`
+
+
+console.log(TenetId())
+
 
 // Adiciona um novo serviço
 export async function newService(data) {
   const config = serviceRetornarConfig(
     "post",
-    endPoints.urlAddNewService,
+    addNew,
     data,
     true
   );
@@ -18,9 +27,19 @@ export async function newService(data) {
   }
 }
 
+
+const formatTime = (horaMinima) => {
+  if (horaMinima === 60) {
+    return '1 hora';
+  }
+  return `${horaMinima} minutos`;
+};
+
 // Faz um get na tabela Serviços
 export async function fetchService() {
-  const config = serviceRetornarConfig("get", endPoints.urlServiceAll, true);
+  const config = serviceRetornarConfig("get", 
+  listAll,
+   true);
 
   try {
     const response = await axios(config);
@@ -29,7 +48,7 @@ export async function fetchService() {
         id: service.id,
         nome: service.name,
         valor: parseFloat(service.price),
-        horaMinima: service.quantityHours || 'N/A',
+        horaMinima:formatTime(service.quantityHours ) || 'N/A',
         descricao: service.description,
       }));
       return service;
@@ -55,7 +74,6 @@ export async function createDataServicoEdit(servicoValues) {
     
       
     };
-    console.log(updatedService)
     return  updatedService;
   } catch (error) {
     console.error("Erro ao converter dados:", error);
@@ -66,7 +84,7 @@ export async function createDataServicoEdit(servicoValues) {
 export async function editService(data) {
   const config = serviceRetornarConfig(
     "put",
-    `${endPoints.urlDeletProduct}/editService`,
+    editServiceUrl,
     data,
     true
   );
@@ -82,11 +100,7 @@ export async function editService(data) {
 
 //Adiciona um novo Produto
 export async function DeleteService(data) {
-  var config = serviceRetornarConfig(
-    "delete",
-    `${endPoints.urlDeletProduct}/deleteService?id=${data.id}` ,
-    true
-  );
+  var config = serviceRetornarConfig( "delete",deletServiceUrl(data.id), true);
   try {
     return (await axios(config)).data;
   } catch (error) {

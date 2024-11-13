@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Modal, Form, Table, Alert } from 'react-bootstrap';
+import RoleModalContent from './RoleModalContent';
 import Card from '../../components/Card';
+import ModalComponent from '../../components/ModalComponet';
 import { fetchRoles, newRole, updateRole, deleteRole } from '../../services/functions/RequestRoleService';
 
-const RoleManager = () => {
+const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
   const [roles, setRoles] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [roleName, setRoleName] = useState('');
-  const [roleDescription, setRoleDescription] = useState(''); // Novo estado para a descrição da role
+  const [roleDescription, setRoleDescription] = useState('');
   const [editingRole, setEditingRole] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-
+  
   useEffect(() => {
     getAllRoles();
   }, []);
@@ -30,7 +31,7 @@ const RoleManager = () => {
 
   const handleShowModal = () => {
     setRoleName('');
-    setRoleDescription(''); // Limpa a descrição ao abrir o modal
+    setRoleDescription('');
     setShowModal(true);
   };
 
@@ -42,7 +43,7 @@ const RoleManager = () => {
   const handleInputChange = (e) => {
     if (e.target.id === 'formRoleName') {
       setRoleName(e.target.value);
-    } else if (e.target.id === 'formRoleDescription') { // Atualiza a descrição
+    } else if (e.target.id === 'formRoleDescription') {
       setRoleDescription(e.target.value);
     }
   };
@@ -56,20 +57,20 @@ const RoleManager = () => {
         const totalRoles = Array.isArray(rolesData) ? rolesData.length : 0;
         const newRoleData = {
           name: roleName,
-          description: roleDescription, // Passa a descrição para o objeto newRoleData
+          description: roleDescription,
           permissions: [
             {
               name: roleName,
               description: 'string'
             }
           ],
-          group: totalRoles + 1, // Calcula o grupo como quantidade total + 1
+          group: totalRoles + 1,
           inative: true
         };
 
-        await newRole(newRoleData); // Chama a função newRole com o objeto JSON criado
+        await newRole(newRoleData);
       }
-      getAllRoles(); // Atualiza a lista de roles após salvar
+      getAllRoles();
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
       handleCloseModal();
@@ -81,14 +82,14 @@ const RoleManager = () => {
   const handleEditRole = (role) => {
     setEditingRole(role);
     setRoleName(role.name);
-    setRoleDescription(role.description); // Define a descrição ao editar a role
+    setRoleDescription(role.description);
     setShowModal(true);
   };
 
   const handleDeleteRole = async (roleId) => {
     try {
       await deleteRole(roleId);
-      getAllRoles(); // Atualiza a lista de roles após deletar
+      getAllRoles();
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
@@ -96,72 +97,57 @@ const RoleManager = () => {
     }
   };
 
+  // Condicional para verificar se o usuário é admin
+
+
   return (
     <Card>
-      <div className="card-header">Gerenciamento de Roles</div>
-      <div className="card-body">
-        <Button variant="primary" onClick={handleShowModal}>Adicionar Role</Button>
+      <div className="user-manager-container">
+        <div className="">Gerenciamento de Roles</div>
+        <div className="card-body">
+          <center>
+            <button type='button' className="btn primary-btn" onClick={handleShowModal}>Adicionar Role</button>
+          </center>
+          <div className="table-container">
+            <table className="user-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nome da Role</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {roles.map((role, index) => (
+                  <tr key={role.id}>
+                    <td>{index + 1}</td>
+                    <td>{role.name}</td>
+                    <td>
+                      <button type='button' className="action-btn edit-btn" onClick={() => handleEditRole(role)}>Editar</button>
+                      {' '}
+                      <button type='button' className="action-btn delete-btn" onClick={() => handleDeleteRole(role.id)}>Excluir</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <Table striped bordered hover className="mt-3">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nome da Role</th>
-               <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {roles.map((role, index) => (
-              <tr key={role.id}>
-                <td>{index + 1}</td>
-                <td>{role.name}</td>
+          <ModalComponent
+            show={showModal}
+            onHide={handleCloseModal}
+            title={editingRole ? 'Editar Role' : 'Adicionar Nova Role'}
+            save={handleSaveRole}
+          >
+            <RoleModalContent
+              roleName={roleName}
+              roleDescription={roleDescription}
+              handleInputChange={handleInputChange}
+            />
+          </ModalComponent>
 
-               
-                  <td>
-                  <Button variant="warning" onClick={() => handleEditRole(role)}>Editar</Button>
-                  {' '}
-                  <Button variant="danger" onClick={() => handleDeleteRole(role.id)}>Excluir</Button>
-                </td>
-            
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-
-        <Modal show={showModal} onHide={handleCloseModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>{editingRole ? 'Editar Role' : 'Adicionar Nova Role'}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group controlId="formRoleName">
-              <Form.Label>Nome da Role</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Digite o nome da role"
-                value={roleName}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formRoleDescription"> {/* Novo campo para a descrição */}
-              <Form.Label>Descrição da Role</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="Digite a descrição da role"
-                value={roleDescription}
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal}>Cancelar</Button>
-            <Button variant="primary" onClick={handleSaveRole}>
-              {editingRole ? 'Salvar Alterações' : 'Adicionar Role'}
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        {showSuccess && <Alert variant="success" className="mt-3">Operação realizada com sucesso!</Alert>}
+          {showSuccess && <div className="success-alert mt-3">Operação realizada com sucesso!</div>}
+        </div>
       </div>
     </Card>
   );
