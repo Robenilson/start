@@ -1,6 +1,8 @@
 import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro,TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
+const user = JSON.parse(localStorage.getItem('user'));
+
 
 
 const addNew = endPoints.urlNewSale+TenetId();
@@ -9,48 +11,45 @@ const addNew = endPoints.urlNewSale+TenetId();
 export async function NewSale(data) {
     var config = serviceRetornarConfig(
       "post",
-      addNew,
+      "https://pos-bff-production.up.railway.app/api/SalesOrder?tenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834",
       data,
       true
     );
     try {
-      return (await axios(config)).data;
+      
+      return await axios(config);
     } catch (error) {
       return serviceRetornarErro(error);
     }
   }
- 
   export async function createSaleOrder(clientId, employeerId, products, discount, payment) {
     // Configurações iniciais do pedido
     const saleOrder = {
         id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Gerador de UUID único
-        dtSale: new Date().toISOString(),
-        produtos: [],
-        clientId: parseInt(clientId),
-        employeerId: parseInt(employeerId),
-        precoTotal: 0,
-        desconto: discount || 0,
-        credito: 0,
+        dtSale: new Date().toISOString(), // Data da venda
+        produtos: [], // Lista de produtos no pedido
+        clientId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Cliente: agora um UUID como string
+        employeerId: user.UserId, // Empregador: agora um UUID como string
+        precoTotal: 0, // Preço total da venda
+        desconto: discount || 0, // Desconto aplicado na venda
+        credito: 0, // Crédito aplicado (se houver)
         saleStatus: 0, // 0: Pendente, 1: Concluído, 2: Cancelado
-        payments: []
+        payments: [] // Lista de pagamentos realizados
     };
 
     // Adiciona produtos ao pedido e calcula o preço total
     products.forEach(product => {
         if (product) { // Verifica se o produto existe
             saleOrder.produtos.push({
-                productId: parseInt(product.id),
-                quantity: parseInt(product.quantidade),
-                orderId:parseInt(saleOrder.id),
-                productType: product.productType || "defaultType", // Defina um valor padrão para tipo de produto
-                name: product.nome,
-                valor: parseFloat(product.valorTotal)  // Calcula o valor unitário
+                productId: product.id, // productId agora é um UUID como string
+                quantity: product.quantidade, // Quantidade do produto
+                orderId: saleOrder.id, // ID do pedido, mantendo como string
+                productType: product.productType || 1, // Definindo tipo de produto, com valor padrão 1
+                name: product.nome || "Produto sem nome", // Nome do produto (valor padrão caso não tenha)
             });
             
             // Atualiza o preço total com base na quantidade e valor total do produto
             saleOrder.precoTotal += parseFloat(product.valorTotal);
-            
-            
         }
     });
 
@@ -59,11 +58,11 @@ export async function NewSale(data) {
 
     // Adiciona pagamento ao pedido
     saleOrder.payments.push({
-        id: 1,
-        value: payment.value,
-        paymentMethod: payment.method,
-        orderId: saleOrder.id,
-        paymentType: payment.type
+        id: 0, // ID do pagamento (default 0 para o primeiro pagamento)
+        value: payment.value, // Valor do pagamento
+        paymentMethod: payment.method || "Método não especificado", // Método de pagamento, com valor padrão
+        orderId: saleOrder.id, // ID do pedido
+        paymentType: payment.type || 1 // Tipo de pagamento (valor padrão 1)
     });
 
     // Define status da venda como "Concluído"
@@ -71,4 +70,5 @@ export async function NewSale(data) {
 
     return saleOrder;
 }
+
 

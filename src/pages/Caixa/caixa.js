@@ -80,10 +80,10 @@ const Caixa = () => {
 
   const handleConfirmarAbrirCaixa = async () => {
     const valor = parseFloat(valorInicial);
-    if (valor >= 100) {
+    if (valor >= -1) {
       setLoading(true);
       const agora = new Date();
-      await OpenBox(valor, user.EmployeerId);
+      await OpenBox();
       setSaldo(valor);
       setCaixaAberto(true);
       setDataAbertura(agora);

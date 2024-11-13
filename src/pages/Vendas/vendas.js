@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
-import { createSaleOrder } from '../../services/functions/RequestSales';
+import { createSaleOrder ,NewSale} from '../../services/functions/RequestSales';
 import { fetchProduct } from '../../services/functions/RequestProduct';
 import { fetchService } from '../../services/functions/RequestService';
 import { BarCod } from '../../services/functions/RequestBarCod';
@@ -62,7 +62,7 @@ const Vendas = ({ userRole }) => {
     setTotalValue(0);
   };
 
-  const confirmOrder = () => {
+  const  confirmOrder = () => {
     const paymenty = {
       id: 1,
       value: "0",
@@ -71,7 +71,11 @@ const Vendas = ({ userRole }) => {
       paymentType: "0"
     };
 
-    console.log(createSaleOrder('1', '22', itemDataToOrder, '0', paymenty));
+     const   newvenda =createSaleOrder('1', '22', itemDataToOrder, '0', paymenty);
+
+      NewSale(newvenda);
+
+
     clearOrder();
     setShowOrderListModal(false);
   };
