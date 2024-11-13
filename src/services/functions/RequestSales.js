@@ -11,7 +11,7 @@ const addNew = endPoints.urlNewSale+TenetId();
 export async function NewSale(data) {
     var config = serviceRetornarConfig(
       "post",
-      "http://localhost:8005/api/SalesOrder"+TenetId(),
+      "https://pos-bff-production.up.railway.app/api/SalesOrder"+TenetId(),
       data,
       true
     );
@@ -25,50 +25,47 @@ export async function NewSale(data) {
 
 
   export async function createSaleOrder(clientId, employeerId, products, discount, payment) {
-    // Configurações iniciais do pedido
+    // Configurações iniciais do pedido no formato esperado
     const saleOrder = {
-        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Gerador de UUID único
-        dtSale: new Date().toISOString(), // Data da venda
-        produtos: [], // Lista de produtos no pedido
-        clientId: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // Cliente: agora um UUID como string
-        employeerId: user.UserId, // Empregador: agora um UUID como string
+        id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // ID do pedido como UUID
+        dtSale: new Date().toISOString(), // Data e hora da venda no formato ISO
+        produtos: [], // Inicializa a lista de produtos no pedido
+        clientId:"3fa85f64-5717-4562-b3fc-2c963f66afa6",// ID do cliente passado como argumento
+        employeerId: "d9fe5471-9807-4878-98bb-69e2dfa48924", // ID do empregado passado como argumento
         precoTotal: 0, // Preço total da venda
-        desconto: discount || 0, // Desconto aplicado na venda
-        credito: 0, // Crédito aplicado (se houver)
-        saleStatus: 0, // 0: Pendente, 1: Concluído, 2: Cancelado
-        payments: [] // Lista de pagamentos realizados
+        desconto: discount || 0, // Desconto aplicado (caso não especificado, 0)
+        credito: 0, // Crédito aplicado, default 0
+        saleStatus: 0, // Status da venda: 0 - Pendente
+        payments: [] // Inicializa a lista de pagamentos
     };
 
     // Adiciona produtos ao pedido e calcula o preço total
     products.forEach(product => {
-        if (product) { // Verifica se o produto existe
+        if (product) {
             saleOrder.produtos.push({
-                productId: product.id, // productId agora é um UUID como string
-                quantity: product.quantidade, // Quantidade do produto
-                orderId: saleOrder.id, // ID do pedido, mantendo como string
-                productType: product.productType || 1, // Definindo tipo de produto, com valor padrão 1
-                name: product.nome || "Produto sem nome", // Nome do produto (valor padrão caso não tenha)
+                productId: product.id || "3fa85f64-5717-4562-b3fc-2c963f66afa6", // ID do produto como UUID
+                quantity: product.quantidade || 0, // Quantidade do produto, default 0
+                orderId: saleOrder.id, // ID do pedido
+                productType: product.productType || 1, // Tipo do produto, default 1
+                name: product.nome || "Produto sem nome" // Nome do produto
             });
-            
-            // Atualiza o preço total com base na quantidade e valor total do produto
-            saleOrder.precoTotal += parseFloat(product.valorTotal);
+
+            // Calcula o preço total com base no valor total de cada produto
+            saleOrder.precoTotal += parseFloat(product.valorTotal || 0);
         }
     });
 
-    // Aplica desconto ao preço total, se houver
+    // Aplica o desconto ao preço total (mantendo no mínimo zero)
     saleOrder.precoTotal = Math.max(saleOrder.precoTotal - saleOrder.desconto, 0);
 
     // Adiciona pagamento ao pedido
     saleOrder.payments.push({
-        id: 0, // ID do pagamento (default 0 para o primeiro pagamento)
-        value: payment.value, // Valor do pagamento
-        paymentMethod: payment.method || "Método não especificado", // Método de pagamento, com valor padrão
+        id:2, // ID do pagamento inicial (0 para o primeiro pagamento)
+        value: payment.value || 0, // Valor do pagamento
+        paymentMethod: payment.method || "string", // Método de pagamento
         orderId: saleOrder.id, // ID do pedido
-        paymentType: payment.type || 1 // Tipo de pagamento (valor padrão 1)
+        paymentType: payment.type || 1 // Tipo de pagamento, default 1
     });
-
-    // Define status da venda como "Concluído"
-    saleOrder.saleStatus = 1;
 
     return saleOrder;
 }

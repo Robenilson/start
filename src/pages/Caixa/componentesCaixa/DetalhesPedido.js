@@ -57,7 +57,7 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento, cancel }) =>
   return (
     <div className="detalhes-pedido">
       <h5>Detalhes do Pedido</h5>
-      {console.log(pedido)}
+   
       <p>Cliente: {pedido.clientName}</p>
       <p>Preço Total: R${pedido.precoTotal}</p>
       <h6>Produtos:</h6>

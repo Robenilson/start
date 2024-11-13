@@ -60,23 +60,29 @@ const Vendas = ({ userRole }) => {
     setTotalValue(0);
   };
 
-  const  confirmOrder = () => {
-    const paymenty = {
-      id: 1,
-      value: "0",
-      paymentMethod: "0",
-      orderId: "0",
-      paymentType: "0"
-    };
+  const confirmOrder = async () => {
+    try {
+        const paymenty = {
+            id: 1,
+            value: 0,  // Certifique-se que é um número
+            paymentMethod: "cash", // Ou outro valor mais intuitivo
+            orderId: "0", // Associe ao ID do pedido depois de criado
+            paymentType: 1  // Certifique-se que é um número
+        };
 
-     const   newvenda =createSaleOrder('1', '22', itemDataToOrder, '0', paymenty);
+        const newVenda = await createSaleOrder('1', '22', itemDataToOrder, 0, paymenty);
 
-      NewSale(newvenda);
+        console.log("Pedido criado:", JSON.stringify(newVenda));
 
+        await NewSale(newVenda); // Aguarda a conclusão do pedido
 
-    clearOrder();
-    setShowOrderListModal(false);
-  };
+        clearOrder();
+        setShowOrderListModal(false);
+    } catch (error) {
+        console.error("Erro ao confirmar pedido:", error);
+    }
+};
+
 
   const filteredData = combinedData.filter((item) =>
     JSON.stringify(item).toLowerCase().includes(filterText.toLowerCase())
