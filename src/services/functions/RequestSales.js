@@ -11,7 +11,7 @@ const addNew = endPoints.urlNewSale+TenetId();
 export async function NewSale(data) {
     var config = serviceRetornarConfig(
       "post",
-      "https://pos-bff-production.up.railway.app/api/SalesOrder"+TenetId(),
+      "https://pos-bff-production.up.railway.app/api/SalesOrder"+"?"+TenetId(),
       data,
       true
     );
