@@ -72,9 +72,9 @@ const Vendas = ({ userRole }) => {
 
         const newVenda = await createSaleOrder('1', '22', itemDataToOrder, 0, paymenty);
 
-        console.log("Pedido criado:", JSON.stringify(newVenda));
+        console.log(newVenda);
 
-        await NewSale(newVenda); // Aguarda a conclusão do pedido
+       // await NewSale(newVenda); // Aguarda a conclusão do pedido
 
         clearOrder();
         setShowOrderListModal(false);
