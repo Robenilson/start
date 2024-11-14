@@ -13,11 +13,15 @@ const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data + Ten
 const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data + TenetId()}`;
 const getCompleteBoxUrl = (data) => `${endPoints.urlPutBox}/${data.id}/complete${TenetId()}`;
 const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel${TenetId()}`;
+const user = JSON.parse(localStorage.getItem('user'));
+const getCashierData = (id) => {
+  return `https://pos-bff-production.up.railway.app/api/SalesOrder/${id}/complete?tenantId=${user.TenantId}`;
 
-const getCashierData = (employeerId, tenantId) => {
-  return `https://pos-bff-production.up.railway.app/api/CashierOrder/open?employeerId=${employeerId}&tenantId=${tenantId}`;
 };
 
+const getSalesURL = (id) => {
+return`https://pos-bff-production.up.railway.app/api/SalesOrder/${id}?TenantId=${user.TenantId}`;
+}
 // Função para abrir o caixa
 export async function OpenBox() {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -33,6 +37,32 @@ export async function OpenBox() {
     return serviceRetornarErro(error);
   }
 }
+
+
+
+
+export async function  getSales(id) {
+  const config = serviceRetornarConfig(
+    "get",
+    getSalesURL(id),
+    true
+  ); 
+  try {
+    const response = await axios(config);
+    const users = response.data;
+    return users; // Retorna a lista de objetos já resolvida
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+
+
+
+
+
 
 // Função para fechar o caixa
 export async function CloseBox(useid) {
@@ -148,42 +178,6 @@ function getPaymentOption(value) {
   return paymentOptions[value];
 }
 
-// Função para criar objeto de dados para edição do caixa
-export async function createDataObjectEditBox(pedido, formaPagamento, desconto, user) {
-  try {
-    const data = {
-      id: pedido.id,
-      dtSale: new Date().toISOString(),
-      produtos: pedido.produto.map(prod => ({
-        productId: prod.productId || '',
-        quantity: prod.quantity || 0,
-        orderId: prod.orderId || '',
-        productType: prod.productType || 0,
-        name: prod.name || ''
-      })),
-      clientId: pedido.clientId || 0,
-      employeerId: parseInt(user.EmployeerId) || 0,
-      precoTotal: pedido.precoTotal || 0,
-      desconto: parseFloat(desconto) || 0,
-      credito: pedido.credito || 0,
-      saleStatus: 4,
-      payments: [
-        {
-          value: pedido.precoTotal || 0,
-          paymentMethod: getPaymentOption(formaPagamento) || '',
-          orderId: pedido.id || '',
-          PaymentType: parseInt(formaPagamento) || 0
-        }
-      ]
-    };
-
-    return data;
-  } catch (error) {
-    console.error('Erro ao converter dados:', error);
-    throw error;
-  }
-}
-
 // Função para visualizar dados do caixa
 export async function ViewDataObjectBox(data) {
   try {
@@ -223,15 +217,16 @@ export async function ViewDataObjectBox(data) {
 }
 
 // Função para marcar o caixa como completo
-export async function PutCompletBox(data) {
+export async function PutCompletBox(id,data) {
+  const user = JSON.parse(localStorage.getItem('user'));
   var config = serviceRetornarConfig(
     "put",
-    getCompleteBoxUrl(data),
+    getCashierData(id),
     data,
     true
   );
-
   try {
+   
     return (await axios(config)).data;
   } catch (error) {
     return serviceRetornarErro(error);
@@ -239,17 +234,61 @@ export async function PutCompletBox(data) {
 }
 
 // Função para cancelar o caixa
-export async function PutCanceltBox(data) {
+export async function PutCanceltBox(id, data) {
   var config = serviceRetornarConfig(
     "put",
-    getCancelBoxUrl (data),
+    getCancelBoxUrl (id),
     data,
     true
   );
 
   try {
+    
     return (await axios(config)).data;
   } catch (error) {
     return serviceRetornarErro(error);
   }
 }
+
+
+
+
+
+export async function createDataObjectEditBox(pedido, formaPagamento, desconto, user) {
+  try {
+    const data = {
+      id: pedido.id,
+      dtSale: new Date().toISOString(),
+      produtos: pedido.produto.map(prod => ({
+        productId: prod.productId || '4e4d3227-39dc-4ad8-a7a5-459b52c3419a',
+        quantity: prod.quantity || 0,
+        orderId: pedido.id || '',
+        productType: prod.productType || 1,
+        name: prod.name || 'Brisadeiro'
+      })),
+      clientId: pedido.clientId || '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+      employeerId: 'd9fe5471-9807-4878-98bb-69e2dfa48924',
+      precoTotal: pedido.precoTotal || 15,
+      desconto: parseFloat(desconto) || 0,
+      credito: pedido.credito || 0,
+      saleStatus: pedido.saleStatus || 0,
+      payments: [
+        {
+          id: 2,
+          value: pedido.precoTotal || 0,
+          paymentMethod: getPaymentOption(formaPagamento) || 'string',
+          orderId: pedido.id || '',
+          paymentType: parseInt(formaPagamento) || 1
+        }
+      ]
+    };
+
+    return data;
+  } catch (error) {
+    console.error('Erro ao converter dados:', error);
+    throw error;
+  }
+}
+
+
+

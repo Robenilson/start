@@ -5,7 +5,7 @@ import Card from '../../components/Card';
 import DetalhesPedido from './componentesCaixa/DetalhesPedido';
 import LoadingModal from '../../components/LoadingModal';
 import Vendas from '../Vendas/vendas';
-import { OpenBox, FetchBox, CloseBox, PutCompletBox, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox } from "../../services/functions/RequestBox";
+import { OpenBox, FetchBox, CloseBox, PutCompletBox,transformOrder,getSales, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox , createSaleOrder } from "../../services/functions/RequestBox";
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -124,17 +124,21 @@ const Caixa = () => {
 
   const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
     setLoading(true);
-    createDataObjectEditBox(pedido, formaPagamento, desconto, user)
-      .then(data => PutCompletBox(data))
-      .then(() => {
-        setShowPedidoSuccess(true);
-        updateBox();
+
+
+    const  data =  createDataObjectEditBox(pedido, formaPagamento, desconto, user)
+    data.then( data =>PutCompletBox(data.id, data))
+    //console.log(" AQUI",data)
+
+    
+
+    //console.log(transformOrder(pedido))
+
+    
+    setShowPedidoSuccess(true);
+     updateBox();
         setTimeout(clearState, 4000);
-      })
-      .catch(error => {
-        console.error('Erro ao concluir a venda:', error);
-        alert('Erro ao concluir a venda.');
-      });
+
     setLoading(false);
     handleCloseConfirmacaoVenda();
   };

@@ -8,7 +8,6 @@ const editServiceUrl =    `${endPoints.URL_DELETE_SERVICE}/editService${TenetId(
 const deletServiceUrl=    (id) => `${endPoints.URL_DELETE_SERVICE}/deleteService?id=${id+TenetId()}`
 
 
-console.log(TenetId())
 
 
 // Adiciona um novo serviço

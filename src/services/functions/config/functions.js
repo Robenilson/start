@@ -15,7 +15,7 @@ export function serviceRetornarConfig(method, url, data) {
 
 export const TenetId = () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    return `?TenantId=${user.TenantId}`;
+    return `?tenantId=${user.TenantId}`;
   };
 
 

@@ -1,0 +1,37 @@
+# Ignorar arquivos de configuração do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de controle de versão
+.git
+.gitignore
+
+# Ignorar dependências instaladas (caso queira que sejam baixadas novamente no build)
+node_modules
+*.log
+
+# Ignorar arquivos de build locais
+dist
+build
+out
+
+# Ignorar arquivos temporários e de cache
+*.swp
+*.temp
+*.pid
+*.tar.gz
+*.zip
+.cache/
+.temp/
+
+# Ignorar arquivos de configuração de editores e IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Ignorar arquivos de configuração específicos para o ambiente
+.env
+.env.local
+.env.development
+.env.production
+.env.test
