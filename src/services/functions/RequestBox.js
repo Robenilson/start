@@ -20,7 +20,8 @@ const getCashierData = (id) => {
 };
 
 const getSalesURL = (id) => {
-return`https://pos-bff-production.up.railway.app/api/SalesOrder/${id}${+"?"+}TenantId=${user.TenantId}`;
+  return `https://pos-bff-production.up.railway.app/api/SalesOrder/${id}?TenantId=${user.TenantId}`;
+
 }
 // Função para abrir o caixa
 export async function OpenBox() {
