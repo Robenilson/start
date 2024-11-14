@@ -5,14 +5,14 @@ import { endPoints } from "./config/endpoints";
 import { FetchUserByID } from "./RequestPeople";
 
 // Funções para montar as URLs
-const getOpenBoxUrl = (employeerId) => `${endPoints.urlOpenBox}/open?employeerId=${employeerId + TenetId()}`;
-const getFecharCaixaUrl = (useid) => `${endPoints.fecharCaixa}/${useid + TenetId()}`;
-const getBoxUrl = () => endPoints.urlGetBox + TenetId();
-const getBoxUrlWithDate = (data) => `${endPoints.urlGetBox}/${data + TenetId()}`;
+const getOpenBoxUrl = (employeerId) => `${endPoints.urlOpenBox}/open?employeerId=${employeerId +"?"+ TenetId()}`;
+const getFecharCaixaUrl = (useid) => `${endPoints.fecharCaixa}/${useid +"?"+TenetId()}`;
+const getBoxUrl = () => endPoints.urlGetBox +"?"+TenetId();
+const getBoxUrlWithDate = (data) => `${endPoints.urlGetBox}/${data +"?"+ TenetId()}`;
 const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data+"?"+TenetId()}`;
-const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data + TenetId()}`;
-const getCompleteBoxUrl = (data) => `${endPoints.urlPutBox}/${data.id}/complete${TenetId()}`;
-const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel${TenetId()}`;
+const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data +"?"+ TenetId()}`;
+const getCompleteBoxUrl = (data) => `${endPoints.urlPutBox}/${data.id}/complete${+"?"+TenetId()}`;
+const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel${+"?"+TenetId()}`;
 const user = JSON.parse(localStorage.getItem('user'));
 const getCashierData = (id) => {
   return `https://pos-bff-production.up.railway.app/api/SalesOrder/${id}/complete?tenantId=${user.TenantId}`;
@@ -20,7 +20,7 @@ const getCashierData = (id) => {
 };
 
 const getSalesURL = (id) => {
-return`https://pos-bff-production.up.railway.app/api/SalesOrder/${id}?TenantId=${user.TenantId}`;
+return`https://pos-bff-production.up.railway.app/api/SalesOrder/${id}${+"?"+}TenantId=${user.TenantId}`;
 }
 // Função para abrir o caixa
 export async function OpenBox() {
