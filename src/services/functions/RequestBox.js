@@ -9,7 +9,7 @@ const getOpenBoxUrl = (employeerId) => `${endPoints.urlOpenBox}/open?employeerId
 const getFecharCaixaUrl = (useid) => `${endPoints.fecharCaixa}/${useid + TenetId()}`;
 const getBoxUrl = () => endPoints.urlGetBox + TenetId();
 const getBoxUrlWithDate = (data) => `${endPoints.urlGetBox}/${data + TenetId()}`;
-const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data + TenetId()}`;
+const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data+"?"+TenetId()}`;
 const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data + TenetId()}`;
 const getCompleteBoxUrl = (data) => `${endPoints.urlPutBox}/${data.id}/complete${TenetId()}`;
 const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel${TenetId()}`;
