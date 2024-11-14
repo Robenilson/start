@@ -76,9 +76,14 @@ const GenericForm = ({ fields, values, handleSave, handleChange, mode, handleUpd
             Confirmar Edição
           </button>
         ) : (
-          <button type="button" className="btn primary-btn" onClick={handleSave} disabled={!isFormValid}>
-            Salvar
-          </button>
+          <button
+              type="button"
+              className="btn primary-btn save-btn" // Adicionando a classe save-btn
+              onClick={handleSave}
+              disabled={!isFormValid} // Mantendo a funcionalidade de desabilitar quando o formulário não for válido
+          >
+          Salvar
+</button>
         )}
       </div>
     </form>

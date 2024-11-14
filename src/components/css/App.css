@@ -693,3 +693,38 @@ font-size: 20px;
   background-color: #2d2d2d;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
+
+/* Estilos para o botão */
+.save-btn {
+  width: 100%;
+  max-width: 250px;
+  padding: 12px 20px;
+  background-color: #32e01d;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-btn:disabled {
+  background-color: #d1d1d1;
+  cursor: not-allowed;
+}
+
+.save-btn:hover {
+  background-color: #28c215;
+  transform: scale(1.05);
+}
+
+/* Estilo adicional para dispositivos móveis */
+@media (max-width: 768px) {
+  .save-btn {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+}
+
