@@ -654,7 +654,7 @@ font-size: 20px;
 @media (max-width: 768px) {
   .menu-nav {
     flex-direction: column; /* Alinha itens verticalmente */
-    align-items: flex-start; /* Alinha à esquerda */
+    width: 100%; /* Alinha à esquerda */
   }
 
   .menu-nav-content {
@@ -666,6 +666,8 @@ font-size: 20px;
     flex-direction: column; /* Alinha links verticalmente */
     width: 100%; /* Faz a lista de links ocupar 100% da largura */
   }
+
+  
 
   .menu-nav-links a {
     margin: 10px 0; /* Margem vertical entre links */

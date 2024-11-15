@@ -65,6 +65,7 @@ export const endPoints = {
 
 
 
+  
   // URL Notification
   urlNotification: backHost2 + "/api/Notification/stream",
 

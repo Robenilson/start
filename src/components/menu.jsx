@@ -12,14 +12,14 @@ function Menu() {
     <>
       <Card>
         <div className="menu-container">
-          <nav className="menu-nav">
+          <nav className="menu-nav menu-nav-links">
             <div>
-              <OptionNav url={urls.userDados} name="Home" />
+              <OptionNav  url={urls.userDados} name="Home" />
             </div>
             <div id="basic-navbar-nav" className="menu-nav-content">
               <div className="menu-nav-links">
                 <Permision userType="tu" />
-               {/*<NotificationBell />  */  } 
+               <NotificationBell />  
                 
 
               </div>
