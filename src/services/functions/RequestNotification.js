@@ -13,7 +13,6 @@ export function FetchNotification(onMessageCallback, onErrorCallback) {
   const createEventSource = () => {
     const eventSource = new EventSource(`${endPoints.urlNotification}?TenantId=${TenetId()}`);
 
-    console.log(eventSource)
 
     eventSource.onmessage = function(event) {
       try {
