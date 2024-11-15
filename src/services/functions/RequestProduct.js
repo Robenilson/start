@@ -83,7 +83,6 @@ export async function newProduct(data) {
     true
   );
   try {
-    console.log(data)
     return await axios(config);
   } catch (error) {
     return serviceRetornarErro(error);
@@ -99,7 +98,6 @@ export async function DeleteProduct(id) {
     true
   );
   try {
-    console.log( deleteProductUrl(id))
     return (await axios(config)).data;
   } catch (error) {
     return serviceRetornarErro(error);

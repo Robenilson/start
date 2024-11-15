@@ -40,7 +40,6 @@ const AcompanhaServico = () => {
     setLoading(true);
     const user = await FetchUserCPF(cpf);
     setUsuario(user);
-    console.log(user);
 
     if (user) {
       const service = ControllServiceGet(user.id);
