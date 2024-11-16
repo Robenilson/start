@@ -654,8 +654,29 @@ font-size: 20px;
 @media (max-width: 768px) {
   .menu-nav {
     flex-direction: column; /* Alinha itens verticalmente */
-    align-items: flex-start; /* Alinha à esquerda */
+    width: 100%; /* Faz o conteúdo ocupar 100% da largura */
   }
+
+
+  
+.notification-dropdown {
+  background-color: #1e1e1e; /* Fundo escuro */
+  color: red;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: small;
+  position: absolute;
+  top: 0px;
+  right: 0; 
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  z-index: 1000;
+  }
+
+
+
+
 
   .menu-nav-content {
     width: 100%; /* Faz o conteúdo ocupar 100% da largura */
@@ -669,6 +690,15 @@ font-size: 20px;
 
   .menu-nav-links a {
     margin: 10px 0; /* Margem vertical entre links */
+    display: flex; /* Para alinhar o texto e o ícone lado a lado */
+    align-items: center; /* Centraliza verticalmente o ícone com o texto */
+  }
+
+
+  .notification-icon {
+    position: fixed; 
+    top: -240px; 
+    left: 150px;
   }
 
   .menu-toggle-btn {
