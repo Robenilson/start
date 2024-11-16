@@ -1,5 +1,11 @@
 import { endPoints } from "./config/endpoints";
-import { TenetId} from "./config/functions";
+
+ const TenetId  = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  // Verifica se user e user.TenantId existem antes de retornar a query string
+  return (user && user.TenantId) ? `?TenantId=${user.TenantId}` : '';
+};
+
 
 
 export function FetchNotification(onMessageCallback, onErrorCallback) {

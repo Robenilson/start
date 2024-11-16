@@ -383,22 +383,36 @@ color:#45a049;
 
 /* Ajuste específico para botões em telas pequenas */
 @media (max-width: 768px) {
-  .user-table th, .user-table td {
+  .user-table th, .user-table  {
     font-size: 12px; /* Reduz o tamanho da fonte em telas menores */
-    padding: 6px; /* Reduz o padding em telas menores */
-    max-width: 100px; /* Reduz a largura máxima das células em telas menores */
+    padding: 0px , 0px; /* Reduz o padding em telas menores */
+    max-width: 1px; /* Reduz a largura máxima das células em telas menores */
   }
 
-  .user-table td button {
-    font-size: 12px;
+  
+
+  .user-table  button {
+    font-size: 10px;
     padding: 4px 8px; /* Botão mais compacto */
+  }
+
+  .td{
+    
+    font-size: xx-small;
+    padding-left: 0%;
+    padding-right: 0%;
+    padding-bottom: 0%;
+    width: 0px;
+
   }
 }
 
 .table-responsive {
+  
   overflow-x: auto; /* Habilita a rolagem horizontal */
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
+  
 }
 
 
@@ -697,8 +711,8 @@ font-size: 20px;
 
   .notification-icon {
     position: fixed; 
-    top: -240px; 
-    left: 150px;
+    top: -228px; 
+    left: 50px;
   }
 
   .menu-toggle-btn {
