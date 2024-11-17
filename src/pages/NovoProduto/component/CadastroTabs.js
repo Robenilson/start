@@ -27,10 +27,9 @@ const CadastroTabs = ({
       <Tabela
         columns={[
 
-          { key: 'nome', label: 'Nome' },
-          { key: 'descricao', label: 'Descrição' },
+          { key: 'nome', label: 'Nome' ,  className: 'space'},
           { key: 'valor', label: 'Valor', render: (item) => `R$${item.valor.toFixed(2)}` },
-          { key: 'quantidade', label: 'Quantidade' },
+          { key: 'quantidade', label: 'Quantidade' ,  className: 'space'},
         ]}
         data={produtos.filter((produto) =>
           produto.nome && produto.nome.toLowerCase().includes(searchTermProduto.toLowerCase())

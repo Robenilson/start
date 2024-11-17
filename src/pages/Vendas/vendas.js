@@ -149,7 +149,6 @@ const Vendas = ({ userRole }) => {
             <Tabela
               columns={[
                 { key: 'nome', label: 'Nome' },
-                { key: 'descricao', label: 'Descrição' },
                 { key: 'valor', label: 'Preço', render: (item) => `R$ ${item.valor.toFixed(2)}` }
               ]}
               data={filteredData}

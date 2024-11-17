@@ -4,8 +4,8 @@ import { endPoints } from "./config/endpoints";
 const user = JSON.parse(localStorage.getItem('user'));
 
 
-const listAll_URL = endPoints.URL_GET_PRODUCT_ALL_PRODUCT+"?"+TenetId();
-const addNew_URL  = endPoints.URL_POST_NEW_PRODUCT+"?"+TenetId();
+const listAll_URL = endPoints.URL_GET_PRODUCT_ALL_PRODUCT+TenetId();
+const addNew_URL  = endPoints.URL_POST_NEW_PRODUCT+TenetId();
 const edit_Url    =`${ endPoints.URL_PUT_PRODUCT}${TenetId()}`;
 const delete_Url  =`${endPoints.URL_DELETE_PRODUCT}${TenetId()}`
 const deleteProductUrl = (id) => `${endPoints.URL_DELETE_PRODUCT}?id=${id}&TenantId=${user.TenantId}`;

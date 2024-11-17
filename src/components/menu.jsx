@@ -19,7 +19,7 @@ function Menu() {
             <div id="basic-navbar-nav" className="menu-nav-content">
               <div className="menu-nav-links">
                 <Permision userType="tu" />
-               {/*<NotificationBell />  */  } 
+               <NotificationBell />  
                 
 
               </div>

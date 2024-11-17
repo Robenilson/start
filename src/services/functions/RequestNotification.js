@@ -1,10 +1,18 @@
 import { endPoints } from "./config/endpoints";
 
+ const TenetId  = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  // Verifica se user e user.TenantId existem antes de retornar a query string
+  return (user && user.TenantId) ? `?TenantId=${user.TenantId}` : '';
+};
+
+
+
 export function FetchNotification(onMessageCallback, onErrorCallback) {
   let lastNotification = null; // Variável para armazenar a última notificação
 
   const createEventSource = () => {
-    const eventSource = new EventSource(endPoints.urlNotification);
+    const eventSource = new EventSource(endPoints.urlNotification+TenetId());
 
     eventSource.onmessage = function(event) {
       try {
