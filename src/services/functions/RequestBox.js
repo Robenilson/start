@@ -103,7 +103,7 @@ const getRole = (roleNumber) => {
 export async function FetchBox() {
   var config = serviceRetornarConfig(
     "get",
-    "http://localhost:8005/api/SalesOrder?tenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834    ",
+    "https://pos-bff-production.up.railway.app/api/SalesOrder?tenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834    ",
     true
   );
   try {

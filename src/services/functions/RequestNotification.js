@@ -16,7 +16,7 @@ export function FetchNotification(onMessageCallback, onErrorCallback) {
   const createEventSource = () => {
 
     console.log(endPoints.urlNotification+TenetId())
-    const eventSource = new EventSource("http://localhost:8005/api/Notification/stream?TenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834");
+    const eventSource = new EventSource("https://authenticationapi-production-9b49.up.railway.app/api/Notification/stream?TenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834");
 
     eventSource.onmessage = function(event) {
       try {
