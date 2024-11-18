@@ -4,6 +4,8 @@ import App from './App';
 import './components/css/App.css';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './components/css/App.css'; // Certifique-se de que o caminho esteja correto
+
 
 import { GlobalProvider } from './services/context/UserContext';
 

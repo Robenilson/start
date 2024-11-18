@@ -7,7 +7,7 @@ import { FetchUserByID } from "./RequestPeople";
 // Funções para montar as URLs
 const getOpenBoxUrl = (employeerId) => `${endPoints.urlOpenBox}/open?employeerId=${employeerId +"?"+ TenetId()}`;
 const getFecharCaixaUrl = (useid) => `${endPoints.fecharCaixa}/${useid +"?"+TenetId()}`;
-const getBoxUrl = () => endPoints.urlGetBox +"?"+TenetId();
+const getBoxUrl = () => endPoints.urlGetBox +TenetId();
 const getBoxUrlWithDate = (data) => `${endPoints.urlGetBox}/${data +"?"+ TenetId()}`;
 const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data+"?"+TenetId()}`;
 const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data +"?"+ TenetId()}`;
@@ -103,11 +103,12 @@ const getRole = (roleNumber) => {
 export async function FetchBox() {
   var config = serviceRetornarConfig(
     "get",
-    getBoxUrl(),
+    "http://localhost:8005/api/SalesOrder?tenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834    ",
     true
   );
   try {
     const response = await axios(config);
+    console.log(response.data)
     return response.data;
   } catch (error) {
     return serviceRetornarErro(error);

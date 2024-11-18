@@ -1,8 +1,7 @@
 var backHost =
   process.env.REACT_APP_BACKEND_HOST != null
     ? process.env.REACT_APP_BACKEND_HOST
-    
-    : "https://authenticationapi-production-9b49.up.railway.app";
+    : "https://localhost:7278";
 
     var backHost2 =
     process.env.REACT_APP_BACKEND_HOST != null

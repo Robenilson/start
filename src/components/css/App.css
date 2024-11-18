@@ -1,5 +1,4 @@
-/* Containers gerais */
-.user-manager-container,
+* Containers gerais */
 .modal-content,
 .creditos-modal,
 .menu-container,
@@ -351,7 +350,7 @@ color:#45a049;
 .user-table td {
   padding: 8px; /* Reduz o padding para ganhar mais espaço */
   border: 1px solid #333;
-  text-align: left;
+  text-align: center;
   color: #39ff14;
   max-width: 200px; /* Define uma largura máxima para as células */
   overflow: hidden; /* Esconde o conteúdo que ultrapassar a largura da célula */
@@ -386,7 +385,7 @@ color:#45a049;
   .user-table th, .user-table  {
     font-size: 12px; /* Reduz o tamanho da fonte em telas menores */
     padding: 0px , 0px; /* Reduz o padding em telas menores */
-    max-width: 1px; /* Reduz a largura máxima das células em telas menores */
+    min-width: 1px; /* Reduz a largura máxima das células em telas menores */
   }
 
   
@@ -397,7 +396,7 @@ color:#45a049;
   }
 
   .td{
-    
+    text-align: center;
     font-size: xx-small;
     padding-left: 0%;
     padding-right: 0%;
@@ -500,10 +499,7 @@ position: relative;
 cursor: pointer;
 margin-left: 15px;
 }
-.notification-icon:hover {
-color: #ff4081; /* Cor de destaque */
-transform: scale(1.1); /* Efeito de escala ao passar o mouse */
-}
+
 
 .notification-count {
 position: absolute;
@@ -628,6 +624,7 @@ font-size: 20px;
 .menu-nav-content {
   display: flex;
   align-items: center;
+  
 }
 
 /* Links de navegação */
@@ -670,28 +667,9 @@ font-size: 20px;
     flex-direction: column; /* Alinha itens verticalmente */
     width: 100%; /* Faz o conteúdo ocupar 100% da largura */
   }
-
-
-  
-.notification-dropdown {
-  background-color: #1e1e1e; /* Fundo escuro */
-  color: red;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: small;
-  position: absolute;
-  top: 0px;
-  right: 0; 
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  width: 320px;
-  z-index: 1000;
-  }
-
-
-
-
-
+ .modal-body{
+   font-size: small;
+ }
   .menu-nav-content {
     width: 100%; /* Faz o conteúdo ocupar 100% da largura */
     flex-direction: column; /* Empilha os itens verticalmente */
@@ -771,4 +749,3 @@ font-size: 20px;
     padding: 10px;
   }
 }
-
