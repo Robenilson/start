@@ -108,7 +108,6 @@ export async function FetchBox() {
   );
   try {
     const response = await axios(config);
-    console.log(response.data)
     return response.data;
   } catch (error) {
     return serviceRetornarErro(error);
@@ -182,21 +181,17 @@ function getPaymentOption(value) {
 
 // Função para visualizar dados do caixa
 export async function ViewDataObjectBox(data) {
+
   try {
     let value = [];
-
     if (data && Array.isArray(data)) {
-      value = await Promise.all(data.map(async s => {
-        if (s.saleStatus === 4 || s.saleStatus === '4' || !s.produtos || s.produtos.length === 0) {
-          return null;
-        }
-
+      value = await Promise.all(data.map(async s => { 
         const clientName = s.clientId !== undefined ? await FetchUserByID(s.clientId) : { nome: "Unknown" };
 
         return {
           id: s.id,
           clientId: s.clientId !== undefined ? s.clientId : 0,
-          clientName: clientName.nome,
+          clientName: clientName.nome ||"CLIENTE NÂO CADASTRADO",
           tipo: s.tipo || "null",
           desconto: s.desconto !== undefined ? s.desconto : 0,
           precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,

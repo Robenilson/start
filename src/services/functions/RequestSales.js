@@ -1,17 +1,15 @@
 import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro,TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
-const user = JSON.parse(localStorage.getItem('user'));
 
+const URL_ADD_NEW_SALES = `${endPoints.urlNewSale}?tenantId=${TenetId()}`;
 
-
-const addNew = endPoints.urlNewSale+TenetId();
 
 //Adiciona um nova Venda
 export async function NewSale(data) {
     var config = serviceRetornarConfig(
-      "post",
-      "https://pos-bff-production.up.railway.app/api/SalesOrder"+"?"+TenetId(),
+      "POST",
+      URL_ADD_NEW_SALES,
       data,
       true
     );
@@ -24,7 +22,7 @@ export async function NewSale(data) {
   }
 
 
-  export async function createSaleOrder(clientId, employeerId, products, discount, payment) {
+  export async function createSaleOrder(clientId, employeerId, products, discount, payment) {   
     // Configurações iniciais do pedido no formato esperado
     const saleOrder = {
         id: "3fa85f64-5717-4562-b3fc-2c963f66afa6", // ID do pedido como UUID
@@ -44,7 +42,7 @@ export async function NewSale(data) {
         if (product) {
             saleOrder.produtos.push({
                 productId: product.id || "3fa85f64-5717-4562-b3fc-2c963f66afa6", // ID do produto como UUID
-                quantity: product.quantidade || 0, // Quantidade do produto, default 0
+                quantity: product.quantity || 0, // Quantidade do produto, default 0
                 orderId: saleOrder.id, // ID do pedido
                 productType: product.productType || 1, // Tipo do produto, default 1
                 name: product.nome || "Produto sem nome" // Nome do produto
