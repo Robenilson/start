@@ -51,7 +51,6 @@ const OrderItemManager = ({
               onChange={handleQuantityChange}
               className="form-control"
             />
-            <p>Valor Total: R$ {calculatedTotal.toFixed(2)}</p>
             <button 
               className="btn primary-btn" 
               onClick={handleConfirmItem} // Chamada da função modificada

@@ -1,11 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import ModalComponent from '../../components/ModalComponet';
-import Tabela from '../../components/GenericTabel'; // Novo componente Tabela
+import Tabela from '../../components/GenericTabel';
 import Card from '../../components/Card';
-import DetalhesPedido from './componentesCaixa/DetalhesPedido';
+import DetalhesPedido from './components/DetalhesPedido';
 import LoadingModal from '../../components/LoadingModal';
 import Vendas from '../Vendas/vendas';
-import { OpenBox, FetchBox, CloseBox, PutCompletBox,transformOrder,getSales, ViewDataObjectBox, createDataObjectEditBox, PutCanceltBox , createSaleOrder } from "../../services/functions/RequestBox";
+import {
+  OpenBox,
+  FetchBox,
+  CloseBox,
+  PutCompletBox,
+  transformOrder,
+  ViewDataObjectBox,
+  createDataObjectEditBox,
+  PutCanceltBox,
+} from "../../services/functions/RequestBox";
+import CaixaActionComponent from './components/AbrirCaixaComponent'; // Importação do componente genérico
 
 const user = JSON.parse(localStorage.getItem('user'));
 
@@ -13,8 +23,6 @@ const Caixa = () => {
   const [loading, setLoading] = useState(false);
   const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
   const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
-  const [valorInicial, setValorInicial] = useState('');
-  const [saldo, setSaldo] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPedidoSuccess, setShowPedidoSuccess] = useState(false);
   const [pedidos, setPedidos] = useState([]);
@@ -24,6 +32,7 @@ const Caixa = () => {
   const [showModalConfirmacaoVenda, setShowModalConfirmacaoVenda] = useState(false);
   const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
   const [showModalVenda, setShowModalVenda] = useState(false);
+  const [saldo, setSaldo] = useState(0);
 
   const handleClose = () => {
     updateBox();
@@ -42,7 +51,12 @@ const Caixa = () => {
   const updateBox = async () => {
     setLoading(true);
     const boxData = await FetchBox();
+    
+
     const viewData = await ViewDataObjectBox(boxData);
+
+    console.log(viewData)
+
     setPedidos(viewData);
     setLoading(false);
   };
@@ -57,87 +71,28 @@ const Caixa = () => {
     updateBox();
   }, []);
 
-  const handleAbrirCaixa = () => {
-    setShowModalAbrirCaixa(true);
-  };
-
-  const handleFecharCaixa = () => {
-    setShowModalFecharCaixa(true);
-  };
-
-  const handleCloseAbrirCaixa = () => {
-    setShowModalAbrirCaixa(false);
-    setValorInicial('');
-  };
-
-  const handleCloseFecharCaixa = () => {
-    setShowModalFecharCaixa(false);
-  };
-
-  const handleNWeVendas = () => {
-    setShowModalVenda(true);
-  };
-
-  const handleConfirmarAbrirCaixa = async () => {
-    const valor = parseFloat(valorInicial);
-    if (valor >= -1) {
-      setLoading(true);
-      const agora = new Date();
-      await OpenBox();
-      setSaldo(valor);
-      setCaixaAberto(true);
-      setDataAbertura(agora);
-      localStorage.setItem('dataAbertura', agora.toISOString());
-      localStorage.setItem('saldo', valor.toString());
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 5000);
-      handleCloseAbrirCaixa();
-    } else {
-      alert('O valor inicial deve ser igual ou maior que 100.');
-    }
-    setLoading(false);
-  };
-
-  const handleConfirmarFecharCaixa = async () => {
-    setLoading(true);
-    const agora = new Date();
-    await CloseBox(user.EmployeerId);
-    setCaixaAberto(false);
-    setSaldo(0);
-    setHoraFechamento(new Date().toLocaleString());
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 5000);
-    localStorage.removeItem('dataAbertura');
-    localStorage.removeItem('saldo');
-    setLoading(false);
-    handleCloseFecharCaixa();
-  };
+  const handleAbrirCaixa = () => setShowModalAbrirCaixa(true);
+  const handleFecharCaixa = () => setShowModalFecharCaixa(true);
+  const handleCloseAbrirCaixa = () => setShowModalAbrirCaixa(false);
+  const handleCloseFecharCaixa = () => setShowModalFecharCaixa(false);
+  const handleNWeVendas = () => setShowModalVenda(true);
 
   const handlePedidoFormaPagamento = (index) => {
     setPedidoSelecionado(index);
     setShowModalConfirmacaoVenda(true);
   };
 
-  const handleCloseConfirmacaoVenda = () => {
-    setShowModalConfirmacaoVenda(false);
-  };
+  const handleCloseConfirmacaoVenda = () => setShowModalConfirmacaoVenda(false);
 
   const handleConfirmarPagamento = (pedido, formaPagamento, desconto) => {
     setLoading(true);
 
+    const data = createDataObjectEditBox(pedido, formaPagamento, desconto, user);
+    data.then((data) => PutCompletBox(data.id, data));
 
-    const  data =  createDataObjectEditBox(pedido, formaPagamento, desconto, user)
-    data.then( data =>PutCompletBox(data.id, data))
-    //console.log(" AQUI",data)
-
-    
-
-    //console.log(transformOrder(pedido))
-
-    
     setShowPedidoSuccess(true);
-     updateBox();
-        setTimeout(clearState, 4000);
+    updateBox();
+    setTimeout(clearState, 4000);
 
     setLoading(false);
     handleCloseConfirmacaoVenda();
@@ -156,7 +111,6 @@ const Caixa = () => {
     setShowPedidoSuccess(false);
   };
 
-  // Configuração das colunas e ações para o componente Tabela
   const columns = [
     { key: 'clientName', label: 'Cliente' },
     {
@@ -180,37 +134,39 @@ const Caixa = () => {
         <div className="user-manager-container">
           <div className="card-header">Gestão de Caixa</div>
           <center>
-            {caixaAberto && (
+            {caixaAberto ? (
               <>
-                <button onClick={handleNWeVendas} className="btn primary-btn">Nova Venda</button>
-                <button className="btn primary-btn" onClick={handleFecharCaixa}>Fechar Caixa</button>
+                <button onClick={handleNWeVendas} className="btn primary-btn">
+                  Nova Venda
+                </button>
+                <button className="btn primary-btn" onClick={handleFecharCaixa}>
+                  Fechar Caixa
+                </button>
               </>
-            )}
-            {!caixaAberto && (
-              <button onClick={handleAbrirCaixa} className="btn primary-btn">Abrir Caixa</button>
+            ) : (
+              <button onClick={handleAbrirCaixa} className="btn primary-btn">
+                Abrir Caixa
+              </button>
             )}
           </center>
 
           <ModalComponent
             show={showModalAbrirCaixa}
             onHide={handleCloseAbrirCaixa}
-            hideButtons='true'
+            hideButtons="true"
             title="Abrir Caixa"
           >
-            <form>
-              <div>
-                <label className='titles'>Valor Inicial</label>
-                <input
-                  type="number"
-                  className="form-control my-2 mb-4"
-                  value={valorInicial}
-                  onChange={(e) => setValorInicial(e.target.value)}
-                  placeholder="Valor Inicial"
-                />
-              </div>
-            </form>
-            <div className="btn danger-btn" onClick={handleConfirmarAbrirCaixa}>Salvar</div>
-            <div className="btn secondary-btn" onClick={handleCloseAbrirCaixa}>Cancelar</div>
+            <CaixaActionComponent
+              actionType="abrir"
+              onSuccess={({ valor, dataAbertura }) => {
+                setSaldo(valor);
+                setCaixaAberto(true);
+                setDataAbertura(dataAbertura);
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 5000);
+              }}
+              onClose={handleCloseAbrirCaixa}
+            />
           </ModalComponent>
 
           <ModalComponent
@@ -218,9 +174,18 @@ const Caixa = () => {
             onHide={handleCloseFecharCaixa}
             title="Fechar Caixa"
           >
-            <p>Você está prestes a fechar o caixa. Deseja continuar?</p>
-            <div className="btn danger-btn" onClick={handleConfirmarFecharCaixa}>Salvar</div>
-            <div className="btn secondary-btn" onClick={handleCloseFecharCaixa}>Cancelar</div>
+            <CaixaActionComponent
+              actionType="fechar"
+              user={user}
+              onSuccess={({ horaFechamento }) => {
+                setCaixaAberto(false);
+                setSaldo(0);
+                setHoraFechamento(horaFechamento.toLocaleString());
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 5000);
+              }}
+              onClose={handleCloseFecharCaixa}
+            />
           </ModalComponent>
 
           <ModalComponent

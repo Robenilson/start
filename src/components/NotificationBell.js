@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { FetchNotification } from '../services/functions/RequestNotification';
 import LoadingModal from '../components/LoadingModal'; // Importa o LoadingModal
+import ModalComponet from '../components/ModalComponet'; // Importa o ModalComponet
 
 function NotificationBell() {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -12,28 +13,26 @@ function NotificationBell() {
   useEffect(() => {
     const { getLastNotification, eventSource } = FetchNotification(
       (notification) => {
-        // Verifica se a notificação já existe antes de adicionar
         if (notification && !notifications.includes(notification)) {
           setNotifications((prev) => [...prev, notification]);
         }
-        setLoading(false); // Carregamento concluído ao receber a primeira notificação
+        setLoading(false);
       },
       (error) => {
-        setLoading(false); // Fechar loading em caso de erro
+        setLoading(false);
       }
     );
 
-    // Exibe a última notificação logo após o componente ser montado, se existir
     const lastNotification = getLastNotification();
     if (lastNotification && !notifications.includes(lastNotification)) {
       setNotifications((prev) => [...prev, lastNotification]);
-      setLoading(false); // Carregamento concluído se houver última notificação
+      setLoading(false);
     }
 
     return () => {
-      eventSource.close(); // Limpeza do eventSource ao desmontar o componente
+      eventSource.close();
     };
-  }, [notifications]); // Adiciona notifications como dependência para verificar duplicatas
+  }, [notifications]);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
@@ -43,24 +42,28 @@ function NotificationBell() {
     <div className="notification-icon" onClick={toggleNotifications} style={{ position: 'relative' }}>
       <FontAwesomeIcon icon={faBell} />
       {notifications.length > 0 && (
-        <span className="notification-count">
+        <span  className="notification-count">
           {notifications.length}
         </span>
       )}
-      {showNotifications && (
-        <div className="notification-dropdown">
-          <ul>
-            {notifications.length > 0 ? (
-              notifications.map((notification, index) => (
-                <li key={index}>{notification}</li> // Aqui deve mostrar as notificações
-              ))  
-            ) : (
-              <li>No new notifications</li>
-            )}
-          </ul>
-        </div>
-      )}
       {loading && <LoadingModal />} {/* Exibe o LoadingModal enquanto está carregando */}
+
+      {/* Substituição do dropdown pelo ModalComponet */}
+      <ModalComponet
+        show={showNotifications}
+        onHide={() => setShowNotifications(false)}
+        title="Notificações"
+      >
+        <ul>
+          {notifications.length > 0 ? (
+            notifications.map((notification, index) => (
+              <li key={index}>{notification}</li> // Mostra as notificações no modal
+            ))
+          ) : (
+            <li>No new notifications</li> // Mensagem padrão quando não há notificações
+          )}
+        </ul>
+      </ModalComponet>
     </div>
   );
 }

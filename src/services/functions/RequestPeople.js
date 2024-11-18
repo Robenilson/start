@@ -261,7 +261,3 @@ export async function NewUser(data) {
       return serviceRetornarErro(error);
     }
   }
- 
-
-
-

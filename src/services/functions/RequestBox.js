@@ -7,7 +7,7 @@ import { FetchUserByID } from "./RequestPeople";
 // Funções para montar as URLs
 const getOpenBoxUrl = (employeerId) => `${endPoints.urlOpenBox}/open?employeerId=${employeerId +"?"+ TenetId()}`;
 const getFecharCaixaUrl = (useid) => `${endPoints.fecharCaixa}/${useid +"?"+TenetId()}`;
-const getBoxUrl = () => endPoints.urlGetBox +"?"+TenetId();
+const getBoxUrl = () => endPoints.urlGetBox +TenetId();
 const getBoxUrlWithDate = (data) => `${endPoints.urlGetBox}/${data +"?"+ TenetId()}`;
 const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data+"?"+TenetId()}`;
 const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data +"?"+ TenetId()}`;
@@ -103,7 +103,7 @@ const getRole = (roleNumber) => {
 export async function FetchBox() {
   var config = serviceRetornarConfig(
     "get",
-    getBoxUrl(),
+    "https://pos-bff-production.up.railway.app/api/SalesOrder?tenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834    ",
     true
   );
   try {
@@ -181,21 +181,17 @@ function getPaymentOption(value) {
 
 // Função para visualizar dados do caixa
 export async function ViewDataObjectBox(data) {
+
   try {
     let value = [];
-
     if (data && Array.isArray(data)) {
-      value = await Promise.all(data.map(async s => {
-        if (s.saleStatus === 4 || s.saleStatus === '4' || !s.produtos || s.produtos.length === 0) {
-          return null;
-        }
-
+      value = await Promise.all(data.map(async s => { 
         const clientName = s.clientId !== undefined ? await FetchUserByID(s.clientId) : { nome: "Unknown" };
 
         return {
           id: s.id,
           clientId: s.clientId !== undefined ? s.clientId : 0,
-          clientName: clientName.nome,
+          clientName: clientName.nome ||"CLIENTE NÂO CADASTRADO",
           tipo: s.tipo || "null",
           desconto: s.desconto !== undefined ? s.desconto : 0,
           precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,

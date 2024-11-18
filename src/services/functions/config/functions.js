@@ -2,8 +2,6 @@
 
 
 export function serviceRetornarConfig(method, url, data) {
-   
-  
       return {
         method: method,
         url: url,
@@ -16,7 +14,7 @@ export function serviceRetornarConfig(method, url, data) {
 export const TenetId  = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     // Verifica se user e user.TenantId existem antes de retornar a query string
-    return (user && user.TenantId) ? `?tenantId=${user.TenantId}` : '';
+    return (user && user.TenantId) ? `${user.TenantId}` : '';
 };
 
 

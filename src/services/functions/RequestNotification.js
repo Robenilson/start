@@ -1,5 +1,7 @@
 import { endPoints } from "./config/endpoints";
 
+
+
  const TenetId  = () => {
   const user = JSON.parse(localStorage.getItem('user'));
   // Verifica se user e user.TenantId existem antes de retornar a query string
@@ -12,7 +14,9 @@ export function FetchNotification(onMessageCallback, onErrorCallback) {
   let lastNotification = null; // Variável para armazenar a última notificação
 
   const createEventSource = () => {
-    const eventSource = new EventSource(endPoints.urlNotification+TenetId());
+
+    console.log(endPoints.urlNotification+TenetId())
+    const eventSource = new EventSource("https://pos-bff-production.up.railway.app/api/Notification/stream?TenantId=6e5a1265-47fc-42a8-ad70-74307b0ab834");
 
     eventSource.onmessage = function(event) {
       try {

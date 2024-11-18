@@ -1,5 +1,4 @@
 import React from 'react';
-import './css/App.css'; // Certifique-se de que o caminho esteja correto
 
 const ModalComponent = ({ show, save,onHide, title, hideButtons, children }) => {
   if (!show) return null;

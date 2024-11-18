@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import Tabela from '../../../components/GenericTabel'; // Substitua pelo caminho correto
 
 const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento, cancel }) => {
   const [formaPagamento, setFormaPagamento] = useState('');
   const [desconto, setDesconto] = useState('');
   const [valorTotal, setValorTotal] = useState(0);
-  const [erro, setErro] = useState(''); // Estado para armazenar a mensagem de erro
+  const [erro, setErro] = useState('');
 
+  // Calcula o valor total do pedido ao carregar o componente ou quando o pedido muda
   useEffect(() => {
+     console.log(pedido)
+
     if (pedido && pedido.produto && pedido.produto.length > 0) {
-      const total = pedido.produto.reduce((acc, prod) => acc + (prod.price * prod.quantity), 0);
+      const total = pedido.precoTotal;
       setValorTotal(total);
     } else {
       setValorTotal(0);
@@ -24,7 +28,6 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento, cancel }) =>
   };
 
   const handleConfirmar = () => {
-    // Verifica se os campos obrigatórios foram preenchidos
     if (!formaPagamento) {
       setErro('Por favor, selecione a forma de pagamento.');
       return;
@@ -33,11 +36,7 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento, cancel }) =>
       setErro('Por favor, insira um desconto.');
       return;
     }
-
-    // Limpa a mensagem de erro se tudo estiver preenchido
     setErro('');
-    
-    // Chama a função de confirmação de pagamento
     handleConfirmarPagamento(pedido, formaPagamento, desconto);
   };
 
@@ -47,39 +46,61 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento, cancel }) =>
   };
 
   const formatTime = (horaMinima) => {
-    console.log(horaMinima)
-    if (horaMinima === 60 &&  horaMinima === 1) {
+    if (horaMinima === 60) {
       return '1 hora';
     }
     return `${horaMinima} minutos`;
   };
-  
+
+  // Definindo as colunas da tabela
+  const columns = [
+    { key: 'name', label: 'Nome' },
+,    {
+      key: 'quantity',
+      label: 'Quantidade/Tempo',
+      render: (item) =>
+        item.productType === 1
+          ? `${item.quantity} Unidades`
+          : formatTime(item.quantity),
+    }
+  ];
+
+  // Ações (opcional, caso precise implementar botões para cada linha)
+  const actions = [
+    {
+      label: 'Editar',
+      className: 'btn-edit',
+      onClick: (item) => alert(`Editar item: ${item.name}`),
+    },
+    {
+      label: 'Remover',
+      className: 'btn-remove',
+      onClick: (item) => alert(`Remover item: ${item.name}`),
+    },
+  ];
+
   return (
     <div className="detalhes-pedido">
       <h5>Detalhes do Pedido</h5>
-   
       <p>Cliente: {pedido.clientName}</p>
-      <p>Preço Total: R${pedido.precoTotal}</p>
-      <h6>Produtos:</h6>
-      {pedido.produto && pedido.produto.length > 0 ? (
-        <ul>
-          {pedido.produto.map((produto, index) => (
-            <li key={index}>
-              <div>
-                <p>{produto.productType === 1 ? "Detalhes do Produto" : "Detalhes do Serviço"}</p>
-                <p>Nome: {produto.name}</p>
-                <p>{produto.productType === 1 ? "Quantidade" : "Tempo Alugado"}:{produto.productType === 1 ? `${produto.quantity} Unidades` : formatTime(produto.quantity)}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Nenhum produto disponível.</p>
-      )}
+      <p>Preço Total: R${valorTotal.toFixed(2)}</p>
 
+      {/* Tabela para exibir os produtos/serviços */}
+      <Tabela
+        columns={columns}
+        data={pedido.produto || []}
+        actions={actions} // Opcional, remova se não necessário
+        keyField="id" // Ajuste conforme o campo único de cada item
+      />
+
+      {/* Formulário para pagamento */}
       <div className="form-group">
         <label htmlFor="formaPagamento">Forma de Pagamento</label>
-        <select id="formaPagamento" value={formaPagamento} onChange={handleFormaPagamentoChange}>
+        <select
+          id="formaPagamento"
+          value={formaPagamento}
+          onChange={handleFormaPagamentoChange}
+        >
           <option value="">Selecione</option>
           <option value="1">Cédulas</option>
           <option value="2">Cartão de Débito</option>
@@ -99,7 +120,8 @@ const DetalhesPedido = ({ pedido, onHide, handleConfirmarPagamento, cancel }) =>
         />
       </div>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>} {/* Exibe a mensagem de erro, se houver */}
+      {/* Exibindo mensagem de erro, se houver */}
+      {erro && <p style={{ color: 'red' }}>{erro}</p>}
 
       <div className="actions">
         <button className="btn cancel" onClick={handleCancel}>

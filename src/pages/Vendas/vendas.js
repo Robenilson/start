@@ -62,6 +62,7 @@ const Vendas = ({ userRole }) => {
 
   const confirmOrder = async () => {
     try {
+
         const paymenty = {
             id: 1,
             value: 0,  // Certifique-se que é um número
@@ -70,11 +71,8 @@ const Vendas = ({ userRole }) => {
             paymentType: 1  // Certifique-se que é um número
         };
 
-        const newVenda = await createSaleOrder('1', '22', itemDataToOrder, 0, paymenty);
-
-        console.log("Pedido criado:", JSON.stringify(newVenda));
-
-        await NewSale(newVenda); // Aguarda a conclusão do pedido
+       const newVenda = await createSaleOrder('1', '22', itemDataToOrder, 0, paymenty);
+       await NewSale(newVenda); // Aguarda a conclusão do pedido
 
         clearOrder();
         setShowOrderListModal(false);
