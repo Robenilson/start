@@ -114,7 +114,6 @@ const Vendas = () => {
           {/* Condicional para exibir conteúdo com base na aba ativa */}
           {activeTab === 'order' && (
             <>
-            <div className="card-header">Gestão de Vendas e Caixa</div>
        
           <div className="form-group input-pequeno respon">
             <input
@@ -147,10 +146,10 @@ const Vendas = () => {
               </button>
 
               {showOrderListModal && objValue && (
-                <ListaVendas 
-                  dadosDetalhados={objValue}
-                  onCloseListaVendas={() => setShowOrderListModal(false)}
-                />
+                <>
+               <div className="card-header">Venda</div>
+                <ListaVendas dadosDetalhados={objValue}  onCloseListaVendas={() => setShowOrderListModal(false)}/>
+                </>
               )}
 
               <OrderItemManager
