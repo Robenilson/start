@@ -12,7 +12,6 @@ const getBoxUrlWithDate = (data) => `${endPoints.urlGetBox}/${data +"?"+ TenetId
 const getProdutoByIdUrl = (data) => `${endPoints.urlGetByIdProdutos}${data+"?"+TenetId()}`;
 const getServicoByIdUrl = (data) => `${endPoints.urlGetByIdServicos}${data +"?"+ TenetId()}`;
 const getCompleteBoxUrl = (data) => `${endPoints.urlPutBox}/${data.id}/complete${+"?"+TenetId()}`;
-const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel${+"?"+TenetId()}`;
 const user = JSON.parse(localStorage.getItem('user'));
 const getCashierData = (id) => {
   return `https://pos-bff-production.up.railway.app/api/SalesOrder/${id}/complete?tenantId=${user.TenantId}`;
@@ -181,29 +180,32 @@ function getPaymentOption(value) {
 
 // Função para visualizar dados do caixa
 export async function ViewDataObjectBox(data) {
-
   try {
     let value = [];
     if (data && Array.isArray(data)) {
       value = await Promise.all(data.map(async s => { 
-        const clientName = s.clientId !== undefined ? await FetchUserByID(s.clientId) : { nome: "Unknown" };
+        // Verifica se o produto é null ou o saleStatus é 4
+        if (!s.produtos || s.produtos.length === 0 || s.saleStatus === 4) {
+          return null;
+        }
 
         return {
           id: s.id,
           clientId: s.clientId !== undefined ? s.clientId : 0,
-          clientName: clientName.nome ||"CLIENTE NÂO CADASTRADO",
+          clientName: "CLIENTE NÂO CADASTRADO",
           tipo: s.tipo || "null",
           desconto: s.desconto !== undefined ? s.desconto : 0,
           precoTotal: s.precoTotal !== undefined ? s.precoTotal : 0,
           credito: s.credito !== undefined ? s.credito : 0,
           payments: s.payments && s.payments.length > 0 ? s.payments : null,
           saleStatus: s.saleStatus !== undefined ? s.saleStatus : 0,
-          produto: s.produtos,
+          produtos: s.produtos,
           dtSale: s.dtSale
         };
       }));
 
-      value = value.filter(item => item !== null); // Remove os objetos nulos
+      // Filtra os objetos nulos, incluindo os removidos devido a produto null ou saleStatus 4
+      value = value.filter(item => item !== null); 
     }
 
     return value;
@@ -230,22 +232,6 @@ export async function PutCompletBox(id,data) {
   }
 }
 
-// Função para cancelar o caixa
-export async function PutCanceltBox(id, data) {
-  var config = serviceRetornarConfig(
-    "put",
-    getCancelBoxUrl (id),
-    data,
-    true
-  );
-
-  try {
-    
-    return (await axios(config)).data;
-  } catch (error) {
-    return serviceRetornarErro(error);
-  }
-}
 
 
 
@@ -256,9 +242,9 @@ export async function createDataObjectEditBox(pedido, formaPagamento, desconto, 
     const data = {
       id: pedido.id,
       dtSale: new Date().toISOString(),
-      produtos: pedido.produto.map(prod => ({
+      produtos: pedido.produtos.map(prod => ({
         productId: prod.productId || '4e4d3227-39dc-4ad8-a7a5-459b52c3419a',
-        quantity: prod.quantity || 0,
+        quantity: prod.quantitda || 0,
         orderId: pedido.id || '',
         productType: prod.productType || 1,
         name: prod.name || 'Brisadeiro'

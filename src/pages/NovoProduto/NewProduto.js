@@ -65,7 +65,7 @@ const NewCadastro = () => {
     setLoading(true);
     try {
       const data = await fetchProduct();
-      console.log(data)
+      
       setProdutos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error updating products:', error);
@@ -243,9 +243,7 @@ const NewCadastro = () => {
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
     const newData = createProductObject(data)
-    //console.log(newData)
     const a =await editProduct(newData);
-    console.log("a"+a)
     await updateTabelProduct();
     
   };

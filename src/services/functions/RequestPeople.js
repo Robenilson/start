@@ -3,12 +3,12 @@ import { serviceRetornarConfig , serviceRetornarErro, TenetId} from "./config/fu
 import { endPoints } from "./config/endpoints";
 
 
-const listAll_URL =endPoints.URL_GET_ListAllUser+TenetId();
-const addNew_URL  =   endPoints.URL_POST_AddNewUser+TenetId();
-const edit_Url    =     `${endPoints.URL_PUT_AddNewUser}${TenetId()}`;
-const selectCPF_Url =  (data) =>`${endPoints.URL_GET_UserCPF}${data}`+TenetId();
-const select_UserByID = (data) =>  `${endPoints.URL_GET_PRODUCT_BYID}/${data}`+TenetId();
-const delete_ByID  =    (data) =>  `${endPoints.URL_DELETE_UserByid}/${data}`
+const listAll_URL =`${endPoints.URL_GET_ListAllUser}?tenantId=${TenetId()}`;
+const addNew_URL  =  `${endPoints.URL_POST_AddNewUser}?tenantId=${TenetId()}`;
+const edit_Url    =     `${endPoints.URL_PUT_AddNewUser}?tenantId=${TenetId()}`;
+const selectCPF_Url =  (data) =>`${endPoints.URL_GET_UserCPF}${data}?tenantId=${TenetId()}`;
+const select_UserByID = (data) =>  `${endPoints.URL_GET_PRODUCT_BYID}/${data}?tenantId=${TenetId()}`;
+const delete_ByID  =    (data) =>  `${endPoints.URL_DELETE_UserByid}/${data}?tenantId=${TenetId()}`
 
 
 

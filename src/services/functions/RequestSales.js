@@ -3,23 +3,92 @@ import { serviceRetornarConfig , serviceRetornarErro,TenetId} from "./config/fun
 import { endPoints } from "./config/endpoints";
 
 const URL_ADD_NEW_SALES = `${endPoints.urlNewSale}?tenantId=${TenetId()}`;
+const URL_SALES_ORDER_BY_ID =(data) => `${endPoints.urlNewSale}/${data}?tenantId=${TenetId()}`;
+const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel?tenantId=${TenetId()}`;
+const URL_PUT_COMPLETE_SALES = (id) => `${endPoints.urlPutBox}/${id}/complete?tenantId=${TenetId()}`;
 
 
-//Adiciona um nova Venda
-export async function NewSale(data) {
-    var config = serviceRetornarConfig(
-      "POST",
-      URL_ADD_NEW_SALES,
-      data,
-      true
-    );
-    try {
-      
-      return await axios(config);
-    } catch (error) {
-      return serviceRetornarErro(error);
-    }
+export async function SalesOrderByID(data) {
+  var config = serviceRetornarConfig(
+    "GET",
+    URL_SALES_ORDER_BY_ID(data),
+    true
+  );
+  try {
+    return await (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
   }
+}
+
+// Função para cancelar o caixa
+export async function PutCanceltBox(data) {
+  var config = serviceRetornarConfig(
+    "put",
+    getCancelBoxUrl (data.id),
+    true
+  );
+  try { 
+    return (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+export async function NewSale(data) {
+  const config = serviceRetornarConfig(
+    "POST",
+    URL_ADD_NEW_SALES,
+    data,
+    true
+  );
+
+  try {
+    const response = await axios(config);
+    return response.data
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+
+// Função para marcar o caixa como completo
+export async function Put_Sales_Complete(data) {
+  
+  var config = serviceRetornarConfig(
+    "PUT",
+    URL_PUT_COMPLETE_SALES(data.id),
+    data,
+    true
+  );
+  try {
+    return (await axios(config)).data;
+  } catch (error) {
+    return serviceRetornarErro(error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   export async function createSaleOrder(clientId, employeerId, products, discount, payment) {   

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
-import { createSaleOrder ,NewSale} from '../../services/functions/RequestSales';
+import { createSaleOrder ,NewSale,  SalesOrderByID } from '../../services/functions/RequestSales';
 import { fetchProduct } from '../../services/functions/RequestProduct';
 import { fetchService } from '../../services/functions/RequestService';
 import { BarCod } from '../../services/functions/RequestBarCod';
 import Tabela from '../../components/GenericTabel';
 import BarcodeScanner from '../../components/BarcodeScanner';
 import OrderItemManager from './OrderItemManager';
+import  ListaVendas  from '../Caixa/ListaVendas';
 
-const Vendas = ({ userRole }) => {
+const Vendas = ({  }) => {
   const [combinedData, setCombinedData] = useState([]);
   const [filterText, setFilterText] = useState('');
   const [itemDataToOrder, setItemDataToOrder] = useState([]);
@@ -17,6 +18,7 @@ const Vendas = ({ userRole }) => {
   const [showQuantityModal, setShowQuantityModal] = useState(false);
   const [showOrderListModal, setShowOrderListModal] = useState(false);
   const [totalValue, setTotalValue] = useState(0);
+  const [objValue, setObjValue] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -70,9 +72,9 @@ const Vendas = ({ userRole }) => {
             orderId: "0", // Associe ao ID do pedido depois de criado
             paymentType: 1  // Certifique-se que é um número
         };
-
        const newVenda = await createSaleOrder('1', '22', itemDataToOrder, 0, paymenty);
-       await NewSale(newVenda); // Aguarda a conclusão do pedido
+       setObjValue(await SalesOrderByID(await NewSale(newVenda)));
+     
 
         clearOrder();
         setShowOrderListModal(false);
@@ -85,6 +87,10 @@ const Vendas = ({ userRole }) => {
   const filteredData = combinedData.filter((item) =>
     JSON.stringify(item).toLowerCase().includes(filterText.toLowerCase())
   );
+
+
+
+
 
   return (
     <Card>

@@ -117,9 +117,7 @@ const UserManager = () => {
   const handleAddUser = async () => {
     handleCloseModal();
     setLoading(true);
-    const newDataUser = await createDataObjectUser(userValues);
-    console.log(newDataUser)
-    await NewUser(newDataUser);
+    await NewUser(await createDataObjectUser(userValues));
     await updateUsers();
     setShowSuccessModal(true);
     setLoading(false);
@@ -192,7 +190,6 @@ const UserManager = () => {
   
     const users = Array.isArray(result) ? result : []; // Garante que users seja um array, mesmo que FetchUser retorne algo inesperado
   
-    console.log(users); // Log para verificar o conteúdo de users
   
     // Passa o array de usuários para o estado `pessoas`
     setPessoas(users);
