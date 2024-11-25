@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
-
 const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEditMode }) => {
   const [isFormValid, setIsFormValid] = useState(false);
-
   useEffect(() => {
     const checkFormValidity = () => {
       const { nome, sobrenome, cpf, email, dataNascimento, password } = userValues;
       return nome && sobrenome && cpf && email && dataNascimento && password;
     };
-
     setIsFormValid(checkFormValidity());
   }, [userValues]);
-
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -20,7 +16,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
     const day = (`0${date.getDate()}`).slice(-2);
     return `${year}-${month}-${day}`;
   };
-
   return (
     <form>
       <div className="form-row mb-3">
@@ -36,7 +31,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
             className="form-control"
           />
         </div>
-
         <div className="form-group col">
           <label htmlFor="formSobrenome">Sobrenome</label>
           <input
@@ -49,7 +43,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           />
         </div>
       </div>
-
       <div className="form-row mb-3">
         <div className="form-group col">
           <label htmlFor="formEmail">Email</label>
@@ -62,7 +55,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
             className="form-control"
           />
         </div>
-
         <div className="form-group col">
           <label htmlFor="formDataNascimento">Data de Nascimento</label>
           <input
@@ -76,7 +68,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           />
         </div>
       </div>
-
       <div className="form-row mb-3">
         <div className="form-group col">
           <label htmlFor="formCpf">CPF</label>
@@ -90,7 +81,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
             className="form-control"
           />
         </div>
-
         <div className="form-group col">
           <label htmlFor="formTelefone">Telefone</label>
           <input
@@ -103,7 +93,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           />
         </div>
       </div>
-
       <div className="form-row mb-3">
         <div className="form-group">
           <label htmlFor="formPassword">Senha</label>
@@ -118,9 +107,7 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           />
         </div>
       </div>
-
       <h5>Endereço</h5>
-
       <div className="form-row mb-3">
         <div className="form-group col">
           <label htmlFor="formCep">CEP</label>
@@ -133,7 +120,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
             className="form-control"
           />
         </div>
-
         <div className="form-group col">
           <label htmlFor="formCidade">Cidade</label>
           <input
@@ -146,7 +132,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           />
         </div>
       </div>
-
       <div className="form-row mb-3">
         <div className="form-group col">
           <label htmlFor="formEstado">Estado</label>
@@ -159,7 +144,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
             className="form-control"
           />
         </div>
-
         <div className="form-group col">
           <label htmlFor="formBairro">Bairro</label>
           <input
@@ -172,7 +156,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           />
         </div>
       </div>
-
       <div className="form-row mb-3">
         <div className="form-group col">
           <label htmlFor="formNumero">Número</label>
@@ -186,7 +169,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           />
         </div>
       </div>
-
       <div className="form-row mb-3">
         <div className="form-group col">
           <label htmlFor="formRole">Tipo de Usuário</label>
@@ -205,7 +187,6 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
           </select>
         </div>
       </div>
-
       <div className="form-row mt-4">
         <div className="col">
           <button type="button" onClick={handleClose} className="btn btn-secondary">
@@ -228,5 +209,4 @@ const UserForm = ({ userValues, save, edit, handleInputChange, handleClose, isEd
     </form>
   );
 };
-
 export default UserForm;

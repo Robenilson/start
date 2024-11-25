@@ -1,7 +1,6 @@
 import React from 'react';
 import { Tabs, Tab, Form } from 'react-bootstrap';
 import Tabela from '../../../components/GenericTabel';
-
 const CadastroTabs = ({
   produtos,
   servicos,
@@ -26,7 +25,6 @@ const CadastroTabs = ({
       />
       <Tabela
         columns={[
-
           { key: 'nome', label: 'Nome' ,  className: 'space'},
           { key: 'valor', label: 'Valor', render: (item) => `R$${item.valor.toFixed(2)}` },
           { key: 'quantidade', label: 'Quantidade' ,  className: 'space'},
@@ -41,7 +39,6 @@ const CadastroTabs = ({
         keyField="id"
       />
     </Tab>
-
     {/* Aba Serviços */}
     <Tab eventKey="servicos" title="Serviços">
       <Form.Control
@@ -70,5 +67,4 @@ const CadastroTabs = ({
     </Tab>
   </Tabs>
 );
-
 export default CadastroTabs;

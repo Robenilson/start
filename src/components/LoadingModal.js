@@ -1,7 +1,6 @@
 import React from 'react';
 import ModalComponent from './ModalComponet';
 import { Spinner } from 'react-bootstrap';
-
 const LoadingModal = ({ show, onHide }) => (
   <ModalComponent
     show={show}

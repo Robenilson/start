@@ -1,8 +1,6 @@
 import React from 'react';
-
 const ModalComponent = ({ show, save,onHide, title, hideButtons, children }) => {
   if (!show) return null;
- 
   return (
     <div className="modal-overlay" onClick={onHide}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -13,11 +11,8 @@ const ModalComponent = ({ show, save,onHide, title, hideButtons, children }) => 
         <div className="modal-body">
           {children}
         </div>
-       
-       
       </div>
     </div>
   );
 };
-
 export default ModalComponent;

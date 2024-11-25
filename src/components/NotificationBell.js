@@ -4,12 +4,10 @@ import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { FetchNotification } from '../services/functions/RequestNotification';
 import LoadingModal from '../components/LoadingModal'; // Importa o LoadingModal
 import ModalComponet from '../components/ModalComponet'; // Importa o ModalComponet
-
 function NotificationBell() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true); // Estado para controlar o loading
-
   useEffect(() => {
     const { getLastNotification, eventSource } = FetchNotification(
       (notification) => {
@@ -22,22 +20,18 @@ function NotificationBell() {
         setLoading(false);
       }
     );
-
     const lastNotification = getLastNotification();
     if (lastNotification && !notifications.includes(lastNotification)) {
       setNotifications((prev) => [...prev, lastNotification]);
       setLoading(false);
     }
-
     return () => {
       eventSource.close();
     };
   }, [notifications]);
-
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
   };
-
   return (
     <div className="notification-icon" onClick={toggleNotifications} style={{ position: 'relative' }}>
       <FontAwesomeIcon icon={faBell} />
@@ -47,7 +41,6 @@ function NotificationBell() {
         </span>
       )}
       {loading && <LoadingModal />} {/* Exibe o LoadingModal enquanto está carregando */}
-
       {/* Substituição do dropdown pelo ModalComponet */}
       <ModalComponet
         show={showNotifications}
@@ -67,5 +60,4 @@ function NotificationBell() {
     </div>
   );
 }
-
 export default NotificationBell;

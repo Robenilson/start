@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ModalComponent from '../../components/ModalComponet';
 import Tabela from '../../components/GenericTabel';
-
 const OrderItemManager = ({ 
   showModal, 
   onClose, 
@@ -15,23 +14,19 @@ const OrderItemManager = ({
 }) => {
   const [quantity, setQuantity] = useState(0);
   const [calculatedTotal, setCalculatedTotal] = useState(selectedProduct?.valor || 0);
-
   useEffect(() => {
     setQuantity(0);
   }, []);
-
   const handleQuantityChange = (e) => {
     const newQuantity = parseInt(e.target.value, 10);
     const validValue = isNaN(newQuantity) ? 0 : newQuantity;
     setQuantity(validValue);
     setCalculatedTotal(validValue * (selectedProduct?.valor || 0));
   };
-
   const handleConfirmItem = () => {
     onAddItem(selectedProduct, quantity, calculatedTotal);
     setQuantity(0); // Reset da quantidade após a confirmação
   };
-
   return (
     <ModalComponent
       show={showModal}
@@ -59,7 +54,6 @@ const OrderItemManager = ({
             </button>
           </div>
         )}
-
         {/* Lista de Produtos já Adicionados */}
         <div>
           <h5>Itens no Pedido</h5>
@@ -83,7 +77,6 @@ const OrderItemManager = ({
         <br />
         <h5>Total da Compra: R$ {totalValue.toFixed(2)}</h5>
       </div>
-
       {/* Botões de Ação */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
         <button className="btn btn-danger" onClick={onClearOrder}>Cancelar compra</button>
@@ -92,5 +85,4 @@ const OrderItemManager = ({
     </ModalComponent>
   );
 };
-
 export default OrderItemManager;

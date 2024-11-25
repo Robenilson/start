@@ -1,6 +1,3 @@
-
-
-
 export function serviceRetornarConfig(method, url, data) {
       return {
         method: method,
@@ -10,16 +7,11 @@ export function serviceRetornarConfig(method, url, data) {
         data: data,
     };
 }
-
 export const TenetId  = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     // Verifica se user e user.TenantId existem antes de retornar a query string
     return (user && user.TenantId) ? `${user.TenantId}` : '';
 };
-
-
-
-
 export function serviceRetornarErro(error) {
     if (error.response) {
         // Erros de resposta do servidor (status code 4xx, 5xx)

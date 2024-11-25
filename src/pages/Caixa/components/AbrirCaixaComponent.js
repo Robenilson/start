@@ -7,18 +7,28 @@ const AbrirCaixaComponent = ({ onSuccess, onClose }) => {
 
   const handleConfirmarAbrirCaixa = async () => {
     const valor = parseFloat(valorInicial);
-    if (valor >= -1) {
+    if (isNaN(valor)) {
+      alert('Por favor, insira um número válido.');
+      return;
+    }
+    
+    if (valor >= 100) {
       setLoading(true);
-      const agora = new Date();
-      await OpenBox();
-      localStorage.setItem('dataAbertura', agora.toISOString());
-      localStorage.setItem('saldo', valor.toString());
-      onSuccess({ valor, dataAbertura: agora });
-      onClose();
+      try {
+        const agora = new Date();
+        await OpenBox();
+        localStorage.setItem('dataAbertura', agora.toISOString());
+        localStorage.setItem('saldo', valor.toString());
+        onSuccess({ valor, dataAbertura: agora });
+        onClose();
+      } catch (error) {
+        alert('Erro ao abrir a caixa. Tente novamente.');
+      } finally {
+        setLoading(false);
+      }
     } else {
       alert('O valor inicial deve ser igual ou maior que 100.');
     }
-    setLoading(false);
   };
 
   return (
@@ -35,8 +45,8 @@ const AbrirCaixaComponent = ({ onSuccess, onClose }) => {
           />
         </div>
       </form>
-      <div className="btn danger-btn" onClick={handleConfirmarAbrirCaixa}>
-        Salvar
+      <div className={`btn danger-btn ${loading ? 'disabled' : ''}`} onClick={!loading ? handleConfirmarAbrirCaixa : null}>
+        {loading ? 'Salvando...' : 'Salvar'}
       </div>
       <div className="btn secondary-btn" onClick={onClose}>
         Cancelar
