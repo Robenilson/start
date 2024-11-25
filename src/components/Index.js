@@ -1,8 +1,6 @@
 import React from 'react'
 import { Outlet } from "react-router-dom"; // Importando o Outlet
 import Menu from './menu';
-
-
 export const Index = () => {
   return (
     <>
@@ -12,6 +10,4 @@ export const Index = () => {
     </>
   )
 }
-
-
 export default Index;

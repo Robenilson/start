@@ -5,7 +5,6 @@ import UserForm from './componente/UserForm';
 import Tabela from '../../components/GenericTabel'; // Substituição de UserTable por Tabela
 import { FetchUser, NewUser, createDataObjectUser, deleteUserByID, editUser, createUpdatedDataObjectUser } from '../../services/functions/RequestPeople';
 import LoadingModal from '../../components/LoadingModal';
-
 const UserManager = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -37,7 +36,6 @@ const UserManager = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [showCreditosModal, setShowCreditosModal] = useState(false);
-
   // Configuração de colunas para o componente Tabela
   const columns = [
     { key: 'nome', label: 'Nome' },
@@ -47,7 +45,6 @@ const UserManager = () => {
     { key: 'telefone', label: 'Telefone' },
     { key: 'role', label: 'Role' }
   ];
-
   const actions = [
     {
       label: 'Editar',
@@ -60,7 +57,6 @@ const UserManager = () => {
       onClick: (user) => handleShowDeleteModal(user),
     },
   ];
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name.startsWith('endereco.')) {
@@ -79,7 +75,6 @@ const UserManager = () => {
       }));
     }
   };
-
   const handleShowModal = () => {
     setUserValues({
       id: '',
@@ -102,9 +97,7 @@ const UserManager = () => {
     setIsEditMode(false);
     setShowModal(true);
   };
-
   const handleCloseModal = () => setShowModal(false);
-
   const handleEditUser = async () => {
     const dataObject = await createUpdatedDataObjectUser(userValues);
     handleCloseModal();
@@ -113,7 +106,6 @@ const UserManager = () => {
     await updateUsers();
     setLoading(false);
   };
-
   const handleAddUser = async () => {
     handleCloseModal();
     setLoading(true);
@@ -122,9 +114,7 @@ const UserManager = () => {
     setShowSuccessModal(true);
     setLoading(false);
   };
-
   const handleCloseSuccessModal = () => setShowSuccessModal(false);
-
   const handleEditUserData = async (userData) => {
     setUserValues({
       id: userData.id ?? '',
@@ -147,7 +137,6 @@ const UserManager = () => {
     setIsEditMode(true);
     setShowModal(true);
   };
-
   const handleDeleteUser = async () => {
     setShowDeleteModal(false);
     setLoading(true);
@@ -161,51 +150,38 @@ const UserManager = () => {
     }
     setLoading(false);
   };
-
   const handleShowDeleteModal = (user) => {
     setUserToDelete(user);
     setShowDeleteModal(true);
   };
-
   const handleCloseDeleteModal = () => {
     setUserToDelete(null);
     setShowDeleteModal(false);
   };
-
   const handleCreditos = () => {
     setShowCreditosModal(true);
   };
-
   const handleCloseCreditosModal = () => {
     setShowCreditosModal(false);
   };
-
   useEffect(() => {
     updateUsers();
   }, []);
-
   const updateUsers = async () => {
     setLoading(true);
     const result = await FetchUser();
-  
     const users = Array.isArray(result) ? result : []; // Garante que users seja um array, mesmo que FetchUser retorne algo inesperado
-  
-  
     // Passa o array de usuários para o estado `pessoas`
     setPessoas(users);
-  
     setLoading(false);
   };
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
-
   const filteredUsers = pessoas.filter((user) =>
     user.nome.toLowerCase().includes(searchTerm.toLowerCase()) || user.sobrenome.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
-
   const renderPagination = () => {
     const pageNumbers = [];
     for (let i = 1; i <= Math.ceil(filteredUsers.length / itemsPerPage); i++) {
@@ -221,7 +197,6 @@ const UserManager = () => {
       </div>
     );
   };
-
   return (
     <Card>
       <div className="user-manager-container">
@@ -230,19 +205,15 @@ const UserManager = () => {
             Cadastrar Pessoa
           </button>
         </center>
-
         <ModalComponent show={showModal} onHide={handleCloseModal} hideButtons="true" title={isEditMode ? "Editar Pessoa" : "Cadastrar Pessoa"}>
           <UserForm userValues={userValues} handleInputChange={handleInputChange} handleClose={handleCloseModal} save={handleAddUser} edit={handleEditUser} isEditMode={isEditMode} />
         </ModalComponent>
-
         <center>
           <div className="form-group input-pequeno respon">
             <input className="form-control" type="text" placeholder="Pesquisar por nome ou sobrenome" value={searchTerm} onChange={handleSearchChange} />
           </div>
         </center>
-
         <Tabela columns={columns} data={currentItems} actions={actions} />
-
         {renderPagination()}
       </div>
       <ModalComponent show={showDeleteModal} onHide={handleCloseDeleteModal} hideButtons="true" title="Excluir Usuário">
@@ -262,5 +233,4 @@ const UserManager = () => {
     </Card>
   );
 };
-
 export default UserManager;

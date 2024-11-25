@@ -1,69 +1,82 @@
-import React, { useEffect, useRef } from 'react';
-import  Quagga from'quagga';
+import React, { useEffect, useState } from 'react';
+import Quagga from 'quagga';
 
+const BarcodeScanner = ({ onDetected }) => {
+  const [scannerInitialized, setScannerInitialized] = useState(false);
 
-const BarcodeScanner = ({ onDetected, active }) => {
-  const videoRef = useRef(null);
-
-  const startScanner = () => {
-    Quagga.init({
-      inputStream: {
-        type: 'LiveStream',
-        target: videoRef.current,
-        constraints: {
-          width: 640,
-          height: 480,
-          facingMode: 'environment'
+  const initScanner = async () => {
+    return new Promise((resolve, reject) => {
+      Quagga.init(
+        {
+          inputStream: {
+            type: 'LiveStream',
+            target: document.querySelector('#scanner-container'),
+            constraints: {
+              width: window.innerWidth < 600 ? window.innerWidth - 20 : 600,
+              height: window.innerHeight < 400 ? window.innerHeight / 2 : 100,
+              facingMode: 'environment', // Câmera traseira
+            },
+          },
+          decoder: {
+            readers: ['code_128_reader'],
+          },
         },
-      },
-      decoder: {
-        readers: ['code_128_reader', 'ean_reader', 'ean_8_reader']
-      }
-    }, (err) => {
-      if (err) {
-        console.error('Erro ao iniciar o Quagga:', err);
-        return;
-      }
-      Quagga.start();
-    });
-
-    Quagga.onDetected((data) => {
-      onDetected(data.codeResult.code);
-      stopScanner();  // Desliga o scanner ao detectar o código
+        (err) => {
+          if (err) {
+            console.error('Erro ao iniciar o Quagga:', err);
+            reject(err);
+            return;
+          }
+          Quagga.start();
+          resolve();
+        }
+      );
     });
   };
 
-  const stopScanner = () => {
+  const handleDetected = (data) => {
+    // Chamando a função onDetected sempre que um código é escaneado
+    onDetected(data.codeResult.code);
+  };
+
+  const handleResize = async () => {
     Quagga.stop();
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject;
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
-      videoRef.current.srcObject = null;
-    }
+    await initScanner();
   };
 
   useEffect(() => {
-    let timeout;
+    const initializeScanner = async () => {
+      try {
+        await initScanner();
+        setScannerInitialized(true);
+        Quagga.onDetected(handleDetected);
+      } catch (error) {
+        console.error('Erro ao inicializar o scanner', error);
+      }
+    };
 
-    if (active) {
-      startScanner();
-      // Inicia o temporizador de 10 segundos para desligar a câmera automaticamente
-      
-    } else {
-      stopScanner();
-    }
+    initializeScanner();
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      stopScanner(); // Garante que o scanner seja desligado ao desmontar o componente
-   
+      Quagga.stop();
+      window.removeEventListener('resize', handleResize);
     };
-  }, [active]); // Dependência em "active"
+  }, []);
 
-  return <div ref={videoRef} style={{ width: '100%', height: '100%' }} />;
+  return (
+    <div
+      id="scanner-container"
+      style={{
+        width: '100%',
+        maxWidth: '600px',
+        margin: '0 auto',
+        height: 'auto',
+        position: 'relative',
+      }}
+    />
+  );
 };
 
 export default BarcodeScanner;
-
-
-

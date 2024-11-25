@@ -1,7 +1,6 @@
 import React from 'react';
 import LoadingModal from '../../../components/LoadingModal';
 import ModalComponent from '../../../components/ModalComponet';  // Certifique-se de usar o caminho correto
-
 const DetalhesPedido = ({
   pedidoSelecionado,
   formaPagamento,
@@ -14,14 +13,12 @@ const DetalhesPedido = ({
   loading,
 }) => {
   if (!pedidoSelecionado) return null;  // Evita erro caso pedido seja nulo
-
   return (
     <ModalComponent show={true} onHide={onClose} title="">
       <div className="">
         <center><h4>Detalhes do Pedido</h4></center>
         <p>Cliente: {pedidoSelecionado.clientName}</p>
         <p>Preço Total: R$ {pedidoSelecionado.precoTotal.toFixed(2)}</p>
-
         <ol className="">
           {pedidoSelecionado.produtos.map((item, index) => (
             <li key={index}>
@@ -29,7 +26,6 @@ const DetalhesPedido = ({
             </li>
           ))}
         </ol>
-
         {/* Formulário para pagamento */}
         <div className="">
           <label htmlFor="formaPagamento">Forma de Pagamento</label>
@@ -46,7 +42,6 @@ const DetalhesPedido = ({
             <option value="4">Pix</option>
           </select>
         </div>
-
         {/* Campo de desconto */}
         <div className="">
           <label htmlFor="desconto">Desconto</label>
@@ -58,7 +53,6 @@ const DetalhesPedido = ({
             onChange={onDescontoChange}
           />
         </div>
-
         <div className="actions">
           <button className="btn secondary-btn" onClick={onCancel}>
             Cancelar
@@ -68,10 +62,8 @@ const DetalhesPedido = ({
           </button>
         </div>
       </div>
-
       {loading && <LoadingModal />}
     </ModalComponent>
   );
 };
-
 export default DetalhesPedido;

@@ -1,41 +1,21 @@
 import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro, TenetId} from "./config/functions";
-import { endPoints } from "./config/endpoints";
-
-
-const listAll_URL =`${endPoints.URL_GET_ListAllUser}?tenantId=${TenetId()}`;
-const addNew_URL  =  `${endPoints.URL_POST_AddNewUser}?tenantId=${TenetId()}`;
-const edit_Url    =     `${endPoints.URL_PUT_AddNewUser}?tenantId=${TenetId()}`;
-const selectCPF_Url =  (data) =>`${endPoints.URL_GET_UserCPF}${data}?tenantId=${TenetId()}`;
-const select_UserByID = (data) =>  `${endPoints.URL_GET_PRODUCT_BYID}/${data}?tenantId=${TenetId()}`;
-const delete_ByID  =    (data) =>  `${endPoints.URL_DELETE_UserByid}/${data}?tenantId=${TenetId()}`
-
-
-
-
-
-
-
-
+import { endPoints } from "./config/endpoints";  
 export async function FetchUser() {
   const config = serviceRetornarConfig(
-    "get",
-    listAll_URL,
+    "GET",
+    `${endPoints.URL_GET_ListAllUser}?tenantId=${TenetId()}`,
     true
   ); 
   try {
     const response = await axios(config);
     const users = response.data;
-
-    // Usa Promise.all para resolver todas as Promises retornadas por UpdateDataObjectUser
     const updatedUsers = await Promise.all(users.map(user => UpdateDataObjectUser(user)));
-
     return updatedUsers; // Retorna a lista de objetos já resolvida
   } catch (error) {
     return serviceRetornarErro(error);
   }
 }
-
   export async function UpdateDataObjectUser(user) {
     try {
       const  data = {
@@ -50,22 +30,17 @@ export async function FetchUser() {
         passwordHash: user.passwordHash?.toString() ?? '',
         roleIds: [ "3fa85f64-5717-4562-b3fc-2c963f66afa6"],  // Mantendo este valor como está
       };
-  
       return  data;
     } catch (error) {
       console.error('Erro ao converter dados:', error);
       throw error;
     }
   }
-
-
-
-
 //Faz  uma pesquisa na tabela usuario 
 export async function FetchUserCPF(data) {
   var config = serviceRetornarConfig(
-    "get",
-    selectCPF_Url(data),
+    "GET",
+    `${endPoints.URL_GET_UserCPF}${data}?tenantId=${TenetId()}`,
     true
   );
   try {
@@ -75,12 +50,10 @@ export async function FetchUserCPF(data) {
     return serviceRetornarErro(error);
   }
 }
-
-//Faz  uma pesquisa por id na  tabela usuario 
 export async function FetchUserByID(data) {
   var config = serviceRetornarConfig(
-   "get",
-    select_UserByID(data),
+   "GET",
+   `${endPoints.URL_GET_PRODUCT_BYID}/${data}?tenantId=${TenetId()}`,
     true
   );
   try {
@@ -90,15 +63,11 @@ export async function FetchUserByID(data) {
     return serviceRetornarErro(error);
   }
 }
-
-
-
-
 //Faz  uma pesquisa por id na  tabela usuario 
 export async function deleteUserByID(data) {
   var config = serviceRetornarConfig(
     "delete",
-    delete_ByID(data),
+    `${endPoints.URL_DELETE_UserByid}/${data}?tenantId=${TenetId()}`,
     true
   );
   try {
@@ -108,9 +77,6 @@ export async function deleteUserByID(data) {
     return serviceRetornarErro(error);
   }
 }
-
-
-
 export async function createUpdatedDataObjectUser(userValues) {
   try {
     const dataObject = {
@@ -132,18 +98,15 @@ export async function createUpdatedDataObjectUser(userValues) {
       roleIds: ["3fa85f64-5717-4562-b3fc-2c963f66afa6"],
       password: userValues.password?.toString() ?? ''
     };
-
     // Adiciona o 'userType' ao objeto, convertendo o nome para o ID correspondente
     const role = getRoleName2(userValues.userType);
     dataObject.userType = role;
-
     return dataObject;
   } catch (error) {
     console.error('Erro ao converter dados:', error);
     throw error;
   }
 };
-
 // Função para mapear o tipo de usuário para o ID correspondente
 const getRoleName2 = (userType) => {
   switch (userType) {
@@ -159,29 +122,20 @@ const getRoleName2 = (userType) => {
       return userType;  // Retorna o valor original se não corresponder a nenhum caso
   }
 };
-
-
-
-
-
-
 //Adiciona um novo Produto
 export async function NewUser(data) {
     var config = serviceRetornarConfig(
-      "post",
-      addNew_URL,
+      "POST",
+      `${endPoints.URL_POST_AddNewUser}?tenantId=${TenetId()}`,
       data,
       true
     );
-  
     try {
       return (await axios(config)).data;
     } catch (error) {
       return serviceRetornarErro(error);
     }
   }
-
-
   const getRoleName = (role) => {
     switch (role) {
       case 1:
@@ -196,9 +150,6 @@ export async function NewUser(data) {
         return 'Desconhecido';
     }
   };
-  
-  
-
   export async function createDataObjectUser(userValues) {
     try {
       const data = {
@@ -212,12 +163,10 @@ export async function NewUser(data) {
         passwordHash: userValues.password?.toString() || '',
         roleIds: userValues.roleIds || [], // Array de IDs de roles vindo de userValues
         storeId: userValues.storeId?.toString() || '', // ID da loja do usuário
-  
         store: {
           id: userValues.store?.id?.toString() || '',
           name: userValues.store?.name?.toString() || '',
           companyId: userValues.store?.companyId?.toString() || '',
-          
           company: {
             id: userValues.store?.company?.id?.toString() || '',
             name: userValues.store?.company?.name?.toString() || '',
@@ -227,30 +176,23 @@ export async function NewUser(data) {
             updatedAt: userValues.store?.company?.updatedAt || new Date().toISOString(),
             stores: userValues.store?.company?.stores || []
           },
-          
           createdAt: userValues.store?.createdAt || new Date().toISOString(),
           updatedAt: userValues.store?.updatedAt || new Date().toISOString()
         },
-  
         createdAt: userValues.createdAt || new Date().toISOString(),
         updatedAt: userValues.updatedAt || new Date().toISOString(),
         inative: userValues.inative ?? false // Define como false se inative não estiver definido
       };
-      
       return data;
     } catch (error) {
       console.error('Erro ao converter dados:', error);
       throw error;
     }
   }
-  
-  
-
-
   export async function editUser(data) {
     var config = serviceRetornarConfig(
       "put",
-      edit_Url,
+      `${endPoints.URL_PUT_AddNewUser}?tenantId=${TenetId()}`,
       data,
       true
     );  

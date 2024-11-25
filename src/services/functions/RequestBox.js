@@ -3,7 +3,6 @@ import axios from "axios";
 import { serviceRetornarConfig, serviceRetornarErro, TenetId } from "./config/functions";
 import { endPoints } from "./config/endpoints";
 import { FetchUserByID } from "./RequestPeople";
-
 // Funções para montar as URLs
 const getOpenBoxUrl = (employeerId) => `${endPoints.urlOpenBox}/open?employeerId=${employeerId +"?"+ TenetId()}`;
 const getFecharCaixaUrl = (useid) => `${endPoints.fecharCaixa}/${useid +"?"+TenetId()}`;
@@ -15,12 +14,9 @@ const getCompleteBoxUrl = (data) => `${endPoints.urlPutBox}/${data.id}/complete$
 const user = JSON.parse(localStorage.getItem('user'));
 const getCashierData = (id) => {
   return `https://pos-bff-production.up.railway.app/api/SalesOrder/${id}/complete?tenantId=${user.TenantId}`;
-
 };
-
 const getSalesURL = (id) => {
   return `https://pos-bff-production.up.railway.app/api/SalesOrder/${id}?TenantId=${user.TenantId}`;
-
 }
 // Função para abrir o caixa
 export async function OpenBox() {
@@ -30,17 +26,12 @@ export async function OpenBox() {
     getCashierData(user.UserId, user.TenantId),
     true
   );
-
   try {
     return (await axios(config)).data;
   } catch (error) {
     return serviceRetornarErro(error);
   }
 }
-
-
-
-
 export async function  getSales(id) {
   const config = serviceRetornarConfig(
     "get",
@@ -55,15 +46,6 @@ export async function  getSales(id) {
     return serviceRetornarErro(error);
   }
 }
-
-
-
-
-
-
-
-
-
 // Função para fechar o caixa
 export async function CloseBox(useid) {
   var config = serviceRetornarConfig(
@@ -77,7 +59,6 @@ export async function CloseBox(useid) {
     return serviceRetornarErro(error);
   }
 }
-
 // Função para buscar o nome do cliente
 export async function Name(clientId) {
   try {
@@ -88,7 +69,6 @@ export async function Name(clientId) {
     return undefined;
   }
 }
-
 // Função para determinar o papel baseado no número
 const getRole = (roleNumber) => {
   return roleNumber === 1 ? 'Iniciada' :
@@ -97,7 +77,6 @@ const getRole = (roleNumber) => {
          roleNumber === 4 ? 'vendedor' :
          'Role não reconhecido';
 };
-
 // Função para listar pedidos do caixa
 export async function FetchBox() {
   var config = serviceRetornarConfig(
@@ -112,13 +91,11 @@ export async function FetchBox() {
     return serviceRetornarErro(error);
   }
 }
-
 // Função para listar pedidos por ID de usuário
 export async function FetchBoxUserId(id) {
   const pedidos = await FetchBox();
   return pedidos;
 }
-
 // Função para listar pedidos com ID específico
 export async function FetchBoxById(data) {
   var config = serviceRetornarConfig(
@@ -126,7 +103,6 @@ export async function FetchBoxById(data) {
     getBoxUrlWithDate(data),
     true
   );
-
   try {
     const response = await axios(config);
     return response.data;
@@ -134,7 +110,6 @@ export async function FetchBoxById(data) {
     return serviceRetornarErro(error);
   }
 }
-
 // Função para listar produtos por ID
 export async function GetByIdProdutos(data) {
   var config = serviceRetornarConfig(
@@ -142,7 +117,6 @@ export async function GetByIdProdutos(data) {
     getProdutoByIdUrl(data),
     true
   );
-
   try {
     const response = await axios(config);
     return response.data;
@@ -150,7 +124,6 @@ export async function GetByIdProdutos(data) {
     return serviceRetornarErro(error);
   }
 }
-
 // Função para listar serviços por ID
 export async function GetByIdServicos(data) {
   var config = serviceRetornarConfig(
@@ -158,7 +131,6 @@ export async function GetByIdServicos(data) {
     getServicoByIdUrl(data),
     true
   );
-
   try {
     const response = await axios(config);
     return response.data;
@@ -166,7 +138,6 @@ export async function GetByIdServicos(data) {
     return serviceRetornarErro(error);
   }
 }
-
 // Função para obter a opção de pagamento
 function getPaymentOption(value) {
   const paymentOptions = {
@@ -177,7 +148,6 @@ function getPaymentOption(value) {
   };
   return paymentOptions[value];
 }
-
 // Função para visualizar dados do caixa
 export async function ViewDataObjectBox(data) {
   try {
@@ -188,7 +158,6 @@ export async function ViewDataObjectBox(data) {
         if (!s.produtos || s.produtos.length === 0 || s.saleStatus === 4) {
           return null;
         }
-
         return {
           id: s.id,
           clientId: s.clientId !== undefined ? s.clientId : 0,
@@ -203,18 +172,15 @@ export async function ViewDataObjectBox(data) {
           dtSale: s.dtSale
         };
       }));
-
       // Filtra os objetos nulos, incluindo os removidos devido a produto null ou saleStatus 4
       value = value.filter(item => item !== null); 
     }
-
     return value;
   } catch (error) {
     console.error('Erro ao converter dados:', error);
     throw error;
   }
 }
-
 // Função para marcar o caixa como completo
 export async function PutCompletBox(id,data) {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -225,18 +191,11 @@ export async function PutCompletBox(id,data) {
     true
   );
   try {
-   
     return (await axios(config)).data;
   } catch (error) {
     return serviceRetornarErro(error);
   }
 }
-
-
-
-
-
-
 export async function createDataObjectEditBox(pedido, formaPagamento, desconto, user) {
   try {
     const data = {
@@ -265,13 +224,9 @@ export async function createDataObjectEditBox(pedido, formaPagamento, desconto, 
         }
       ]
     };
-
     return data;
   } catch (error) {
     console.error('Erro ao converter dados:', error);
     throw error;
   }
 }
-
-
-

@@ -1,8 +1,6 @@
 import React from 'react';
-
 const ConfirmationModal = ({ show, onHide, onConfirm, title, body }) => {
   if (!show) return null;
-
   return (
     <div className="modal-overlay" onClick={onHide}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -25,5 +23,4 @@ const ConfirmationModal = ({ show, onHide, onConfirm, title, body }) => {
     </div>
   );
 };
-
 export default ConfirmationModal;

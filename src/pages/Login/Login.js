@@ -6,8 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { urls } from "../../services/functions/config/urls";
 import { jwtDecode } from 'jwt-decode'; // Atualização na importação
 import LoadingModal from '../../components/LoadingModal';
-
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,15 +13,12 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');       
-
     try {
       const vRetorno = await loginUser(email, password); // Call renamed function
-
       if (typeof vRetorno === 'string') {
         const userData = jwtDecode(vRetorno);
         userData.token = vRetorno;
@@ -40,7 +35,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
   return (
     <Card>
       <div className="  user-manager-container">
@@ -80,8 +74,6 @@ const Login = () => {
       </div>
       </div>
     </Card>
-    
   );
 };
-
 export default Login;

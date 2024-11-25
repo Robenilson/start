@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Modal, Form, Dropdown } from 'react-bootstrap';
-
 const ModalPesquisarCPF = ({ showModal, setShowModal, cpf, setCpf, usuario, setUsuario, handlePesquisarCPF, selectedServico, setSelectedServico, handleIniciarServico }) => (
   <Modal show={showModal} onHide={() => setShowModal(false)}>
     <Modal.Header closeButton>
@@ -53,5 +52,4 @@ const ModalPesquisarCPF = ({ showModal, setShowModal, cpf, setCpf, usuario, setU
     </Modal.Body>
   </Modal>
 );
-
 export default ModalPesquisarCPF;

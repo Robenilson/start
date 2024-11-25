@@ -1,218 +1,136 @@
 import React, { useState, useEffect } from 'react';
+import ModalComponent from '../../components/ModalComponet';
 import Card from '../../components/Card';
-import { createSaleOrder, NewSale, SalesOrderByID } from '../../services/functions/RequestSales';
-import { fetchProduct } from '../../services/functions/RequestProduct';
-import { fetchService } from '../../services/functions/RequestService';
-import Tabela from '../../components/GenericTabel';
-import BarcodeScanner from '../../components/BarcodeScanner';
-import OrderItemManager from '../Vendas/OrderItemManager';
+import LoadingModal from '../../components/LoadingModal';
+import Vendas from '../Vendas/vendas'; // Importação do componente de vendas
+import AbrirCaixaComponent from './components/AbrirCaixaComponent';
 import ListaVendas from './ListaVendas';
-const Vendas = () => {
-  const [combinedData, setCombinedData] = useState([]);
-  const [filterText, setFilterText] = useState('');
-  const [itemDataToOrder, setItemDataToOrder] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [scanning, setScanning] = useState(false);
-  const [showQuantityModal, setShowQuantityModal] = useState(false);
-  const [showOrderListModal, setShowOrderListModal] = useState(false);
-  const [totalValue, setTotalValue] = useState(0);
-  const [objValue, setObjValue] = useState(null);
-  const [activeTab, setActiveTab] = useState('order'); // Estado para controlar a aba ativa
-
-  const fetchData = async () => {
-    try {
-      const productResponse = await fetchProduct();
-      const serviceResponse = await fetchService();
-      const combinedArray = [
-        ...(Array.isArray(productResponse) ? productResponse : []),
-        ...(Array.isArray(serviceResponse) ? serviceResponse : []),
-      ];
-      setCombinedData(combinedArray);
-    } catch (error) {
-      console.error('Erro ao buscar dados', error);
-    }
-  };
+const Caixa = () => {
+  const [loading, setLoading] = useState(false);
+  const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
+  const [showModalFecharCaixa, setShowModalFecharCaixa] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [caixaAberto, setCaixaAberto] = useState(false);
+  const [horaFechamento, setHoraFechamento] = useState(null);
+  const [dataAbertura, setDataAbertura] = useState(null);
+  const [saldo, setSaldo] = useState(0);
+  const [abaAtiva, setAbaAtiva] = useState('caixa'); // Estado para controlar a aba ativa
 
   useEffect(() => {
-    fetchData();
+    const dataAberturaSalva = localStorage.getItem('dataAbertura');
+    if (dataAberturaSalva) {
+      setDataAbertura(new Date(dataAberturaSalva));
+      setCaixaAberto(true);
+      setSaldo(parseFloat(localStorage.getItem('saldo')));
+    }
   }, []);
 
-  const addItemToOrder = (product, quantity, calculatedTotal) => {
-    const itemWithQuantity = { ...product, quantity, valorTotal: calculatedTotal };
-    setItemDataToOrder((prevItems) => [...prevItems, itemWithQuantity]);
-    setCombinedData((prevItems) => prevItems.filter((i) => i.id !== product.id));
-    setTotalValue((prevTotal) => prevTotal + calculatedTotal);
-    setShowQuantityModal(false);
-  };
-
-  const removeItemFromOrder = (item) => {
-    setItemDataToOrder((prevItems) => prevItems.filter((i) => i.id !== item.id));
-    setTotalValue((prevTotal) => prevTotal - item.valorTotal);
-  };
-
-  const clearOrder = () => {
-    setItemDataToOrder([]);
-    setTotalValue(0);
-  };
-
-  const confirmOrder = async () => {
-    try {
-      const paymentData = {
-        id: 1,
-        value: totalValue,
-        paymentMethod: 'cash',
-        orderId: '0',
-        paymentType: 1,
-      };
-
-      const newVenda = await createSaleOrder('1', '22', itemDataToOrder, 0, paymentData);
-      const result = await SalesOrderByID(await NewSale(newVenda));
-
-      if (result && typeof result === 'object') {
-        setObjValue(result); 
-      } else {
-        console.error('Erro: Dados inválidos retornados.');
-      }
-
-      clearOrder();
-      setShowQuantityModal(false);
-      setShowOrderListModal(true); 
-
-    } catch (error) {
-      console.error('Erro ao confirmar pedido:', error);
-    }
-  };
-
-  const filteredData = combinedData.filter((item) =>
-    JSON.stringify(item).toLowerCase().includes(filterText.toLowerCase())
-  );
-
   return (
-    <Card>
-      <div className="user-manager-container">
-        <center>
-        
+    <>
+      <Card>
+        <div className="user-manager-container">
+          <div className="card-header">Gestão de Caixa</div>
 
-         {/* Abas de Navegação */}
-         <div className="tabs">
-            <button
-              className={`btn primary-btn ${activeTab === 'order' ? 'active' : ''}`}
-              onClick={() => setActiveTab('order')}
-            >
-              Vendas 
-            </button>
-            <button
-              className={`btn primary-btn ${activeTab === 'history' ? 'active' : ' '}`}
-              onClick={() => setActiveTab('history')}
-            >
-               Caixa
-            </button>
-          </div>
+          {/* Botões de controle do caixa */}
+          <center>
+            {caixaAberto ? (
+              <button className="btn primary-btn" onClick={() => setShowModalFecharCaixa(true)}>
+                Fechar Caixa
+              </button>
+            ) : (
+              <button className="btn primary-btn" onClick={() => setShowModalAbrirCaixa(true)}>
+                Abrir Caixa
+              </button>
+            )}
+          </center>
 
-
-
-          {/* Condicional para exibir conteúdo com base na aba ativa */}
-          {activeTab === 'order' && (
+          {/* Exibição condicional das abas */}
+          {caixaAberto && (
             <>
-       
-          <div className="form-group input-pequeno respon">
-            <input
-              type="text"
-              placeholder="Digite para filtrar..."
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-              className="form-control"
+              {/* Barra de navegação das abas */}
+              <div className="tabs mt-3">
+                <center>
+                <button
+                    className={`btn ${abaAtiva === 'caixa' ? 'secondary-btn' : 'primary-btn'}`}
+                    onClick={() => setAbaAtiva('caixa')}
+                >
+                    Caixa
+                </button>
+                <button
+                    className={`btn ${abaAtiva === 'vendas' ? 'secondary-btn' : 'primary-btn'}`}
+                    onClick={() => setAbaAtiva('vendas')}
+                >
+                     Vendas
+                </button>
+                </center>
+                </div>
+
+                            {/* Conteúdo das abas */}
+              {abaAtiva === 'caixa' && (
+                <div className="mt-3">
+                  <ListaVendas />
+                </div>
+              )}
+
+              {abaAtiva === 'vendas' && (
+                <div className="mt-3">
+                  <Vendas   props="caixa"  onClose={() => setAbaAtiva('caixa')} />
+                </div>
+              )}
+            </>
+          )}
+
+          {/* Modal de Abrir Caixa */}
+          <ModalComponent
+            show={showModalAbrirCaixa}
+            onHide={() => setShowModalAbrirCaixa(false)}
+            hideButtons="true"
+            title="Abrir Caixa"
+          >
+            <AbrirCaixaComponent
+              onSuccess={({ valor, dataAbertura }) => {
+                setSaldo(valor);
+                setCaixaAberto(true);
+                setDataAbertura(dataAbertura);
+                setShowSuccess(true);
+                setTimeout(() => setShowSuccess(false), 5000);
+                setShowModalAbrirCaixa(false);
+              }}
+              onClose={() => setShowModalAbrirCaixa(false)}
             />
-          </div>
+          </ModalComponent>
 
-           <button
-                className="btn primary-btn"
-                onClick={() => setScanning((prev) => !prev)}
-              >
-                {scanning ? 'Parar Scanner' : 'Iniciar Scanner'}
+          {/* Modal de Fechar Caixa */}
+          <ModalComponent
+            show={showModalFecharCaixa}
+            onHide={() => setShowModalFecharCaixa(false)}
+            title="Fechar Caixa"
+          >
+            <div>
+              <p>Confirma o fechamento do caixa?</p>
+              <button className="btn primary-btn" onClick={() => {
+                setCaixaAberto(false);
+                setHoraFechamento(new Date().toLocaleString());
+                setShowModalFecharCaixa(false);
+                localStorage.removeItem('dataAbertura');
+                localStorage.removeItem('saldo');
+              }}>
+                Confirmar Fechamento
               </button>
-              {scanning && (
-                <BarcodeScanner
-                  active={scanning}
-                  onDetected={(code) => {
-                    setScanning(false);
-                    // Lógica de processamento do código de barras pode ser adicionada aqui
-                  }}
-                />
-              )}
+            </div>
+          </ModalComponent>
 
-              <button className="btn btn-info" onClick={() => setShowQuantityModal(true)}>
-                Exibir Lista de Compras
-              </button>
-
-              {showOrderListModal && objValue && (
-                <>
-               <div className="card-header">Venda</div>
-                <ListaVendas dadosDetalhados={objValue}  onCloseListaVendas={() => setShowOrderListModal(false)}/>
-                </>
-              )}
-
-              <OrderItemManager
-                showModal={showQuantityModal}
-                onClose={() => setShowQuantityModal(false)}
-                selectedProduct={selectedProduct}
-                itemDataToOrder={itemDataToOrder}
-                onAddItem={addItemToOrder}
-                onRemoveItem={removeItemFromOrder}
-                totalValue={totalValue}
-                onClearOrder={clearOrder}
-                onConfirmOrder={confirmOrder}
-              />
-              {filterText && (
-                <Tabela
-                  columns={[
-                    { key: 'nome', label: 'Nome' },
-                    { key: 'valor', label: 'Preço', render: (item) => `R$ ${item.valor.toFixed(2)}` },
-                  ]}
-                  data={filteredData}
-                  actions={[
-                    {
-                      label: 'COMPRAR',
-                      className: 'btn btn-primary btn-sm',
-                      onClick: (product) => {
-                        setSelectedProduct(product);
-                        setShowQuantityModal(true);
-                      },
-                    },
-                  ]}
-                  keyField="id"
-                />
-              )}
-            
-
-              
-              </>
-          )}  
-            
-              
-
-
-
-
-
-
-
-
-        
-          {/* Aba de Histórico de Vendas */}
-          {activeTab === 'history' && (
-            <div className="historico-vendas">
-              {/* Conteúdo para o Histórico de Vendas */}
-              
-              <ListaVendas />
-              {/* Aqui você pode adicionar o componente ou funcionalidade relacionada ao histórico de vendas */}
+          {/* Sucesso */}
+          {showSuccess && (
+            <div className="alert alert-success mt-3">
+              Operação concluída com sucesso!
             </div>
           )}
-        
-        </center>
-      </div>
-    </Card>
+        </div>
+
+        <LoadingModal show={loading} />
+      </Card>
+    </>
   );
 };
-
-export default Vendas;
+export default Caixa;

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import GenericTabel from '../../components/GenericTabel';
-
 import GenericForm from './component/GenericForm';
 import {
   newService,
@@ -17,16 +16,10 @@ import {
   editProduct,
   createProductObject
 } from '../../services/functions/RequestProduct';
-
 import ConfirmationModal from './component/ConfirmationModal';
 import SuccessAlert from './component/SuccessAlert';
 import LoadingModal from '../../components/LoadingModal';
 import CadastroTabs from './component/CadastroTabs';
-
-
-
-
-
 const NewCadastro = () => {
   const [showModalProduto, setShowModalProduto] = useState(false);
   const [showModalServico, setShowModalServico] = useState(false);
@@ -42,7 +35,6 @@ const NewCadastro = () => {
   const [confirmDeleteProduto, setConfirmDeleteProduto] = useState({ show: false, produto: null });
   const [confirmDeleteServico, setConfirmDeleteServico] = useState({ show: false, servico: null });
   const [loading, setLoading] = useState(false);
-
   const produtoFields = [
     { name: 'nomeProduto', label: 'Nome do Produto', type: 'text', placeholder: 'Nome do Produto' },
     { name: 'valorProduto', label: 'Valor', type: 'number', placeholder: 'R$0,00', step: '0.01' },
@@ -50,9 +42,6 @@ const NewCadastro = () => {
     { name: 'descricaoProduto', label: 'Descrição', type: 'text', placeholder: 'Descrição do Produto' },
     { name: 'dueDate', label: 'Data Validade', type: 'date', placeholder: 'Data' },
   ];
-
-
-  
   const servicoFields = [
     { name: 'nomeServico', label: 'Nome do Serviço', type: 'text', placeholder: 'Nome do Serviço' },
     { name: 'valorServico', label: 'Valor', type: 'number', placeholder: 'R$0,00', step: '0.01' },
@@ -65,7 +54,6 @@ const NewCadastro = () => {
     setLoading(true);
     try {
       const data = await fetchProduct();
-      
       setProdutos(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error updating products:', error);
@@ -73,7 +61,6 @@ const NewCadastro = () => {
     }
     setLoading(false);
   };
-
   const updateTabelServicos = async () => {
     setLoading(true);
     try {
@@ -85,62 +72,44 @@ const NewCadastro = () => {
     }
     setLoading(false);
   };
-
   useEffect(() => {
     updateTabelProduct();
   }, []);
-
   useEffect(() => {
     updateTabelServicos();
   }, []);
-
   const handleInputChange = (setter) => (name, value) => {
     setter(prevValues => ({
       ...prevValues,
       [name]: value,
     }));
   };
-
   const handleShowProduto = () => {
     setMode('cadastrar');
     setShowModalProduto(true);
   };
-
   const handleShowServico = () => {
     setMode('cadastrar');
     setShowModalServico(true);
   };
-
   const handleCloseProduto = () => {
     setShowModalProduto(false);
     setProdutoValues({ id: '', nomeProduto: '', valorProduto: '', quantidade: '', descricaoProduto: '' });
   };
-
   const handleCloseServico = () => {
     setShowModalServico(false);
     setServicoValues({ id: '', nomeServico: '', valorServico: '', tempo: '15', quantidade: '', descricaoServico: '', computador:"" });
   };
-
   const handleCadastroProduto = async () => {
-    const data = {    
-      name: produtoValues.nomeProduto,
-      description: produtoValues.descricaoProduto,
-      price: parseFloat(produtoValues.valorProduto),
-      quantity: parseInt(produtoValues.quantidade),
-      dueDate:produtoValues.dueDate,
-    };
-
-    const newdata= createProductObject(data);
+    const newdata= createProductObject(produtoValues);
     await newProduct(newdata);
     await updateTabelProduct();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
   };
-
   const handleCadastroServico = async () => {
     const tempoEmMinutos = parseInt(servicoValues.tempo);
-
     const data = {
       name: servicoValues.nomeServico,
       price: parseFloat(servicoValues.valorServico),
@@ -149,15 +118,12 @@ const NewCadastro = () => {
       description: servicoValues.descricaoServico,
       isComputer: servicoValues.computador=== "true", // Conversão para booleano
     };
-
-   
     await newService(data);
     await updateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
   };
-
   const handleEditProduto = (produto) => {
     setProdutoValues({
       id: produto.id,
@@ -166,21 +132,17 @@ const NewCadastro = () => {
       quantidade: produto.quantidade,
       descricaoProduto: produto.descricao,
     });
-
     setMode('editar');
     setShowModalProduto(true);
   };
-
   const handleDeleteProduto = (produto) => {
     setConfirmDeleteProduto({ show: true, produto: produto });
   };
-
   const confirmDeleteProdutoHandler = async () => {
     await DeleteProduct(confirmDeleteProduto.produto.id);
     await updateTabelProduct();
     setConfirmDeleteProduto({ show: false, produto: null });
   };
-
   const handleEditServico = (servico) => {
     setServicoValues({
       id: servico.id,
@@ -190,24 +152,19 @@ const NewCadastro = () => {
       quantidade: servico.quantityEquipament,
       descricaoServico: servico.descricao,
     });
-
     setMode('editar');
     setShowModalServico(true);
   };
-
   const handleDeleteServico = (servico) => {
     setConfirmDeleteServico({ show: true, servico: servico });
   };
-
   const confirmDeleteServicoHandler = async () => {
     await DeleteService(confirmDeleteServico.servico);
     await updateTabelServicos();
     setConfirmDeleteServico({ show: false, servico: null });
   };
-
   const updateSeviceSave = async () => {
     const tempoEmMinutos = parseInt(servicoValues.tempo);
-
     const data = {
       name: servicoValues.nomeServico,
       price: parseFloat(servicoValues.valorServico),
@@ -215,16 +172,12 @@ const NewCadastro = () => {
       quantityEquipament: servicoValues.quantidade,
       description: servicoValues.descricaoServico,
     };
-
-   
-
     await editService(data);
     await updateTabelServicos();
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseServico();
   };
-
   const updateProductSave = async () => {
     const data = {    
       id: produtoValues.id,
@@ -232,22 +185,14 @@ const NewCadastro = () => {
       description: produtoValues.descricaoProduto,
       price: parseFloat(produtoValues.valorProduto),
       quantity: parseInt(produtoValues.quantidade)   
-         
     };
-
-
-
-
-
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 5000);
     handleCloseProduto();
     const newData = createProductObject(data)
     const a =await editProduct(newData);
     await updateTabelProduct();
-    
   };
-
   return (
     <Card>
       <div className="user-manager-container">
@@ -268,6 +213,7 @@ const NewCadastro = () => {
           />
         </ModalComponent>
 
+        
         <ModalComponent show={showModalServico} onHide={handleCloseServico} title="Cadastrar Serviço">
           <GenericForm
             fields={servicoFields}
@@ -279,7 +225,6 @@ const NewCadastro = () => {
             handleClose={handleCloseServico}
           />
         </ModalComponent>
-
         <ConfirmationModal
           show={confirmDeleteProduto.show}
           onHide={() => setConfirmDeleteProduto({ show: false, produto: null })}
@@ -287,7 +232,6 @@ const NewCadastro = () => {
           title="Confirmar Exclusão"
           body={`Tem certeza que deseja excluir o produto "${confirmDeleteProduto.produto?.nome}"?`}
         />
-
         <ConfirmationModal
           show={confirmDeleteServico.show}
           onHide={() => setConfirmDeleteServico({ show: false, servico: null })}
@@ -295,9 +239,7 @@ const NewCadastro = () => {
           title="Confirmar Exclusão"
           body={`Tem certeza que deseja excluir o serviço "${confirmDeleteServico.servico?.nome}"?`}
         />
-
         <SuccessAlert show={showSuccess} />
-
         <CadastroTabs
           produtos={produtos}
           servicos={servicos}
@@ -310,11 +252,9 @@ const NewCadastro = () => {
           handleEditServico={handleEditServico}
           handleDeleteServico={handleDeleteServico}
         />
-
         <LoadingModal show={loading} />
       </div>
     </Card>
   );
 };
-
 export default NewCadastro;

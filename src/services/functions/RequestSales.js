@@ -1,17 +1,10 @@
 import axios from "axios";
 import { serviceRetornarConfig , serviceRetornarErro,TenetId} from "./config/functions";
 import { endPoints } from "./config/endpoints";
-
-const URL_ADD_NEW_SALES = `${endPoints.urlNewSale}?tenantId=${TenetId()}`;
-const URL_SALES_ORDER_BY_ID =(data) => `${endPoints.urlNewSale}/${data}?tenantId=${TenetId()}`;
-const getCancelBoxUrl = (data) => `${endPoints.urlPutBox}/${data}/cancel?tenantId=${TenetId()}`;
-const URL_PUT_COMPLETE_SALES = (id) => `${endPoints.urlPutBox}/${id}/complete?tenantId=${TenetId()}`;
-
-
 export async function SalesOrderByID(data) {
   var config = serviceRetornarConfig(
     "GET",
-    URL_SALES_ORDER_BY_ID(data),
+    `${endPoints.urlNewSale}/${data}?tenantId=${TenetId()}`,
     true
   );
   try {
@@ -20,12 +13,11 @@ export async function SalesOrderByID(data) {
     return serviceRetornarErro(error);
   }
 }
-
 // Função para cancelar o caixa
 export async function PutCanceltBox(data) {
   var config = serviceRetornarConfig(
-    "put",
-    getCancelBoxUrl (data.id),
+    "PUT",
+    `${endPoints.urlPutBox}/${data.id}/cancel?tenantId=${TenetId()}`,
     true
   );
   try { 
@@ -34,16 +26,13 @@ export async function PutCanceltBox(data) {
     return serviceRetornarErro(error);
   }
 }
-
-
 export async function NewSale(data) {
   const config = serviceRetornarConfig(
     "POST",
-    URL_ADD_NEW_SALES,
+    `${endPoints.urlNewSale}?tenantId=${TenetId()}`,
     data,
     true
   );
-
   try {
     const response = await axios(config);
     return response.data
@@ -51,16 +40,11 @@ export async function NewSale(data) {
     return serviceRetornarErro(error);
   }
 }
-
-
-
-
 // Função para marcar o caixa como completo
 export async function Put_Sales_Complete(data) {
-  
   var config = serviceRetornarConfig(
     "PUT",
-    URL_PUT_COMPLETE_SALES(data.id),
+    `${endPoints.urlPutBox}/${data.id}/complete?tenantId=${TenetId()}`,
     data,
     true
   );
@@ -70,27 +54,6 @@ export async function Put_Sales_Complete(data) {
     return serviceRetornarErro(error);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   export async function createSaleOrder(clientId, employeerId, products, discount, payment) {   
     // Configurações iniciais do pedido no formato esperado
     const saleOrder = {
@@ -105,7 +68,6 @@ export async function Put_Sales_Complete(data) {
         saleStatus: 0, // Status da venda: 0 - Pendente
         payments: [] // Inicializa a lista de pagamentos
     };
-
     // Adiciona produtos ao pedido e calcula o preço total
     products.forEach(product => {
         if (product) {
@@ -116,15 +78,12 @@ export async function Put_Sales_Complete(data) {
                 productType: product.productType || 1, // Tipo do produto, default 1
                 name: product.nome || "Produto sem nome" // Nome do produto
             });
-
             // Calcula o preço total com base no valor total de cada produto
             saleOrder.precoTotal += parseFloat(product.valorTotal || 0);
         }
     });
-
     // Aplica o desconto ao preço total (mantendo no mínimo zero)
     saleOrder.precoTotal = Math.max(saleOrder.precoTotal - saleOrder.desconto, 0);
-
     // Adiciona pagamento ao pedido
     saleOrder.payments.push({
         id:2, // ID do pagamento inicial (0 para o primeiro pagamento)
@@ -133,8 +92,5 @@ export async function Put_Sales_Complete(data) {
         orderId: saleOrder.id, // ID do pedido
         paymentType: payment.type || 1 // Tipo de pagamento, default 1
     });
-
     return saleOrder;
 }
-
-

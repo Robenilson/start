@@ -3,10 +3,8 @@ import Card from '../../components/Card';
 import { FetchUserCPF } from '../../services/functions/RequestPeople';
 import LoadingModal from '../../components/LoadingModal';
 import { ControllServiceStop, ControllServiceGet } from '../../services/functions/RequestControllService';
-
 import ModalPesquisarCPF from './components/ModalPesquisarCPF';
 import Tabela from '../../components/GenericTabel'; // Substituído ServicoTable por Tabela
-
 const AcompanhaServico = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +15,6 @@ const AcompanhaServico = () => {
   const [cpf, setCpf] = useState('');
   const [usuario, setUsuario] = useState(null);
   const [selectedServico, setSelectedServico] = useState(null);
-
   useEffect(() => {
     setServicos((prevServicos) => {
       const updatedServicos = prevServicos.map((servico) => {
@@ -35,13 +32,11 @@ const AcompanhaServico = () => {
       return updatedServicos;
     });
   }, []);
-
   const handlePesquisarCPF = async () => {
     setLoading(true);
     const user = await FetchUserCPF(cpf);
     setUsuario(user);
     console.log(user);
-
     if (user) {
       const service = ControllServiceGet(user.id);
       service.then((data) => {
@@ -60,7 +55,6 @@ const AcompanhaServico = () => {
     }
     setLoading(false);
   };
-
   const handleIniciarServico = () => {
     if (selectedServico) {
       const now = Date.now();
@@ -80,14 +74,12 @@ const AcompanhaServico = () => {
       localStorage.setItem('servicos', JSON.stringify(novosServicos));
     }
   };
-
   const handlePararServico = (servico) => {
     ControllServiceStop(servico.productId, Math.floor(servico.tempoAlugado / 60));
     const novosServicos = servicos.filter(s => s.productId !== servico.productId);
     setServicos(novosServicos);
     localStorage.setItem('servicos', JSON.stringify(novosServicos));
   };
-
   useEffect(() => {
     const intervalId = setInterval(() => {
       setServicos((prevServicos) => {
@@ -109,14 +101,12 @@ const AcompanhaServico = () => {
     }, 1000);
     return () => clearInterval(intervalId);
   }, []);
-
   const formatTime = (seconds) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
-
   // Configuração das colunas para o componente Tabela
   const columns = [
     { key: 'nomeUsuario', label: 'Nome' },
@@ -124,7 +114,6 @@ const AcompanhaServico = () => {
     { key: 'nomeServico', label: 'Serviço' },
     { key: 'tempoAlugado', label: 'Tempo Alugado', render: (item) => formatTime(item.tempoAlugado) },
   ];
-
   // Definição das ações para o componente Tabela
   const actions = [
     {
@@ -133,7 +122,6 @@ const AcompanhaServico = () => {
       onClick: handlePararServico,
     },
   ];
-
   return (
     <Card>
       <div className="user-manager-container">
@@ -168,5 +156,4 @@ const AcompanhaServico = () => {
     </Card>
   );
 };
-
 export default AcompanhaServico;

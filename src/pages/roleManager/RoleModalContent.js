@@ -1,9 +1,6 @@
-
 import React from 'react';
 import Form from 'react-bootstrap/Form'; // Importar o Form do React Bootstrap, se ainda não tiver sido importado
-
 const RoleModalContent = ({ roleName, roleDescription, handleInputChange }) => (
-  
   <>
     <Form.Group controlId="formRoleName">
       <Form.Label>Nome da Role</Form.Label>
@@ -26,5 +23,4 @@ const RoleModalContent = ({ roleName, roleDescription, handleInputChange }) => (
     </Form.Group>
   </>
 );
-
 export default RoleModalContent;

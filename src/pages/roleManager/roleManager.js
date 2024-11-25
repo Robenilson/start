@@ -3,7 +3,6 @@ import RoleModalContent from './RoleModalContent';
 import Card from '../../components/Card';
 import ModalComponent from '../../components/ModalComponet';
 import { fetchRoles, newRole, updateRole, deleteRole } from '../../services/functions/RequestRoleService';
-
 const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
   const [roles, setRoles] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -11,11 +10,9 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
   const [roleDescription, setRoleDescription] = useState('');
   const [editingRole, setEditingRole] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  
   useEffect(() => {
     getAllRoles();
   }, []);
-
   const getAllRoles = async () => {
     try {
       const rolesData = await fetchRoles();
@@ -28,18 +25,15 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
       console.error('Erro ao buscar roles:', error);
     }
   };
-
   const handleShowModal = () => {
     setRoleName('');
     setRoleDescription('');
     setShowModal(true);
   };
-
   const handleCloseModal = () => {
     setShowModal(false);
     setEditingRole(null);
   };
-
   const handleInputChange = (e) => {
     if (e.target.id === 'formRoleName') {
       setRoleName(e.target.value);
@@ -47,7 +41,6 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
       setRoleDescription(e.target.value);
     }
   };
-
   const handleSaveRole = async () => {
     try {
       if (editingRole) {
@@ -67,7 +60,6 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
           group: totalRoles + 1,
           inative: true
         };
-
         await newRole(newRoleData);
       }
       getAllRoles();
@@ -78,14 +70,12 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
       console.error('Erro ao salvar role:', error);
     }
   };
-
   const handleEditRole = (role) => {
     setEditingRole(role);
     setRoleName(role.name);
     setRoleDescription(role.description);
     setShowModal(true);
   };
-
   const handleDeleteRole = async (roleId) => {
     try {
       await deleteRole(roleId);
@@ -96,10 +86,7 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
       console.error('Erro ao excluir role:', error);
     }
   };
-
   // Condicional para verificar se o usuário é admin
-
-
   return (
     <Card>
       <div className="user-manager-container">
@@ -132,7 +119,6 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
               </tbody>
             </table>
           </div>
-
           <ModalComponent
             show={showModal}
             onHide={handleCloseModal}
@@ -145,12 +131,10 @@ const RoleManager = ({ userRole }) => {  // Adicionamos a prop userRole
               handleInputChange={handleInputChange}
             />
           </ModalComponent>
-
           {showSuccess && <div className="success-alert mt-3">Operação realizada com sucesso!</div>}
         </div>
       </div>
     </Card>
   );
 };
-
 export default RoleManager;

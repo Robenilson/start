@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Button } from 'react-bootstrap';
-
 const UserValidationForm = ({ cpf, setCpf, nomeUsuario, handleValidateUser }) => {
   return (
     <Form.Group>
@@ -28,5 +27,4 @@ const UserValidationForm = ({ cpf, setCpf, nomeUsuario, handleValidateUser }) =>
     </Form.Group>
   );
 };
-
 export default UserValidationForm;

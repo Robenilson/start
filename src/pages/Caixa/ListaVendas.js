@@ -3,14 +3,12 @@ import LoadingModal from '../../components/LoadingModal';
 import ModalComponent from '../../components/ModalComponet'; 
 import Tabela from '../../components/GenericTabel';
 import DetalhesPedido from './components/DetalhesPedido';  // Importe o novo componente
-
 import {
   FetchBox,
   ViewDataObjectBox,
   createDataObjectEditBox,
 } from "../../services/functions/RequestBox";
 import { PutCanceltBox, Put_Sales_Complete } from '../../services/functions/RequestSales';
-
 const ListaVendas = ({ dadosDetalhados, onCloseListaVendas }) => {  // Nova prop onCloseListaVendas
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,21 +16,24 @@ const ListaVendas = ({ dadosDetalhados, onCloseListaVendas }) => {  // Nova prop
   const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
   const [desconto, setDesconto] = useState(0);
   const [formaPagamento, setFormaPagamento] = useState('');
-
   const updateBox = async () => {
     setLoading(true);
     setPedidos(await ViewDataObjectBox(await FetchBox()));
     setLoading(false);
   };
-
   const handleCancel = async () => {
-    setLoading(true);
-    await PutCanceltBox(pedidoSelecionado);
-    await updateBox();
-    handleCloseModal();
-    setLoading(false);
+    if (!pedidoSelecionado) {
+      await PutCanceltBox(dadosDetalhados);
+      handleCloseModal();
+      onCloseListaVendas();
+    }else{
+      setLoading(true);
+      await PutCanceltBox(pedidoSelecionado);
+      await updateBox();
+      handleCloseModal();
+      setLoading(false);
+    }
   };
-
   const handleConfirmar = async () => {
     setLoading(true);
     try {
@@ -42,7 +43,6 @@ const ListaVendas = ({ dadosDetalhados, onCloseListaVendas }) => {  // Nova prop
         await Put_Sales_Complete(await createDataObjectEditBox(pedidoSelecionado, formaPagamento, desconto));
         await updateBox();
       }
-
       handleCloseModal();
       if (onCloseListaVendas) onCloseListaVendas();  // Chama a função de retorno
     } catch (error) {
@@ -50,29 +50,24 @@ const ListaVendas = ({ dadosDetalhados, onCloseListaVendas }) => {  // Nova prop
     }
     setLoading(false);
   };
-
   useEffect(() => {
     if (!dadosDetalhados) {
       updateBox(); // Apenas busca dados se não estiver no modo de detalhes diretos
     }
   }, [dadosDetalhados]);
-
   const handleCloseModal = () => {
     setShowModal(false);
     setPedidoSelecionado(null);
     setDesconto(0);
     setFormaPagamento('');
   };
-
   const handleDescontoChange = (event) => {
     const novoDesconto = parseFloat(event.target.value) || 0;
     setDesconto(novoDesconto);
   };
-
   const handleFormaPagamentoChange = (event) => {
     setFormaPagamento(event.target.value);
   };
-
   if (dadosDetalhados) {
     return (
       <DetalhesPedido
@@ -88,9 +83,11 @@ const ListaVendas = ({ dadosDetalhados, onCloseListaVendas }) => {  // Nova prop
       />
     );
   }
-
   return (
+    
     <div className="user-manager-container">
+      <center>
+       <div className="card-header">Caixa</div>
       <Tabela
         columns={[
           { key: 'clientName', label: 'Cliente' },
@@ -113,7 +110,6 @@ const ListaVendas = ({ dadosDetalhados, onCloseListaVendas }) => {  // Nova prop
         ]}
         keyField="id"
       />
-
       {showModal && pedidoSelecionado && (
         <DetalhesPedido
           pedidoSelecionado={pedidoSelecionado}
@@ -127,15 +123,9 @@ const ListaVendas = ({ dadosDetalhados, onCloseListaVendas }) => {  // Nova prop
           loading={loading}
         />
       )}
-
       {loading && <LoadingModal />}
+      </center>
     </div>
   );
-
-
-
-
-  
 };
-
 export default ListaVendas;

@@ -1,5 +1,4 @@
 import React from 'react';
-
 const Tabela = ({ columns, data, actions, keyField }) => {
   return (
     <div className="table-container table-responsive">
@@ -38,5 +37,4 @@ const Tabela = ({ columns, data, actions, keyField }) => {
       </div>
   );
 };
-
 export default Tabela;
