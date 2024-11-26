@@ -5,28 +5,91 @@ import OptionNav from './optionNav';
 import Card from '../components/Card';
 import { urls } from "../services/functions/config/urls";
 import NotificationBell from './NotificationBell'; // Componente de notificação
-import BarcodeScannerComponent from './BarcodeScanner';
+
+
+
+
 function Menu() {
+
+  
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <>
       <Card>
-        <div className="menu-container">
-          <nav className="menu-nav">
-            <div>
+      <div className="menu-container">
+      <nav className="menu-nav">
+        {/* Botão de toggle (aparece apenas no mobile) */}
+        <button
+          className="menu-toggle-btn"
+          onClick={toggleMenu}
+          aria-expanded={isMenuOpen}
+        >
+          ☰ Menu
+        </button>
+       
+
+        {/* Menu de navegação */}
+        <div className={`menu-nav-content ${isMenuOpen ? "open" : ""}`}>
+          <div className="menu-nav-links">
+            <div className="dropdown">
               <OptionNav url={urls.userDados} name="Home" />
-            </div>
-            <div id="basic-navbar-nav" className="menu-nav-content">
-              <div className="menu-nav-links">
-                <Permision userType="tu" />
-               <NotificationBell />  
+             
+              <div className="dropdown-content">
+                
               </div>
             </div>
-          </nav>
+            <Permision userType="tu" />
+            
+          </div>
+          <div className="notification-icon">
+        <NotificationBell />
+      </div>
+
+          <div>
+            
+          </div>
         </div>
+      </nav>
+    </div>
       </Card>
       <div className="menu-modal-body">
         <Outlet />
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </>
   );
 }
