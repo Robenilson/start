@@ -5,6 +5,9 @@ const BarcodeScanner = ({ onDetected }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Função para identificar se o dispositivo é móvel
+    const isMobileDevice = () => /Mobi|Android|iPhone/i.test(navigator.userAgent);
+
     const initScanner = () => {
       Quagga.init(
         {
@@ -14,22 +17,12 @@ const BarcodeScanner = ({ onDetected }) => {
             constraints: {
               width: 300,
               height: 300,
-              facingMode: 'environment', // Usa a câmera traseira
+              facingMode: isMobileDevice() ? 'environment' : 'user', // Muda com base no dispositivo
             },
           },
           decoder: {
-            readers: [ // Lista completa de leitores suportados
-              'code_128_reader',
-              'ean_reader',
-              'ean_8_reader',
-              'code_39_reader',
-              'code_39_vin_reader',
-              'codabar_reader',
-              'upc_reader',
-              'upc_e_reader',
-              'i2of5_reader',
-              '2of5_reader',
-              'code_93_reader'
+            readers: [
+              'code_128_reader', // Leitor padrão para códigos de barras comuns
             ],
           },
           locate: true, // Ativa o rastreamento visual para melhor precisão
@@ -44,19 +37,21 @@ const BarcodeScanner = ({ onDetected }) => {
         }
       );
 
+      // Callback ao detectar código de barras
       Quagga.onDetected((data) => {
         onDetected(data.codeResult.code);
         Quagga.stop(); // Para o scanner após a detecção
       });
     };
 
+    // Verifica suporte à câmera antes de iniciar
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       initScanner();
     } else {
       setError('Seu navegador não suporta acesso à câmera.');
     }
 
-    // Limpa o scanner ao desmontar o componente
+    // Limpeza ao desmontar o componente
     return () => {
       Quagga.stop();
     };
