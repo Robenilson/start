@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Quagga from 'quagga';
 
 const BarcodeScanner = ({ onDetected }) => {
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const initScanner = () => {
       Quagga.init(
@@ -10,18 +12,32 @@ const BarcodeScanner = ({ onDetected }) => {
             type: 'LiveStream',
             target: document.querySelector('#scanner-container'),
             constraints: {
-              width: 300, // Defina a largura máxima
-              height: 300, // Defina a altura máxima
+              width: 300,
+              height: 300,
               facingMode: 'environment', // Usa a câmera traseira
             },
           },
           decoder: {
-            readers: ['code_128_reader'], // Tipo de leitor
+            readers: [ // Lista completa de leitores suportados
+              'code_128_reader',
+              'ean_reader',
+              'ean_8_reader',
+              'code_39_reader',
+              'code_39_vin_reader',
+              'codabar_reader',
+              'upc_reader',
+              'upc_e_reader',
+              'i2of5_reader',
+              '2of5_reader',
+              'code_93_reader'
+            ],
           },
+          locate: true, // Ativa o rastreamento visual para melhor precisão
         },
         (err) => {
           if (err) {
             console.error('Erro ao iniciar o Quagga:', err);
+            setError('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
             return;
           }
           Quagga.start();
@@ -34,36 +50,40 @@ const BarcodeScanner = ({ onDetected }) => {
       });
     };
 
-    initScanner();
-
-    // Reinicia o scanner ao redimensionar a janela
-    const handleResize = () => {
-      Quagga.stop();
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       initScanner();
-    };
+    } else {
+      setError('Seu navegador não suporta acesso à câmera.');
+    }
 
-    window.addEventListener('resize', handleResize);
-
+    // Limpa o scanner ao desmontar o componente
     return () => {
       Quagga.stop();
-      window.removeEventListener('resize', handleResize);
     };
   }, [onDetected]);
 
   return (
-    <div
-      id="scanner-container"
-      style={{
-        width: '100%',
-        maxWidth: '300px',
-        height: '300px',
-        overflow: 'hidden', // Impede o vazamento da imagem
-        margin: '10px auto',
-        border: '2px solid #00eaff',
-        borderRadius: '10px',
-        position: 'relative',
-      }}
-    />
+    <div>
+      {error ? (
+        <div style={{ color: 'red', textAlign: 'center', margin: '10px' }}>
+          {error}
+        </div>
+      ) : (
+        <div
+          id="scanner-container"
+          style={{
+            width: '100%',
+            maxWidth: '300px',
+            height: '300px',
+            overflow: 'hidden',
+            margin: '10px auto',
+            border: '2px solid #00eaff',
+            borderRadius: '10px',
+            position: 'relative',
+          }}
+        />
+      )}
+    </div>
   );
 };
 
