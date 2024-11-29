@@ -22,7 +22,7 @@ const BarcodeScanner = ({ onDetected }) => {
           },
           decoder: {
             readers: [
-              'code_128_reader', // Leitor padrão para códigos de barras comuns
+              'EAN-13', // Leitor padrão para códigos de barras comuns
             ],
           },
           locate: true, // Ativa o rastreamento visual para melhor precisão
