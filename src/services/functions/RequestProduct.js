@@ -98,7 +98,7 @@ export async function createDataProductEdit(produtoValues) {
   }
 }
 export async function editProduct(data) {
-  console.log(data)
+
   const config = serviceRetornarConfig(
     "PUT",  
     `${ endPoints.URL_PUT_PRODUCT}?TenantId=${TenetId()}`,        
