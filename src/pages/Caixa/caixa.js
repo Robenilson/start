@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import ModalComponent from '../../components/ModalComponet';
 import Card from '../../components/Card';
 import LoadingModal from '../../components/LoadingModal';
-import Vendas from '../Vendas/vendas'; // Importação do componente de vendas
+import Vendas from '../Vendas/vendas';
 import AbrirCaixaComponent from './components/AbrirCaixaComponent';
 import ListaVendas from './ListaVendas';
+
 const Caixa = () => {
   const [loading, setLoading] = useState(false);
   const [showModalAbrirCaixa, setShowModalAbrirCaixa] = useState(false);
@@ -14,7 +15,7 @@ const Caixa = () => {
   const [horaFechamento, setHoraFechamento] = useState(null);
   const [dataAbertura, setDataAbertura] = useState(null);
   const [saldo, setSaldo] = useState(0);
-  const [abaAtiva, setAbaAtiva] = useState('caixa'); // Estado para controlar a aba ativa
+  const [abaAtiva, setAbaAtiva] = useState('caixa');
 
   useEffect(() => {
     const dataAberturaSalva = localStorage.getItem('dataAbertura');
@@ -25,13 +26,17 @@ const Caixa = () => {
     }
   }, []);
 
+  // Nova função para alternar abas sem erros
+  const handleAbaClick = (aba) => {
+    setAbaAtiva(aba);
+  };
+
   return (
     <>
       <Card>
         <div className="user-manager-container">
           <div className="card-header">Gestão de Caixa</div>
 
-          {/* Botões de controle do caixa */}
           <center>
             {caixaAberto ? (
               <button className="btn primary-btn" onClick={() => setShowModalFecharCaixa(true)}>
@@ -44,28 +49,28 @@ const Caixa = () => {
             )}
           </center>
 
-          {/* Exibição condicional das abas */}
           {caixaAberto && (
             <>
-              {/* Barra de navegação das abas */}
               <div className="tabs mt-3">
                 <center>
-                <button
+                  <button
                     className={`btn ${abaAtiva === 'caixa' ? 'secondary-btn' : 'primary-btn'}`}
-                    onClick={() => setAbaAtiva('caixa')}
-                >
+                    onClick={(e) => { e.preventDefault(); handleAbaClick('caixa'); }}
+                    aria-selected={abaAtiva === 'caixa'}
+                  >
                     Caixa
-                </button>
-                <button
+                  </button>
+                  <button
                     className={`btn ${abaAtiva === 'vendas' ? 'secondary-btn' : 'primary-btn'}`}
-                    onClick={() => setAbaAtiva('vendas')}
-                >
-                     Vendas
-                </button>
+                    onClick={(e) => { e.preventDefault(); handleAbaClick('vendas'); }}
+                    aria-selected={abaAtiva === 'vendas'}
+                  >
+                    Vendas
+                  </button>
                 </center>
-                </div>
+              </div>
 
-                            {/* Conteúdo das abas */}
+              {/* Conteúdo das abas */}
               {abaAtiva === 'caixa' && (
                 <div className="mt-3">
                   <ListaVendas />
@@ -74,7 +79,7 @@ const Caixa = () => {
 
               {abaAtiva === 'vendas' && (
                 <div className="mt-3">
-                  <Vendas   props="caixa"  onClose={() => setAbaAtiva('caixa')} />
+                  <Vendas props="caixa" onClose={() => setAbaAtiva('caixa')} />
                 </div>
               )}
             </>
@@ -133,4 +138,5 @@ const Caixa = () => {
     </>
   );
 };
+
 export default Caixa;
