@@ -21,30 +21,33 @@ const Vendas = ({ props}) => {
   const [objValue, setObjValue] = useState(null);
 
   // Função chamada quando o código de barras é detectado
-  const codeBar = async (code) => {
-    setScanning(false);
+  // Função chamada quando o código de barras é detectado
+const codeBar = async (code) => {
+  setScanning(false);
 
-    try {
-      const produto = await BarCod(code);
-
-      // Validação para garantir que 'produto' é válido
-      if (!produto || typeof produto !== 'object') {
-        console.error("Produto inválido ou não encontrado");
-        return;
-      }
-
-      // Comparação baseada em propriedades (evita comparação direta de objetos)
-      if (selectedProduct && selectedProduct.id === produto.id) {
-        return;
-      }
-
-      setSelectedProduct(produto);
-      setShowQuantityModal(true);
-
-    } catch (error) {
-      console.error("Erro ao processar código de barras:", error);
+  try {
+    const produto = await BarCod(code);
+    // Validação do produto retornado
+    const { id, nome, valor, quantidade } = produto;
+    if (!id || !nome || !valor || !quantidade) {
+      alert("Erro: Dados do produto estão incompletos.");
+      setScanning(true)
+      return; // Interrompe o fluxo se os dados do produto estiverem incompletos
     }
-  };
+    // Comparação para evitar seleção duplicada do mesmo produto
+    if (selectedProduct && selectedProduct.id === produto.data.id) {
+      return;
+    }
+
+    // Definir o produto selecionado e abrir o modal
+    setSelectedProduct(produto);  // Usa produto.data em vez de produto diretamente
+    setShowQuantityModal(true);  // Certifique-se de que o modal está sendo acionado corretamente
+
+  } catch (error) {
+    console.error("Erro ao processar código de barras:", error);
+    alert("Erro ao processar código de barras. Tente novamente.");
+  }
+};
 
   // Função para buscar os produtos e serviços
   const fetchData = async () => {

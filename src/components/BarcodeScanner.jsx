@@ -1,88 +1,75 @@
-import React, { useEffect, useState } from 'react';
-import Quagga from 'quagga';
+import React, { useRef, useEffect } from 'react';
+import Webcam from 'react-webcam';
+import { BrowserMultiFormatReader } from '@zxing/library';
 
 const BarcodeScanner = ({ onDetected }) => {
-  const [error, setError] = useState(null);
+  const webcamRef = useRef(null);
+  let codeReader = new BrowserMultiFormatReader();
 
   useEffect(() => {
-    const initScanner = () => {
-      Quagga.init(
-        {
-          inputStream: {
-            type: 'LiveStream',
-            target: document.querySelector('#scanner-container'),
-            constraints: {
-              width: 300,
-              height: 300,
-              facingMode: 'environment', // Usa a câmera traseira
-            },
-          },
-          decoder: {
-            readers: [ // Lista completa de leitores suportados
-              'code_128_reader',
-              'ean_reader',
-              'ean_8_reader',
-              'code_39_reader',
-              'code_39_vin_reader',
-              'codabar_reader',
-              'upc_reader',
-              'upc_e_reader',
-              'i2of5_reader',
-              '2of5_reader',
-              'code_93_reader'
-            ],
-          },
-          locate: true, // Ativa o rastreamento visual para melhor precisão
-        },
-        (err) => {
-          if (err) {
-            console.error('Erro ao iniciar o Quagga:', err);
-            setError('Não foi possível acessar a câmera. Verifique as permissões do navegador.');
-            return;
-          }
-          Quagga.start();
-        }
-      );
+    let scanning = true;
 
-      Quagga.onDetected((data) => {
-        onDetected(data.codeResult.code);
-        Quagga.stop(); // Para o scanner após a detecção
-      });
+    const startScanning = async () => {
+      try {
+        const video = webcamRef.current.video;
+        if (!video) {
+          console.error("Câmera não encontrada.");
+          return;
+        }
+
+        await codeReader.decodeFromVideoDevice(
+          undefined, // Automatically selects the default camera
+          video,
+          (result, error) => {
+            if (result && scanning) {
+              onDetected(result.text);
+              scanning = false; // Stop scanning after detection
+            }
+            if (error && error.name !== "NotFoundException") {
+              console.error("Erro ao escanear:", error.message);
+            }
+          }
+        );
+      } catch (err) {
+        console.error('Erro ao acessar a câmera:', err.message);
+      }
     };
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      initScanner();
+      startScanning();
     } else {
-      setError('Seu navegador não suporta acesso à câmera.');
+      console.error("O navegador não suporta acesso à câmera.");
     }
 
-    // Limpa o scanner ao desmontar o componente
     return () => {
-      Quagga.stop();
+      scanning = false;
+      codeReader.reset(); // Clean up resources when component unmounts
     };
   }, [onDetected]);
 
   return (
-    <div>
-      {error ? (
-        <div style={{ color: 'red', textAlign: 'center', margin: '10px' }}>
-          {error}
-        </div>
-      ) : (
-        <div
-          id="scanner-container"
-          style={{
-            width: '100%',
-            maxWidth: '300px',
-            height: '300px',
-            overflow: 'hidden',
-            margin: '10px auto',
-            border: '2px solid #00eaff',
-            borderRadius: '10px',
-            position: 'relative',
-          }}
-        />
-      )}
+    <div
+      style={{
+        width: '100%',
+        maxWidth: '300px',
+        height: '300px',
+        margin: '10px auto',
+        border: '2px solid #00eaff',
+        borderRadius: '10px',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    >
+      <Webcam
+        ref={webcamRef}
+        mirrored={false}
+        width="100%"
+        height="100%"
+        onUserMediaError={(e) => {
+          console.error("Erro ao acessar a câmera:", e);
+        }}
+        style={{ objectFit: 'cover' }} // Ensures the video fills the container
+      />
     </div>
   );
 };

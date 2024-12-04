@@ -417,11 +417,7 @@ padding: 15px;
 border-radius: 8px;
 text-align: center;
 }
-.notification-icon {
-position: relative;
-cursor: pointer;
-margin-left: 15px;
-}
+
 .notification-count {
 position: absolute;
 top: -5px;
@@ -587,19 +583,20 @@ font-size: 20px;
     display: flex; /* Para alinhar ícone e texto lado a lado */
     align-items: center; /* Centraliza ícone com texto */
   }
+
   .notification-ico{
-    margin: 0px 0; /* Espaçamento entre os links */
-    display: flex; /* Para alinhar ícone e texto lado a lado */
-    align-items: center; /* Centraliza ícone com texto */
+    display: flexbox;
 
   }
-
   .menu-toggle-btn {
-    margin-bottom: 10px; /* Espaçamento inferior */
     display: block; /* Exibe o botão apenas no layout mobile */
   }
 
-  
+  .notification{
+   display: none;
+    
+  }
+
 }
 .grid-container {
   display: grid;
@@ -645,4 +642,51 @@ font-size: 20px;
     font-size: 0.9rem;
     padding: 10px;
   }
+}
+
+/* Alinhamento geral do cabeçalho do menu */
+.menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Espaça o menu e o sino */
+  width: 100%;
+}
+
+/* Botão de menu */
+.menu-toggle-btn {
+  font-size: 18px;
+  color: #00ffff; /* Cor azul neon */
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menu-toggle-btn:hover {
+  text-decoration: underline;
+}
+
+/* Ícone de notificação no lado direito */
+.notification-bell {
+  position: relative;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.notification-bell .badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  border-radius: 50%;
+  padding: 2px 6px;
+}
+
+
+.notification{
+  position: relative;
+cursor: pointer;
+margin-left: 15px;
+  
 }
