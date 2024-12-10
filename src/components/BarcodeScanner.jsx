@@ -18,12 +18,12 @@ const BarcodeScanner = ({ onDetected }) => {
         }
 
         await codeReader.decodeFromVideoDevice(
-          undefined, // Automatically selects the default camera
+          getCameraId(), // Função para selecionar a câmera correta
           video,
           (result, error) => {
             if (result && scanning) {
               onDetected(result.text);
-              scanning = false; // Stop scanning after detection
+              scanning = false; // Parar a leitura após a detecção
             }
             if (error && error.name !== "NotFoundException") {
               console.error("Erro ao escanear:", error.message);
@@ -35,6 +35,18 @@ const BarcodeScanner = ({ onDetected }) => {
       }
     };
 
+    const getCameraId = async () => {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // Tentar encontrar a câmera traseira em dispositivos móveis
+        const backCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
+        return backCamera ? backCamera.deviceId : undefined;
+      }
+      return undefined; // Câmera padrão em computadores
+    };
+
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       startScanning();
     } else {
@@ -43,7 +55,7 @@ const BarcodeScanner = ({ onDetected }) => {
 
     return () => {
       scanning = false;
-      codeReader.reset(); // Clean up resources when component unmounts
+      codeReader.reset(); // Limpar recursos ao desmontar o componente
     };
   }, [onDetected]);
 
@@ -68,7 +80,7 @@ const BarcodeScanner = ({ onDetected }) => {
         onUserMediaError={(e) => {
           console.error("Erro ao acessar a câmera:", e);
         }}
-        style={{ objectFit: 'cover' }} // Ensures the video fills the container
+        style={{ objectFit: 'cover' }} // Garante que o vídeo preencha o contêiner
       />
     </div>
   );
