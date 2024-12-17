@@ -54,14 +54,14 @@ const Caixa = () => {
               <div className="tabs mt-3">
                 <center>
                   <button
-                    className={`btn ${abaAtiva === 'caixa' ? 'secondary-btn' : 'primary-btn'}`}
+                    className= "btn primary-btn"
                     onClick={(e) => { e.preventDefault(); handleAbaClick('caixa'); }}
                     aria-selected={abaAtiva === 'caixa'}
                   >
                     Caixa
                   </button>
                   <button
-                    className={`btn ${abaAtiva === 'vendas' ? 'secondary-btn' : 'primary-btn'}`}
+                    className= "btn primary-btn"
                     onClick={(e) => { e.preventDefault(); handleAbaClick('vendas'); }}
                     aria-selected={abaAtiva === 'vendas'}
                   >

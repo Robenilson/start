@@ -1,15 +1,36 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import Webcam from 'react-webcam';
 import { BrowserMultiFormatReader } from '@zxing/library';
 
 const BarcodeScanner = ({ onDetected }) => {
   const webcamRef = useRef(null);
+  const [cameraId, setCameraId] = useState(null); // Armazena o ID da câmera
   let codeReader = new BrowserMultiFormatReader();
 
   useEffect(() => {
     let scanning = true;
 
-    const startScanning = async () => {
+    const getCameraId = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
+        if (isMobile) {
+          // Encontrar a câmera traseira
+          const backCamera = devices.find(
+            (device) =>
+              device.kind === 'videoinput' && device.label.toLowerCase().includes('back')
+          );
+          return backCamera ? backCamera.deviceId : undefined;
+        }
+        return undefined; // Câmera padrão para computadores
+      } catch (error) {
+        console.error("Erro ao obter dispositivos de mídia:", error);
+        return undefined;
+      }
+    };
+
+    const startScanning = async (deviceId) => {
       try {
         const video = webcamRef.current.video;
         if (!video) {
@@ -18,7 +39,7 @@ const BarcodeScanner = ({ onDetected }) => {
         }
 
         await codeReader.decodeFromVideoDevice(
-          getCameraId(), // Função para selecionar a câmera correta
+          deviceId,
           video,
           (result, error) => {
             if (result && scanning) {
@@ -31,24 +52,19 @@ const BarcodeScanner = ({ onDetected }) => {
           }
         );
       } catch (err) {
-        console.error('Erro ao acessar a câmera:', err.message);
+        console.error("Erro ao acessar a câmera:", err.message);
       }
     };
 
-    const getCameraId = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-
-      if (isMobile) {
-        // Tentar encontrar a câmera traseira em dispositivos móveis
-        const backCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
-        return backCamera ? backCamera.deviceId : undefined;
-      }
-      return undefined; // Câmera padrão em computadores
+    // Inicializar o processo
+    const initializeScanner = async () => {
+      const deviceId = await getCameraId();
+      setCameraId(deviceId); // Armazena o ID da câmera
+      startScanning(deviceId);
     };
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      startScanning();
+      initializeScanner();
     } else {
       console.error("O navegador não suporta acesso à câmera.");
     }
